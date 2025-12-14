@@ -1,977 +1,340 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIF-HKD - Hong Kong AI International Film Festival HKD Stablecoin</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@700;800&family=Noto+Sans+TC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>AIF-HKD - The Infrastructure of Value | HKAIIFF</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', '"Noto Sans TC"', 'sans-serif'],
+                        mono: ['"Space Mono"', 'monospace'],
+                    },
+                    colors: {
+                        black: '#1a1a1a', 
+                        offblack: '#222222',
+                        white: '#ffffff',
+                        offwhite: '#f9f9f9',
+                        gray: {
+                            100: '#f3f3f3',
+                            200: '#e5e5e5',
+                            300: '#d4d4d4',
+                            400: '#a3a3a3',
+                            500: '#737373',
+                            800: '#262626',
+                            900: '#111111'
+                        }
+                    },
+                    animation: {
+                        'marquee': 'marquee 40s linear infinite',
+                        'marquee-reverse': 'marquee-reverse 40s linear infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        },
+                        'marquee-reverse': {
+                            '0%': { transform: 'translateX(-50%)' },
+                            '100%': { transform: 'translateX(0%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --primary: #3498db;
-            --secondary: #8e44ad;
-            --accent: #00ff9d;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --gold: #FFD700;
-        }
-        
+        /* Base & Reset */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-            color: #ffffff;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(142, 68, 173, 0.1) 0%, transparent 20%);
+            background-color: #ffffff;
+            color: #1a1a1a;
+            -webkit-font-smoothing: antialiased;
         }
         
-        .logo-font {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            font-size: 2.5rem;
-            letter-spacing: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            position: relative;
-            display: inline-block;
-            text-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
-            animation: logoGlow 3s ease-in-out infinite alternate;
-        }
-        
-        @keyframes logoGlow {
-            0% { text-shadow: 0 0 10px rgba(0, 255, 157, 0.3); }
-            100% { text-shadow: 0 0 25px rgba(0, 255, 157, 0.6), 0 0 35px rgba(52, 152, 219, 0.4); }
-        }
-        
-        .logo-sub {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-            font-size: 0.7rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-top: -10px;
-            text-align: center;
-            opacity: 0.8;
-        }
-        
-        .gradient-text {
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-        }
-        
-        .accent-bg {
-            background: rgba(0, 255, 157, 0.1);
-            border: 1px solid rgba(0, 255, 157, 0.2);
-        }
-        
-        .card {
-            background-color: rgba(26, 32, 44, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-        
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 255, 157, 0.2);
-            border-color: rgba(0, 255, 157, 0.3);
-        }
-        
-        .navbar {
-            background-color: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 255, 157, 0.1);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            transition: all 0.3s ease;
-            border: none;
-            font-weight: 600;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.4);
-        }
-        
-        .btn-secondary {
-            background-color: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-        
-        .btn-secondary:hover {
-            background-color: rgba(0, 255, 157, 0.1);
-            transform: translateY(-3px);
-        }
-        
-        .hero {
+        /* Language Toggle System */
+        body[data-lang="en"] .lang-zh { display: none !important; }
+        body[data-lang="zh"] .lang-en { display: none !important; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #fff; }
+        ::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ccc; }
+
+        /* Button Styles */
+        .academy-btn {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding-top: 80px;
         }
-        
-        .hero:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 100%);
-            z-index: 1;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .hero-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.7;
-            animation: bgPan 30s infinite linear;
-        }
-        
-        @keyframes bgPan {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
-        }
-        
-        .floating {
-            animation: floating 6s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
-        
-        .animate-fade-in {
-            animation: fadeIn 1s ease-in-out forwards;
-            opacity: 0;
-        }
-        
-        .animate-slide-up {
-            animation: slideUp 0.8s ease-in-out forwards;
-            opacity: 0;
-        }
-        
-        .animate-slide-right {
-            animation: slideRight 0.8s ease-in-out forwards;
-            opacity: 0;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes slideRight {
-            from { transform: translateX(-50px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .progress-bar {
-            background: linear-gradient(to right, var(--primary), var(--accent), var(--secondary));
-            border-radius: 9999px;
-            height: 8px;
-        }
-        
-        .cyber-border {
-            position: relative;
-        }
-        
-        .cyber-border:after {
+        .academy-btn::after {
             content: '';
             position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: linear-gradient(45deg, transparent 30%, var(--accent) 45%, var(--secondary) 55%, transparent 70%);
-            background-size: 200% 200%;
-            animation: borderGlow 5s linear infinite;
-            z-index: -1;
-            border-radius: 20px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
         }
-        
-        @keyframes borderGlow {
-            0% { background-position: 0% 0%; }
-            50% { background-position: 100% 100%; }
-            100% { background-position: 0% 0%; }
+        .academy-btn:hover::after {
+            transform: translateY(0);
         }
+        .academy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Reveal Text Animation */
+        .reveal-text { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal-text.active { opacity: 1; transform: translateY(0); }
         
-        .ai-element {
+        /* Card Hover Effects */
+        .feature-card { transition: all 0.4s ease; border: 1px solid #e5e5e5; }
+        .feature-card:hover { border-color: #000; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.05); }
+        
+        /* Table Styles */
+        .comparison-table th { position: sticky; top: 0; background: #fff; z-index: 10; }
+        .comparison-table tr { transition: background-color 0.2s; }
+        .comparison-table tr:hover { background-color: #f9f9f9; }
+
+        /* Tech Diagram Lines */
+        .tech-line {
             position: absolute;
-            background-color: rgba(52, 152, 219, 0.1);
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            backdrop-filter: blur(5px);
-            padding: 10px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 12px;
-            color: var(--accent);
-            z-index: 3;
-            pointer-events: none;
-            box-shadow: 0 0 15px rgba(0, 255, 157, 0.1);
-        }
-        
-        .data-stream {
-            position: absolute;
-            height: 100px;
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, var(--accent), var(--secondary), transparent);
+            background: #e5e5e5;
             z-index: 0;
-            animation: dataStream 2s linear infinite;
-            opacity: 0.3;
-        }
-        
-        @keyframes dataStream {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100vh); }
-        }
-        
-        .input-field {
-            background-color: rgba(26, 32, 44, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 255, 157, 0.1);
-        }
-        
-        .section-title {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 2rem;
-        }
-        
-        .section-title:after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            border-radius: 2px;
-        }
-        
-        .section-title.center:after {
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .stats-card {
-            text-align: center;
-            padding: 25px;
-            border-radius: 16px;
-            background: rgba(26, 32, 44, 0.5);
-            border: 1px solid rgba(0, 255, 157, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .stats-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-            background: rgba(26, 32, 44, 0.7);
-        }
-        
-        .stats-card i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: var(--accent);
-        }
-        
-        .stats-card .number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .ecosystem-card {
-            background: rgba(26, 32, 44, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 30px;
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        
-        .ecosystem-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 255, 157, 0.2);
-            border-color: rgba(0, 255, 157, 0.3);
-        }
-        
-        .ecosystem-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: white;
-        }
-        
-        .token-badge {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 4px 12px;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            display: inline-block;
-        }
-        
-        .compare-card {
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
-            background: rgba(26, 32, 44, 0.3);
-        }
-        
-        .compare-card.featured {
-            border-color: var(--accent);
-            background: rgba(0, 255, 157, 0.05);
-            transform: scale(1.02);
-        }
-        
-        .compare-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-        }
-        
-        .tab-nav {
-            display: flex;
-            background: rgba(26, 32, 44, 0.5);
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-        
-        .tab-nav button {
-            flex: 1;
-            padding: 12px 16px;
-            border: none;
-            background: transparent;
-            color: #9ca3af;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            min-width: 120px;
-            margin: 2px;
-        }
-        
-        .tab-nav button.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 100%;
-            max-width: 320px;
-            height: 100vh;
-            background: rgba(10, 10, 10, 0.98);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 20px;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .mobile-menu.open {
-            transform: translateX(0);
-        }
-        
-        .mobile-menu-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--accent);
-            z-index: 1001;
-        }
-        
-        .stablecoin-compare {
-            overflow-x: auto;
-        }
-        
-        .stablecoin-table {
-            min-width: 900px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .stablecoin-table th,
-        .stablecoin-table td {
-            padding: 16px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .stablecoin-table th {
-            background: rgba(26, 32, 44, 0.7);
-            font-weight: 600;
-            color: var(--accent);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
-        .stablecoin-table tr:hover {
-            background: rgba(0, 255, 157, 0.05);
-        }
-        
-        .check-icon {
-            color: var(--accent);
-        }
-        
-        .cross-icon {
-            color: var(--danger);
-        }
-        
-        .warning-icon {
-            color: var(--warning);
         }
 
-        /* Partners section */
-        .partners-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+        /* SVG Icon styling */
+        .icon-svg {
+            width: 24px;
+            height: 24px;
+            stroke-width: 1.5;
         }
-        
-        .partner-card {
-            padding: 20px;
-            text-align: center;
-            border-radius: 12px;
-            background: rgba(26, 32, 44, 0.5);
-            border: 1px solid rgba(0, 255, 157, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .partner-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 255, 157, 0.1);
-            border-color: var(--accent);
-        }
-        
-        .partner-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 15px;
-            color: var(--accent);
-        }
-        
-        .partner-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-        }
-        
-        .partner-item {
-            padding: 8px 16px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-        
-        .partner-item:hover {
-            background: rgba(0, 255, 157, 0.1);
-            transform: scale(1.05);
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 1024px) {
-            .ai-element {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .desktop-nav {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block !important;
-                cursor: pointer;
-                z-index: 999;
-            }
-            
-            .logo-font {
-                font-size: 1.8rem;
-                letter-spacing: 2px;
-            }
-            
-            .hero-bg {
-                animation: none;
-            }
-            
-            .hero {
-                min-height: 80vh;
-                padding-top: 100px;
-            }
-            
-            .section-title:after {
-                width: 40px;
-                bottom: -8px;
-            }
-            
-            .hero-content .grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-                line-height: 1.2;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-                line-height: 1.6;
-            }
-            
-            .btn-primary, .btn-secondary {
-                padding: 12px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .tab-nav {
-                flex-direction: column;
-            }
-            
-            .tab-nav button {
-                flex: none;
-                margin: 2px 0;
-                text-align: center;
-            }
-            
-            .partners-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .stablecoin-table {
-                font-size: 0.85rem;
-            }
-            
-            .stablecoin-table th,
-            .stablecoin-table td {
-                padding: 12px 8px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .hero {
-                min-height: 70vh;
-                padding-top: 80px;
-            }
-            
-            .logo-font {
-                font-size: 1.5rem;
-                letter-spacing: 1px;
-            }
-            
-            .logo-sub {
-                font-size: 0.6rem;
-                letter-spacing: 2px;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-                line-height: 1.2;
-            }
-            
-            .hero .grid {
-                gap: 20px;
-            }
-            
-            .card {
-                padding: 1rem;
-            }
-            
-            .ecosystem-card {
-                padding: 20px;
-            }
-            
-            .stats-card {
-                padding: 15px;
-            }
-            
-            .stats-card i {
-                font-size: 1.8rem;
-            }
-            
-            .stats-card .number {
-                font-size: 1.8rem;
-            }
-            
-            .feature-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }
-        }
-        
-        /* Mobile menu link style */
-        .mobile-menu a {
-            display: block;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-            color: white;
-            text-decoration: none;
-            font-size: 1.1rem;
-        }
-        
-        .mobile-menu a:hover {
-            color: var(--accent);
-            padding-left: 10px;
-        }
-        
-        /* Mobile menu buttons */
-        .mobile-menu .mobile-menu-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 30px;
+        .group:hover .icon-svg {
+            stroke-width: 2;
         }
 
-        .mobile-menu-btn {
-            display: none;
+        /* Accordion */
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] summary ~ * { animation: sweep .5s ease-in-out; }
+        @keyframes sweep {
+            0%    {opacity: 0; transform: translateY(-10px)}
+            100%  {opacity: 1; transform: translateY(0)}
         }
     </style>
 </head>
-<body>
-    <!-- AI Elements -->
-    <div class="ai-element" style="top: 120px; left: 10%;">
-        AIF-HKD: ACTIVE <br>
-        RESERVE: 100% HKD <br>
-        // 1:1 Pegged Stablecoin
-    </div>
-    
-    <div class="ai-element" style="bottom: 150px; right: 15%;">
-        HKMA_COMPLIANCE: ✓ <br>
-        AUDIT_STATUS: VERIFIED <br>
-        // Regulatory Approved
-    </div>
-    
-    <!-- Data streams -->
-    <div class="data-stream" style="left: 20%; animation-delay: 0s;"></div>
-    <div class="data-stream" style="left: 40%; animation-delay: 0.5s;"></div>
-    <div class="data-stream" style="left: 60%; animation-delay: 1s;"></div>
-    <div class="data-stream" style="left: 80%; animation-delay: 1.5s;"></div>
+
+<body data-lang="en" class="bg-white text-black selection:bg-black selection:text-white font-sans">
 
     <!-- Navigation -->
-    <nav class="navbar fixed w-full z-50 px-4 py-3">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="#home" class="flex items-center">
-                <div class="hkaifm-logo mr-4">
-                    <div class="logo-font">AIF-HKD</div>
-                    <div class="logo-sub">HKAIIFF STABLECOIN</div>
+    <nav class="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 transition-all duration-300">
+        <div class="px-6 md:px-8 py-4 flex justify-between items-center max-w-[1920px] mx-auto">
+            <a href="#" class="flex items-center gap-4 group">
+                <div class="w-10 h-10 bg-black text-white flex items-center justify-center font-bold font-mono text-xs rounded-sm group-hover:bg-gray-800 transition-colors">
+                    AIF
+                </div>
+                <div class="flex flex-col leading-tight">
+                    <span class="text-lg font-bold tracking-tight">AIF-HKD.</span>
+                    <span class="text-[0.6rem] font-mono uppercase tracking-wider text-gray-500 group-hover:text-black transition-colors">
+                        <span class="lang-en">HKAIIFF Stablecoin Infrastructure</span>
+                        <span class="lang-zh">香港AI國際電影節穩定幣基礎設施</span>
+                    </span>
                 </div>
             </a>
-            <div class="hidden md:flex space-x-8 desktop-nav">
-                <a href="#about" class="hover:text-blue-400 transition">About</a>
-                <a href="#ecosystem" class="hover:text-blue-400 transition">Ecosystem</a>
-                <a href="#core-features" class="hover:text-blue-400 transition">Features</a>
-                <a href="#use-cases" class="hover:text-blue-400 transition">Use Cases</a>
-                <a href="#technology" class="hover:text-blue-400 transition">Technology</a>
-                <a href="#comparison" class="hover:text-blue-400 transition">Comparison</a>
-                <a href="#compliance" class="hover:text-blue-400 transition">Compliance</a>
-                <a href="#partners" class="hover:text-blue-400 transition">Partners</a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden xl:flex items-center gap-1 text-[12px] font-medium tracking-wide uppercase">
+                <a href="#about" class="px-4 py-2 hover:bg-gray-100 rounded-full transition-colors"><span class="lang-en">About</span><span class="lang-zh">關於項目</span></a>
+                <a href="#ecosystem" class="px-4 py-2 hover:bg-gray-100 rounded-full transition-colors"><span class="lang-en">Ecosystem</span><span class="lang-zh">生態系統</span></a>
+                <a href="#features" class="px-4 py-2 hover:bg-gray-100 rounded-full transition-colors"><span class="lang-en">Features</span><span class="lang-zh">核心特色</span></a>
+                <a href="#technology" class="px-4 py-2 hover:bg-gray-100 rounded-full transition-colors"><span class="lang-en">Tech</span><span class="lang-zh">技術架構</span></a>
+                <a href="#compliance" class="px-4 py-2 hover:bg-gray-100 rounded-full transition-colors"><span class="lang-en">Compliance</span><span class="lang-zh">合規框架</span></a>
+                <a href="#partners" class="px-4 py-2 hover:bg-gray-100 rounded-full transition-colors"><span class="lang-en">Partners</span><span class="lang-zh">合作夥伴</span></a>
             </div>
-            <div class="flex items-center space-x-4">
-                <a href="#whitepaper" class="btn-secondary px-6 py-2 rounded-full text-sm hidden sm:block">Whitepaper</a>
-                <a href="#launch" class="btn-primary px-6 py-2 rounded-full text-sm hidden sm:block">Launching Soon</a>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleLanguage()" class="text-xs font-mono border border-gray-200 px-3 py-1.5 rounded-full hover:bg-black hover:text-white transition-all uppercase w-12 text-center">
+                    <span class="lang-en">ZH</span><span class="lang-zh">EN</span>
+                </button>
                 
-                <button class="mobile-menu-btn text-white">
-                    <i class="fas fa-bars text-xl"></i>
+                <a href="#whitepaper" class="hidden md:flex bg-white border border-gray-200 hover:border-black text-black text-[12px] font-bold px-5 py-2 rounded-full transition-all uppercase">
+                    <span class="lang-en">Whitepaper</span><span class="lang-zh">白皮書</span>
+                </a>
+                
+                <a href="#launch" class="hidden md:flex bg-black text-white text-[12px] font-bold px-5 py-2 rounded-full academy-btn items-center gap-2 uppercase">
+                    <span class="lang-en">Launch App</span><span class="lang-zh">啟動應用</span>
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="xl:hidden p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <div class="mobile-menu-close">
-            <i class="fas fa-times"></i>
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-40 transform translate-x-full transition-transform duration-300 xl:hidden flex flex-col pt-24 px-6">
+        <button id="close-mobile-menu" class="absolute top-6 right-6 p-2">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="flex flex-col gap-6 text-2xl font-bold">
+            <a href="#about" class="mobile-link"><span class="lang-en">About</span><span class="lang-zh">關於項目</span></a>
+            <a href="#ecosystem" class="mobile-link"><span class="lang-en">Ecosystem</span><span class="lang-zh">生態系統</span></a>
+            <a href="#features" class="mobile-link"><span class="lang-en">Core Features</span><span class="lang-zh">核心特色</span></a>
+            <a href="#technology" class="mobile-link"><span class="lang-en">Technology</span><span class="lang-zh">技術架構</span></a>
+            <a href="#compliance" class="mobile-link"><span class="lang-en">Compliance</span><span class="lang-zh">合規框架</span></a>
+            <a href="#partners" class="mobile-link"><span class="lang-en">Partners</span><span class="lang-zh">生態伙伴</span></a>
         </div>
-        
-        <div class="mt-16 flex flex-col">
-            <a href="#about">About</a>
-            <a href="#ecosystem">Ecosystem</a>
-            <a href="#core-features">Features</a>
-            <a href="#use-cases">Use Cases</a>
-            <a href="#technology">Technology</a>
-            <a href="#comparison">Comparison</a>
-            <a href="#compliance">Compliance</a>
-            <a href="#partners">Partners</a>
-            
-            <div class="mobile-menu-buttons">
-                <a href="#whitepaper" class="btn-secondary w-full py-3 rounded-lg font-medium text-center">
-                    Download Whitepaper
-                </a>
-                <a href="#launch" class="btn-primary w-full py-3 rounded-lg font-medium text-center">
-                    Learn More
-                </a>
-            </div>
+        <div class="mt-auto mb-10 flex flex-col gap-4">
+             <a href="#whitepaper" class="w-full text-center border border-black py-4 rounded-full font-bold uppercase"><span class="lang-en">Whitepaper</span><span class="lang-zh">白皮書</span></a>
+             <a href="#launch" class="w-full text-center bg-black text-white py-4 rounded-full font-bold uppercase"><span class="lang-en">Launch App</span><span class="lang-zh">啟動應用</span></a>
         </div>
     </div>
 
     <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-bg"></div>
-        <div class="container mx-auto px-4 hero-content">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="animate-fade-in">
-                    <div class="mb-6">
-                        <span class="inline-block px-4 py-2 bg-blue-600 bg-opacity-20 text-blue-400 rounded-full text-sm font-medium border border-blue-500 border-opacity-30">
-                            HKMA Compliant · AI Film Industry Solution
-                        </span>
-                    </div>
-                    <h1 class="text-4xl md:text-6xl font-bold mb-6">
-                        <span class="gradient-text">AIF-HKD</span><br>
-                        The World's First<br>
-                        <span class="text-blue-400">AI Film Industry Stablecoin</span>
-                    </h1>
-                    <p class="text-xl text-gray-300 mb-8 leading-relaxed">
-                        The fiat-anchored stablecoin for the Hong Kong AI International Film Festival (HKAIIFF) ecosystem, pegged 1:1 with the Hong Kong Dollar, providing a stable, efficient, and compliant digital payment infrastructure for the AI-native film and media industry.
-                    </p>
-                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-                        <a href="#about" class="btn-primary px-8 py-4 rounded-full font-medium text-center text-lg">
-                            Learn More
-                        </a>
-                        <a href="#whitepaper" class="btn-secondary px-8 py-4 rounded-full font-medium text-center text-lg">
-                            Download Whitepaper
-                        </a>
+    <header class="relative pt-40 pb-20 px-6 md:px-8 max-w-[1920px] mx-auto border-b border-gray-200 min-h-[90vh] flex flex-col justify-between">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-12 h-full">
+            <div class="md:col-span-8 flex flex-col justify-center">
+                <div class="mb-8 inline-flex items-center gap-3 border border-gray-200 rounded-full pl-2 pr-4 py-1.5 bg-gray-50 self-start">
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span class="text-[10px] uppercase tracking-widest font-mono font-medium text-gray-500">
+                        <span class="lang-en">HKMA Compliance Certified · AI Film Industry</span>
+                        <span class="lang-zh">香港金管局合規認證 · AI電影產業專用</span>
+                    </span>
+                </div>
+                
+                <h1 class="text-6xl md:text-8xl lg:text-9xl font-bold tracking-tighter leading-[0.9] mb-10 text-black">
+                    <span class="lang-en">Value. <br> Stabilized.</span>
+                    <span class="lang-zh">價值恆定 <br> 創意無限</span>
+                </h1>
+                
+                <p class="text-lg md:text-xl text-gray-500 max-w-2xl leading-relaxed font-light mb-12">
+                    <span class="lang-en">AIF-HKD: The world's first stablecoin dedicated to the AI film industry. Pegged 1:1 to HKD. Compliant, Transparent, and Built for the HKAIIFF Ecosystem.</span>
+                    <span class="lang-zh">香港AI國際電影節(HKAIIFF)生態系統的法定貨幣錨定穩定幣，與港幣保持1:1錨定關係，為AI原生電影和媒體行業提供穩定、高效且合規的數字支付基礎設施。</span>
+                </p>
+
+                <div class="flex flex-wrap gap-4">
+                    <a href="#about" class="bg-black text-white px-8 py-4 rounded-full font-medium hover:bg-gray-800 transition-colors academy-btn">
+                        <span class="lang-en">Learn More</span><span class="lang-zh">瞭解更多</span>
+                    </a>
+                    <a href="#whitepaper" class="bg-white border border-gray-200 text-black px-8 py-4 rounded-full font-medium hover:border-black transition-colors">
+                        <span class="lang-en">Read Whitepaper</span><span class="lang-zh">下載白皮書</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="md:col-span-4 flex flex-col justify-end relative">
+                <!-- Status Card -->
+                <div class="bg-white border border-gray-200 p-8 rounded-xl shadow-2xl relative z-10">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-mono text-gray-400 uppercase">Current Rate</span>
+                            <span class="text-4xl font-bold font-mono tracking-tight mt-1">1:1</span>
+                        </div>
+                        <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center">
+                            <span class="font-bold text-xs">HKD</span>
+                        </div>
                     </div>
                     
-                    <!-- Key Stats -->
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-green-400">1:1</div>
-                            <div class="text-sm text-gray-400">HKD Peg</div>
+                    <div class="space-y-4 font-mono text-xs">
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-gray-400">Peg Stability</span>
+                            <span class="text-green-600 font-bold">100% Reserve</span>
                         </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-blue-400">100%</div>
-                            <div class="text-sm text-gray-400">Reserve Backed</div>
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-gray-400">24h Volume</span>
+                            <span class="text-black">$124,592,100</span>
                         </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-purple-400">24/7</div>
-                            <div class="text-sm text-gray-400">Real-time Transactions</div>
+                        <div class="flex justify-between py-3 border-b border-gray-100">
+                            <span class="text-gray-400">Status</span>
+                            <span class="flex items-center gap-2 text-green-600"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active</span>
                         </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-gray-100">
+                        <div class="flex gap-2 mb-2">
+                             <span class="inline-block px-2 py-1 bg-gray-100 rounded text-[10px] uppercase font-bold text-gray-500">HKMA</span>
+                             <span class="inline-block px-2 py-1 bg-gray-100 rounded text-[10px] uppercase font-bold text-gray-500">AML/KYC</span>
+                        </div>
+                        <p class="text-[10px] text-gray-400 leading-normal">
+                            <span class="lang-en">Real-time audited reserve status. Fully regulated under Hong Kong Stablecoin Ordinance.</span>
+                            <span class="lang-zh">實時審計儲備狀態。完全符合香港《穩定幣條例》監管要求。</span>
+                        </p>
                     </div>
                 </div>
                 
-                <div class="animate-slide-right">
-                    <div class="relative">
-                        <div class="card p-6 cyber-border">
-                            <h3 class="text-2xl font-bold mb-4 text-center">AIF-HKD Real-time Status</h3>
-                            
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center p-3 bg-gray-800 bg-opacity-50 rounded-lg">
-                                    <span class="text-gray-300">Stable Trading Pairs</span>
-                                    <span class="text-green-400 font-bold">AIF/FilmToken/ACA</span>
-                                </div>
-                                
-                                <div class="flex justify-between items-center p-3 bg-gray-800 bg-opacity-50 rounded-lg">
-                                    <span class="text-gray-300">Fiat On/Off Ramp</span>
-                                    <span class="text-blue-400 font-bold">HKD ⇄ Web3</span>
-                                </div>
-                                
-                                <div class="flex justify-between items-center p-3 bg-gray-800 bg-opacity-50 rounded-lg">
-                                    <span class="text-gray-300">Financial Services</span>
-                                    <span class="text-purple-400 font-bold">AIFCARD Base</span>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-6 space-y-3 text-sm text-gray-400">
-                                <p><strong>Stable Trading Pairs:</strong> Provides stable liquidity support as the primary trading pair for AIF, FilmToken, and ACA on the AIF Exchange</p>
-                                <p><strong>Fiat On/Off Ramp:</strong> Enables seamless conversion between HKD and digital assets, lowering barriers to Web3 adoption</p>
-                                <p><strong>Financial Services Foundation:</strong> Serves as the stable base currency for AIFCARD financial services, supporting lending, credit, and other financial operations</p>
-                            </div>
-                            
-                            <div class="mt-6 text-center">
-                                <button class="btn-primary w-full py-3 rounded-lg font-medium">
-                                    View Reserve Proof
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Decorative Abstract Element -->
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-gray-50 rounded-full blur-3xl -z-10"></div>
             </div>
         </div>
-    </section>
+    </header>
+
+    <!-- Marquee -->
+    <div class="border-b border-gray-200 py-6 overflow-hidden bg-white">
+        <div class="whitespace-nowrap animate-marquee flex items-center gap-16 text-xs font-mono font-bold uppercase tracking-widest text-black">
+            <span>1:1 Pegged HKD</span> <span>✦</span> <span>HKMA Compliant</span> <span>✦</span> <span>Monthly Audit</span> <span>✦</span> <span>Cross-border Settlement</span> <span>✦</span> <span>Smart Contract Auto-execution</span> <span>✦</span>
+            <span>1:1 港幣錨定</span> <span>✦</span> <span>金管局合規</span> <span>✦</span> <span>月度審計</span> <span>✦</span> <span>跨境結算</span> <span>✦</span> <span>智能合約自動執行</span> <span>✦</span>
+            <span>1:1 Pegged HKD</span> <span>✦</span> <span>HKMA Compliant</span> <span>✦</span> <span>Monthly Audit</span> <span>✦</span> <span>Cross-border Settlement</span> <span>✦</span> <span>Smart Contract Auto-execution</span> <span>✦</span>
+        </div>
+    </div>
 
     <!-- About Section -->
-    <section class="py-20" id="about">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-4xl font-bold mb-6 section-title center">What is AIF-HKD</h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                    AIF-HKD is the world's first stablecoin designed specifically for the AI film industry, operating within Hong Kong Monetary Authority's (HKMA) regulatory framework to provide a stable digital financial infrastructure for the HKAIIFF ecosystem.
+    <section id="about" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto border-b border-gray-200">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-16">
+            <div class="md:col-span-4">
+                <h2 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 reveal-text">
+                    <span class="lang-en">What is <br> AIF-HKD?</span>
+                    <span class="lang-zh">什麼是 <br> AIF-HKD?</span>
+                </h2>
+                <span class="inline-block px-3 py-1 rounded-full border border-gray-300 text-xs font-mono text-gray-500 uppercase reveal-text delay-100">// The Foundation</span>
+            </div>
+            <div class="md:col-span-8">
+                <p class="text-xl font-light text-gray-600 mb-12 reveal-text leading-relaxed">
+                    <span class="lang-en">AIF-HKD is the world's first stablecoin designed specifically for the AI film industry. Based on the regulatory framework of the Hong Kong Monetary Authority's "Stablecoin Ordinance", providing a stable digital financial infrastructure for the HKAIIFF ecosystem.</span>
+                    <span class="lang-zh">AIF-HKD是全球首款專為AI電影產業設計的穩定幣，立足香港金管局《穩定幣條例》的合規框架，為HKAIIFF生態系統提供穩定的數字金融基礎設施。</span>
                 </p>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-                <!-- Core Values -->
-                <div class="card p-8 animate-slide-up">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Stable & Trustworthy</h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        Strictly pegged 1:1 with the Hong Kong Dollar, 100% backed by high-quality, liquid HKD-denominated assets to ensure absolute stability and trustworthiness. Monthly independent audits and transparent reserve proofs.
-                    </p>
-                </div>
                 
-                <div class="card p-8 animate-slide-up" style="animation-delay: 0.4s;">
-                    <div class="feature-icon">
-                        <i class="fas fa-balance-scale"></i>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal-text">
+                    <div class="p-8 border border-gray-200 bg-white hover:bg-black hover:text-white transition-all duration-500 group rounded-lg">
+                        <svg class="w-8 h-8 mb-6 text-black group-hover:text-white icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <h3 class="text-lg font-bold mb-4"><span class="lang-en">Stable & Trusted</span><span class="lang-zh">穩定可信</span></h3>
+                        <p class="text-sm opacity-60 leading-relaxed">
+                            <span class="lang-en">Strictly pegged 1:1 to HKD. 100% backed by high-quality, liquid HKD assets. Monthly independent audits.</span>
+                            <span class="lang-zh">與港幣保持1:1的嚴格錨定，100%由高質量、流動性強的港幣計價資產提供支持，確保絕對的穩定性和可信度。月度獨立審計，儲備證明公開透明。</span>
+                        </p>
                     </div>
-                    <h3 class="text-2xl font-bold mb-4">Compliant & Transparent</h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        Strictly adheres to HKMA's Stablecoin Ordinance, establishing a robust AML/KYC framework to ensure the highest standards of compliance and transparency.
-                    </p>
-                </div>
-                
-                <div class="card p-8 animate-slide-up" style="animation-delay: 0.2s;">
-                    <div class="feature-icon">
-                        <i class="fas fa-film"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">Industry-Specific</h3>
-                    <p class="text-gray-300 leading-relaxed">
-                        The world's first stablecoin designed specifically for the AI film industry, deeply integrated with the HKAIIFF ecosystem to provide specialized financial services including project financing, copyright trading, and cross-border film submission settlements.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Ecosystem Integration -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="animate-fade-in">
-                    <h3 class="text-3xl font-bold mb-6">Ecosystem Integration</h3>
-                    <p class="text-lg text-gray-300 mb-6 leading-relaxed">
-                        AIF-HKD is deeply integrated into HKAIIFF's existing token economy, serving as the core stable payment medium alongside AIF, FilmToken, and ACA tokens to form a complete digital economy ecosystem.
-                    </p>
                     
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <div class="text-blue-400 mr-4 mt-1 text-xl">
-                                <i class="fas fa-coins"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg mb-2">Stable Trading Pairs</h4>
-                                <p class="text-gray-400">Provides stable liquidity support as the primary trading pair for AIF, FilmToken, and ACA on the AIF Exchange</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start">
-                            <div class="text-blue-400 mr-4 mt-1 text-xl">
-                                <i class="fas fa-exchange-alt"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg mb-2">Fiat On/Off Ramp</h4>
-                                <p class="text-gray-400">Enables seamless conversion between HKD and digital assets, lowering barriers to Web3 adoption</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start">
-                            <div class="text-blue-400 mr-4 mt-1 text-xl">
-                                <i class="fas fa-credit-card"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg mb-2">Financial Services Foundation</h4>
-                                <p class="text-gray-400">Serves as the stable base currency for AIFCARD financial services, supporting lending, credit, and other financial operations</p>
-                            </div>
-                        </div>
+                    <div class="p-8 border border-gray-200 bg-white hover:bg-black hover:text-white transition-all duration-500 group rounded-lg">
+                        <svg class="w-8 h-8 mb-6 text-black group-hover:text-white icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+                        <h3 class="text-lg font-bold mb-4"><span class="lang-en">Compliant & Transparent</span><span class="lang-zh">合規透明</span></h3>
+                        <p class="text-sm opacity-60 leading-relaxed">
+                            <span class="lang-en">Strictly adhering to HKMA regulations. Establishing a comprehensive AML/KYC system ensuring the highest standards.</span>
+                            <span class="lang-zh">嚴格遵守香港金管局《穩定幣條例》，全球監管框架先行者優勢，建立完善的AML/KYC體系，確保最高標準的合規性和透明度。</span>
+                        </p>
                     </div>
-                </div>
-                
-                <div class="animate-slide-right">
-                    <div class="relative">
-                        <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Ecosystem" class="w-full h-auto rounded-xl">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-xl"></div>
-                        <div class="absolute bottom-6 left-6 right-6">
-                            <h4 class="text-xl font-bold mb-2">HKAIIFF 4+1+1 Ecosystem</h4>
-                            <p class="text-sm text-gray-300">AIF.Market, HKAIFA, AIF.Center, 404.world, AIF Exchange</p>
-                        </div>
+
+                    <div class="p-8 border border-gray-200 bg-white hover:bg-black hover:text-white transition-all duration-500 group rounded-lg">
+                        <svg class="w-8 h-8 mb-6 text-black group-hover:text-white icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path></svg>
+                        <h3 class="text-lg font-bold mb-4"><span class="lang-en">Vertical Specialization</span><span class="lang-zh">垂直專精</span></h3>
+                        <p class="text-sm opacity-60 leading-relaxed">
+                            <span class="lang-en">Deeply integrated with HKAIIFF ecosystem for project financing, copyright trading, and cross-border settlement.</span>
+                            <span class="lang-zh">全球首款專為AI電影產業設計的穩定幣，深度整合HKAIIFF生態系統，提供項目融資、版權交易、跨境征片結算等專業金融服務。</span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -979,1066 +342,291 @@
     </section>
 
     <!-- Ecosystem Section -->
-    <section class="py-20 bg-gray-900 bg-opacity-50" id="ecosystem">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 section-title center">Hong Kong AI International Film Festival Ecosystem</h2>
-                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                    AIF-HKD serves as the core payment infrastructure connecting all platforms and services in the "4+1+1" ecosystem
+    <section id="ecosystem" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 reveal-text">
+            <div>
+                <h2 class="text-3xl font-bold tracking-tight mb-4"><span class="lang-en">The Ecosystem</span><span class="lang-zh">生態系統</span></h2>
+                <p class="text-gray-500 font-mono text-sm max-w-xl">
+                    <span class="lang-en">AIF-HKD serves as the core payment infrastructure for the "4+1+1" ecosystem, connecting all platforms and services.</span>
+                    <span class="lang-zh">AIF-HKD 作為"4+1+1"生態系統的核心支付基礎設施，連接各個平台和服務。</span>
                 </p>
             </div>
+            <div class="hidden md:block">
+                 <span class="text-xs font-mono text-gray-400 uppercase">Core Infrastructure</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card 1 -->
+            <div class="bg-white p-8 rounded-xl feature-card reveal-text">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                </div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Competition</div>
+                <h3 class="text-xl font-bold mb-3"><span class="lang-en">International Exhibition</span><span class="lang-zh">國際展映競賽單元</span></h3>
+                <p class="text-sm text-gray-500 mb-6 h-12">
+                    <span class="lang-en">Authoritative showcase for global AI-native films.</span>
+                    <span class="lang-zh">全球AI原生影視作品的權威展示平台。</span>
+                </p>
+                <ul class="text-xs text-gray-500 space-y-2 font-mono border-t border-gray-100 pt-4">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Prize settlement in AIF-HKD</span><span class="lang-zh">獎金結算使用 AIF-HKD</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Instant cross-border payment</span><span class="lang-zh">即時跨境支付</span></li>
+                </ul>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white p-8 rounded-xl feature-card reveal-text delay-100">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Education</div>
+                <h3 class="text-xl font-bold mb-3"><span class="lang-en">AI Film Academy</span><span class="lang-zh">香港AI電影學院</span></h3>
+                <p class="text-sm text-gray-500 mb-6 h-12">
+                    <span class="lang-en">First professional institution for AI film education.</span>
+                    <span class="lang-zh">全球首家專注AI電影教育的專業機構。</span>
+                </p>
+                <ul class="text-xs text-gray-500 space-y-2 font-mono border-t border-gray-100 pt-4">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Tuition in AIF-HKD</span><span class="lang-zh">學費支付使用 AIF-HKD</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Seamless global payment</span><span class="lang-zh">全球學員無縫繳費</span></li>
+                </ul>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-white p-8 rounded-xl feature-card reveal-text delay-200">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                </div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Market</div>
+                <h3 class="text-xl font-bold mb-3"><span class="lang-en">AI Film Market</span><span class="lang-zh">香港AI電影市場</span></h3>
+                <p class="text-sm text-gray-500 mb-6 h-12">
+                    <span class="lang-en">Web3 & AI integrated project financing platform.</span>
+                    <span class="lang-zh">融合Web3和AI技術的電影項目融資交易平台。</span>
+                </p>
+                <ul class="text-xs text-gray-500 space-y-2 font-mono border-t border-gray-100 pt-4">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Stable project pricing</span><span class="lang-zh">項目融資穩定計價</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Transparent distribution</span><span class="lang-zh">收益分配透明</span></li>
+                </ul>
+            </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-slide-up">
-                <!-- Exhibition Competition -->
-                <div class="ecosystem-card">
-                    <div class="ecosystem-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <div class="token-badge">Exhibition</div>
-                    <h3 class="text-xl font-bold mb-4">International Exhibition & Competition</h3>
-                    <p class="text-gray-300 mb-4">
-                        The premier global platform for showcasing AI-native film and television works, offering creators an international stage and substantial prizes.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Prize payments settled in AIF-HKD</li>
-                        <li>• Instant cross-border payments</li>
-                        <li>• Transparent reward mechanism</li>
-                    </ul>
+            <!-- Card 4 -->
+            <div class="bg-white p-8 rounded-xl feature-card reveal-text">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                 </div>
-                
-                <!-- Hong Kong AI Film Academy -->
-                <div class="ecosystem-card">
-                    <div class="ecosystem-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div class="token-badge">Education</div>
-                    <h3 class="text-xl font-bold mb-4">Hong Kong AI Film Academy</h3>
-                    <p class="text-gray-300 mb-4">
-                        The world's first educational institution specializing in AI film education, cultivating AI+film interdisciplinary talent.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Tuition payments in AIF-HKD</li>
-                        <li>• Seamless payments for global students</li>
-                        <li>• Stable salary settlements for instructors</li>
-                    </ul>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Service</div>
+                <h3 class="text-xl font-bold mb-3"><span class="lang-en">Submission Center</span><span class="lang-zh">征片中心</span></h3>
+                <p class="text-sm text-gray-500 mb-6 h-12">
+                    <span class="lang-en">Full-chain AI native film content services.</span>
+                    <span class="lang-zh">提供全鏈條AI原生影視內容服務。</span>
+                </p>
+                <ul class="text-xs text-gray-500 space-y-2 font-mono border-t border-gray-100 pt-4">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Unified fee payment</span><span class="lang-zh">征片費用統一支付</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Copyright service fees</span><span class="lang-zh">版權服務費結算</span></li>
+                </ul>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="bg-white p-8 rounded-xl feature-card reveal-text delay-100">
+                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                 </div>
-                
-                <!-- AI Film Market -->
-                <div class="ecosystem-card">
-                    <div class="ecosystem-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="token-badge">Financing</div>
-                    <h3 class="text-xl font-bold mb-4">Hong Kong AI Film Market</h3>
-                    <p class="text-gray-300 mb-4">
-                        A Web3 and AI-powered film project financing and trading platform that democratizes investment.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Stable project financing valuation</li>
-                        <li>• Transparent revenue distribution</li>
-                        <li>• Lower investment barriers</li>
-                    </ul>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Metaverse</div>
+                <h3 class="text-xl font-bold mb-3"><span class="lang-en">404.world</span><span class="lang-zh">404.world</span></h3>
+                <p class="text-sm text-gray-500 mb-6 h-12">
+                    <span class="lang-en">AI-driven interactive content platform.</span>
+                    <span class="lang-zh">AI驅動的互動內容平台與沉浸式體驗。</span>
+                </p>
+                <ul class="text-xs text-gray-500 space-y-2 font-mono border-t border-gray-100 pt-4">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Subscription payments</span><span class="lang-zh">訂閱服務支付</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-black rounded-full"></span><span class="lang-en">Virtual asset trading</span><span class="lang-zh">虛擬資產交易</span></li>
+                </ul>
+            </div>
+            
+            <!-- Card 6 -->
+            <div class="bg-black text-white p-8 rounded-xl feature-card reveal-text delay-200 border-black">
+                <div class="w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                 </div>
-                
-                <!-- Film Submission Center -->
-                <div class="ecosystem-card">
-                    <div class="ecosystem-icon">
-                        <i class="fas fa-film"></i>
-                    </div>
-                    <div class="token-badge">Content Services</div>
-                    <h3 class="text-xl font-bold mb-4">Film Submission Center</h3>
-                    <p class="text-gray-300 mb-4">
-                        Provides end-to-end AI-native film content services, from creation to commercialization.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Unified submission fee payments</li>
-                        <li>• Copyright service settlements</li>
-                        <li>• Global distribution revenue allocation</li>
-                    </ul>
-                </div>
-                
-                <!-- 404.world -->
-                <div class="ecosystem-card">
-                    <div class="ecosystem-icon">
-                        <i class="fas fa-globe-americas"></i>
-                    </div>
-                    <div class="token-badge">Virtual World</div>
-                    <h3 class="text-xl font-bold mb-4">404.world</h3>
-                    <p class="text-gray-300 mb-4">
-                        An AI-driven interactive content platform offering immersive digital experiences and personalized content creation.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Subscription service payments</li>
-                        <li>• Virtual asset trading</li>
-                        <li>• Creator revenue settlements</li>
-                    </ul>
-                </div>
-                
-                <!-- AIF Exchange -->
-                <div class="ecosystem-card">
-                    <div class="ecosystem-icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <div class="token-badge">Exchange</div>
-                    <h3 class="text-xl font-bold mb-4">AIF Exchange</h3>
-                    <p class="text-gray-300 mb-4">
-                        A professional digital asset trading platform providing liquidity services for all ecosystem tokens.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Foundation for stable trading pairs</li>
-                        <li>• Liquidity provision</li>
-                        <li>• Price discovery mechanism</li>
-                    </ul>
-                </div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">Exchange</div>
+                <h3 class="text-xl font-bold mb-3"><span class="lang-en">AIF Exchange</span><span class="lang-zh">AIF交易所</span></h3>
+                <p class="text-sm text-gray-400 mb-6 h-12">
+                    <span class="lang-en">Professional digital asset trading platform.</span>
+                    <span class="lang-zh">專業的數字資產交易平台，提供生態內各類代幣的流動性服務。</span>
+                </p>
+                <ul class="text-xs text-gray-400 space-y-2 font-mono border-t border-white/20 pt-4">
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-white rounded-full"></span><span class="lang-en">Stable trading pairs</span><span class="lang-zh">穩定交易對基礎</span></li>
+                    <li class="flex items-center gap-2"><span class="w-1 h-1 bg-white rounded-full"></span><span class="lang-en">Liquidity provision</span><span class="lang-zh">流動性提供</span></li>
+                </ul>
             </div>
         </div>
     </section>
 
     <!-- Core Features Section -->
-    <section class="py-20" id="core-features">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 section-title center">AIF-HKD Core Features</h2>
-                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                    A stablecoin solution tailor-made for the AI film industry with multiple technical and commercial advantages
+    <section id="features" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+            <div class="reveal-text">
+                <span class="text-xs font-mono text-gray-400 uppercase tracking-widest block mb-4">Core Mechanism</span>
+                <h2 class="text-4xl font-bold mb-8">
+                    <span class="lang-en">1:1 Pegged. <br> Absolute Stability.</span>
+                    <span class="lang-zh">1:1 港幣錨定 <br> 絕對穩定機制</span>
+                </h2>
+                
+                <div class="space-y-8">
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center shrink-0 font-bold">1</div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2"><span class="lang-en">Fiat Collateral Model</span><span class="lang-zh">法定貨幣抵押模式</span></h4>
+                            <p class="text-gray-500 text-sm leading-relaxed"><span class="lang-en">100% backed by HKD reserves. Every AIF-HKD is supported by corresponding HKD reserves.</span><span class="lang-zh">採用100%港幣儲備支撐，確保每一枚AIF-HKD都有對應的港幣儲備。</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-gray-100 text-black flex items-center justify-center shrink-0 font-bold">2</div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2"><span class="lang-en">Transparent Audit</span><span class="lang-zh">透明審計機制</span></h4>
+                            <p class="text-gray-500 text-sm leading-relaxed"><span class="lang-en">Regular publication of reserve audit reports to ensure fund safety and transparency.</span><span class="lang-zh">定期公佈儲備審計報告，確保資金安全和透明度。</span></p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="w-10 h-10 rounded-full bg-gray-100 text-black flex items-center justify-center shrink-0 font-bold">3</div>
+                        <div>
+                            <h4 class="text-lg font-bold mb-2"><span class="lang-en">Instant Redemption</span><span class="lang-zh">即時兌換保證</span></h4>
+                            <p class="text-gray-500 text-sm leading-relaxed"><span class="lang-en">Users can redeem HKD 1:1 at any time, guaranteeing liquidity and stability.</span><span class="lang-zh">用戶可隨時1:1兌換港幣，保證流動性和穩定性。</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-12 rounded-2xl border border-gray-200 reveal-text delay-100">
+                <div class="text-center mb-12">
+                    <span class="text-6xl md:text-8xl font-bold tracking-tighter block mb-2">1:1</span>
+                    <span class="text-xl font-mono text-gray-500">AIF-HKD ⇄ HKD</span>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-6">
+                    <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-50">
+                        <span class="text-sm text-gray-400 font-mono uppercase"><span class="lang-en">Current Rate</span><span class="lang-zh">當前匯率</span></span>
+                        <span class="text-xl font-bold font-mono">1.0000</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400 font-mono uppercase"><span class="lang-en">24H Fluctuation</span><span class="lang-zh">24小時波動</span></span>
+                        <span class="text-xl font-bold font-mono text-gray-400">0.00%</span>
+                    </div>
+                </div>
+                
+                <p class="text-center text-xs text-gray-400 font-mono uppercase">
+                    <span class="lang-en">Pegged Stability · No Volatility Risk</span>
+                    <span class="lang-zh">穩定錨定 · 無波動風險</span>
                 </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16 animate-slide-up">
-                <div>
-                    <h3 class="text-2xl font-bold mb-6">1:1 HKD Peg Mechanism</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <div class="text-blue-400 mr-3 mt-1">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-medium mb-2">Fiat Currency Collateral Model</h4>
-                                <p class="text-sm text-gray-400">100% backed by HKD reserves ensuring each AIF-HKD is fully collateralized</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <div class="text-blue-400 mr-3 mt-1">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-medium mb-2">Transparent Audit Mechanism</h4>
-                                <p class="text-sm text-gray-400">Regular publication of reserve audit reports to ensure fund security and transparency</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <div class="text-blue-400 mr-3 mt-1">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-medium mb-2">Instant Conversion Guarantee</h4>
-                                <p class="text-sm text-gray-400">Users can exchange 1:1 for HKD at any time, ensuring liquidity and stability</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card p-8">
-                    <div class="text-center">
-                        <div class="text-6xl font-bold gradient-text mb-4">1:1</div>
-                        <p class="text-xl font-semibold mb-4">AIF-HKD ⇄ HKD</p>
-                        <div class="bg-gray-800 rounded-lg p-4 mb-4">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-sm text-gray-400">Current Exchange Rate</span>
-                                <span class="text-green-400 font-semibold">1.0000</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-gray-400">24h Change</span>
-                                <span class="text-gray-300">0.00%</span>
-                            </div>
-                        </div>
-                        <div class="text-xs text-gray-500">Stable peg, zero volatility risk</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16 animate-slide-up">
-                <div class="card p-8 order-2 md:order-1">
-                    <h4 class="text-lg font-bold mb-4">Regulatory Compliance Framework</h4>
-                    <div class="space-y-3">
-                        <div class="flex items-center">
-                            <i class="fas fa-university text-blue-400 mr-3"></i>
-                            <span class="text-sm">Regulated by HKMA</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-shield-alt text-green-400 mr-3"></i>
-                            <span class="text-sm">Full compliance with Stablecoin Ordinance</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-file-contract text-purple-400 mr-3"></i>
-                            <span class="text-sm">Anti-Money Laundering (AML) Compliance</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-user-check text-yellow-400 mr-3"></i>
-                            <span class="text-sm">Know Your Customer (KYC) Verification</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-globe text-cyan-400 mr-3"></i>
-                            <span class="text-sm">International Standards Compliance</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="order-1 md:order-2">
-                    <h3 class="text-2xl font-bold mb-6">Comprehensive Regulatory Compliance</h3>
-                    <p class="text-gray-300 mb-6">
-                        Strictly adheres to the Hong Kong Monetary Authority's stablecoin regulatory requirements, providing users with legal, secure, and reliable digital currency services. Our compliance framework covers fund management, risk control, and customer protection.
-                    </p>
-                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-certificate text-white text-xl mr-3"></i>
-                            <div>
-                                <div class="font-semibold text-white">Compliance Certification</div>
-                                <div class="text-sm text-blue-100">Officially licensed by Hong Kong regulators</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- Use Cases Section -->
-    <section class="py-20 bg-gray-900 bg-opacity-50" id="use-cases">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6 section-title center">Use Cases</h2>
-                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                    Diverse applications of AIF-HKD across the AI film ecosystem, covering the entire industry chain from creation to investment
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-slide-up">
-                <!-- Cross-border Film Financing -->
-                <div class="card p-6">
-                    <div class="ecosystem-icon mb-4">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Cross-border Film Financing</h3>
-                    <p class="text-gray-300 mb-4">
-                        Provides a stable financing unit for global AI film projects, eliminating exchange rate risk and simplifying international investment processes.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Project token issuance priced in AIF-HKD</li>
-                        <li>• Stable investment return distribution</li>
-                        <li>• Lower barriers to international investment</li>
-                        <li>• Instant fund settlement</li>
-                    </ul>
-                </div>
-                
-                <!-- Digital Asset Trading -->
-                <div class="card p-6">
-                    <div class="ecosystem-icon mb-4">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Digital Asset Trading</h3>
-                    <p class="text-gray-300 mb-4">
-                        Serves as the stable trading pair for various tokens within the ecosystem, providing liquidity support and price discovery.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• AIF/AIF-HKD trading pair</li>
-                        <li>• FilmToken/AIF-HKD trading pair</li>
-                        <li>• ACA/AIF-HKD trading pair</li>
-                        <li>• Stable liquidity provision</li>
-                    </ul>
-                </div>
-                
-                <!-- Creator Revenue Settlement -->
-                <div class="card p-6">
-                    <div class="ecosystem-icon mb-4">
-                        <i class="fas fa-palette"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Creator Revenue Settlement</h3>
-                    <p class="text-gray-300 mb-4">
-                        Provides stable revenue settlement for AI film creators, supporting various income models including copyright royalties and licensing fees.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Instant copyright revenue settlement</li>
-                        <li>• Transparent licensing fee distribution</li>
-                        <li>• Stable incentive distribution</li>
-                        <li>• Seamless global payments for creators</li>
-                    </ul>
-                </div>
-                
-                <!-- Education Payments -->
-                <div class="card p-6">
-                    <div class="ecosystem-icon mb-4">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Education Payments</h3>
-                    <p class="text-gray-300 mb-4">
-                        Supports tuition payments, instructor salaries, and course material purchases for the Hong Kong AI Film Academy.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Convenient payments for international students</li>
-                        <li>• Stable salary settlements for instructors</li>
-                        <li>• Unified payment for course materials</li>
-                        <li>• Transparent scholarship distribution</li>
-                    </ul>
-                </div>
-                
-                <!-- Content Consumption -->
-                <div class="card p-6">
-                    <div class="ecosystem-icon mb-4">
-                        <i class="fas fa-play-circle"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Content Consumption</h3>
-                    <p class="text-gray-300 mb-4">
-                        Provides a stable payment method for content consumption and virtual asset purchases on platforms like 404.world.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Stable subscription service payments</li>
-                        <li>• Virtual item purchases</li>
-                        <li>• Personalized content customization</li>
-                        <li>• Efficient micro-payments</li>
-                    </ul>
-                </div>
-                
-                <!-- Film Submission Services -->
-                <div class="card p-6">
-                    <div class="ecosystem-icon mb-4">
-                        <i class="fas fa-video"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">Film Submission Services</h3>
-                    <p class="text-gray-300 mb-4">
-                        Covers various service fees at the Film Submission Center, including submission fees, localization services, and copyright representation.
-                    </p>
-                    <ul class="text-sm text-gray-400 space-y-2">
-                        <li>• Unified submission fee collection</li>
-                        <li>• Localization service billing</li>
-                        <li>• Copyright agency fee settlements</li>
-                        <li>• Distribution service fee payments</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Global Stablecoin Comparison -->
-    <section class="py-20 bg-gray-900 bg-opacity-50" id="comparison">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-4xl font-bold mb-6 section-title center">Global Stablecoin Comparison</h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                    AIF-HKD offers unique advantages in its vertical focus, regulatory leadership, and specialized financial services compared to mainstream stablecoins.
-                </p>
-            </div>
-
-            <!-- Market Share Overview -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-                <div class="card p-6 text-center animate-slide-up">
-                    <div class="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-trophy text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">USDT (Tether)</h3>
-                    <div class="text-3xl font-bold text-orange-400 mb-2">66.5%</div>
-                    <p class="text-gray-400">Market Share · $900B Market Cap</p>
-                </div>
-                
-                <div class="card p-6 text-center animate-slide-up" style="animation-delay: 0.2s;">
-                    <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-medal text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">USDC (Circle)</h3>
-                    <div class="text-3xl font-bold text-blue-400 mb-2">28.3%</div>
-                    <p class="text-gray-400">Market Share · $240B Market Cap</p>
-                </div>
-                
-                <div class="card p-6 text-center animate-slide-up" style="animation-delay: 0.4s;">
-                    <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-rocket text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-2">Emerging Stablecoins</h3>
-                    <div class="text-3xl font-bold text-purple-400 mb-2">5.2%</div>
-                    <p class="text-gray-400">Including PYUSD, HKDG, and other emerging projects</p>
-                </div>
-            </div>
-
-            <!-- Detailed Comparison Table -->
-            <div class="stablecoin-compare animate-fade-in">
-                <div class="card p-6">
-                    <h3 class="text-2xl font-bold mb-6 text-center">Stablecoin Detailed Comparison</h3>
-                    <table class="stablecoin-table">
-                        <thead>
-                            <tr>
-                                <th>Project</th>
-                                <th>Issuer</th>
-                                <th>Market Cap</th>
-                                <th>Pegged Currency</th>
-                                <th>Reserve Transparency</th>
-                                <th>Regulatory Status</th>
-                                <th>Vertical Application</th>
-                                <th>Revenue Distribution</th>
-                                <th>Ecosystem Integration</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="compare-card featured">
-                                <td class="font-bold text-accent">AIF-HKD</td>
-                                <td>HKAIIFF</td>
-                                <td class="text-purple-400">Launching Soon</td>
-                                <td>HKD</td>
-                                <td><i class="fas fa-check check-icon"></i> Monthly Audits</td>
-                                <td><i class="fas fa-check check-icon"></i> HKMA</td>
-                                <td><i class="fas fa-check check-icon"></i> AI Film Industry</td>
-                                <td><i class="fas fa-check check-icon"></i> Smart Contracts</td>
-                                <td><i class="fas fa-check check-icon"></i> HKAIIFF Ecosystem</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold">USDT</td>
-                                <td>Tether Ltd.</td>
-                                <td class="text-orange-400">$900B</td>
-                                <td>USD</td>
-                                <td><i class="fas fa-exclamation-triangle warning-icon"></i> Quarterly Reports</td>
-                                <td><i class="fas fa-exclamation-triangle warning-icon"></i> Partial Regulation</td>
-                                <td><i class="fas fa-times cross-icon"></i> General</td>
-                                <td><i class="fas fa-times cross-icon"></i> None</td>
-                                <td><i class="fas fa-times cross-icon"></i> Infrastructure</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold">USDC</td>
-                                <td>Circle</td>
-                                <td class="text-blue-400">$240B</td>
-                                <td>USD</td>
-                                <td><i class="fas fa-check check-icon"></i> Monthly Audits</td>
-                                <td><i class="fas fa-check check-icon"></i> US Compliant</td>
-                                <td><i class="fas fa-times cross-icon"></i> General</td>
-                                <td><i class="fas fa-times cross-icon"></i> None</td>
-                                <td><i class="fas fa-exclamation-triangle warning-icon"></i> Infrastructure</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold">PYUSD</td>
-                                <td>PayPal</td>
-                                <td class="text-green-400">$7.3B</td>
-                                <td>USD</td>
-                                <td><i class="fas fa-check check-icon"></i> Regular Audits</td>
-                                <td><i class="fas fa-check check-icon"></i> US Compliant</td>
-                                <td><i class="fas fa-exclamation-triangle warning-icon"></i> Payments</td>
-                                <td><i class="fas fa-check check-icon"></i> 3.7% APY</td>
-                                <td><i class="fas fa-exclamation-triangle warning-icon"></i> PayPal Ecosystem</td>
-                            </tr>
-                            <tr>
-                                <td class="font-bold">HKDG</td>
-                                <td>Hong Kong Dollar Global</td>
-                                <td class="text-gray-400">Sandbox Testing</td>
-                                <td>HKD</td>
-                                <td><i class="fas fa-exclamation-triangle warning-icon"></i> Pilot Phase</td>
-                                <td><i class="fas fa-exclamation-triangle warning-icon"></i> Sandbox Testing</td>
-                                <td><i class="fas fa-times cross-icon"></i> General</td>
-                                <td><i class="fas fa-times cross-icon"></i> None</td>
-                                <td><i class="fas fa-times cross-icon"></i> Infrastructure</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- AIF-HKD Unique Advantages -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-16">
-                <div class="animate-slide-up">
-                    <h3 class="text-3xl font-bold mb-8">AIF-HKD Core Advantages</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="card p-6">
-                            <div class="flex items-start">
-                                <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                                    <i class="fas fa-film text-white"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold mb-2">100% Overcollateralization</h4>
-                                    <p class="text-gray-300">Ensures reserve assets always exceed the total value of circulating AIF-HKD</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start mt-4">
-                                <div class="text-blue-400 mr-4 mt-1 text-xl">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-bold text-lg mb-2">Daily Reserve Asset Monitoring</h5>
-                                    <p class="text-gray-400">Real-time monitoring of reserve asset status to ensure sufficient liquidity</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start mt-4">
-                                <div class="text-purple-400 mr-4 mt-1 text-xl">
-                                    <i class="fas fa-search"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-bold text-lg mb-2">Monthly Independent Third-party Audits</h5>
-                                    <p class="text-gray-400">Regular independent audits by internationally renowned audit firms</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start mt-4">
-                                <div class="text-orange-400 mr-4 mt-1 text-xl">
-                                    <i class="fas fa-eye"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-bold text-lg mb-2">Transparent Reserve Proofs</h5>
-                                    <p class="text-gray-400">Publicly verifiable reserve proofs ensuring maximum transparency</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <div class="flex items-start">
-                                <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
-                                    <i class="fas fa-certificate text-white"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold mb-2">Regulatory Leadership</h4>
-                                    <p class="text-gray-300">Based on HKMA's clear regulatory framework, minimizing global regulatory uncertainty risks</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="animate-slide-up" style="animation-delay: 0.2s;">
-                    <h3 class="text-3xl font-bold mb-8">Technological & Financial Innovation</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="card p-6">
-                            <h4 class="text-xl font-bold mb-4">Smart Contract Automation</h4>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center">
-                                    <span>Copyright Revenue Distribution</span>
-                                    <span class="text-green-400 font-bold">100% Automated</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span>Project Financing Milestones</span>
-                                    <span class="text-blue-400 font-bold">Smart Triggered</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span>Cross-border Submission Settlement</span>
-                                    <span class="text-purple-400 font-bold">Instant Execution</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <h4 class="text-xl font-bold mb-4">Financial Service Innovations</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-center">
-                                    <i class="fas fa-star text-yellow-400 mr-3"></i>
-                                    <span>AI Creator Credit Rating System</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-star text-yellow-400 mr-3"></i>
-                                    <span>Film IP Fractional Investment</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-star text-yellow-400 mr-3"></i>
-                                    <span>Dynamic Revenue Distribution Mechanism</span>
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-star text-yellow-400 mr-3"></i>
-                                    <span>Cross-chain Asset Interoperability</span>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <h4 class="text-xl font-bold mb-4">Competitive Barriers</h4>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-green-400">100+</div>
-                                    <div class="text-sm text-gray-400">AI Film Projects</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-blue-400">50+</div>
-                                    <div class="text-sm text-gray-400">Global Partners</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-purple-400">10+</div>
-                                    <div class="text-sm text-gray-400">Regulatory Approvals</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-2xl font-bold text-orange-400">1st</div>
-                                    <div class="text-sm text-gray-400">Industry Pioneer</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Comparison Section -->
+    <section id="comparison" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50 border-t border-gray-200">
+        <h2 class="text-3xl font-bold mb-12 text-center reveal-text"><span class="lang-en">Market Comparison</span><span class="lang-zh">全球穩定幣對比優勢</span></h2>
+        
+        <div class="overflow-x-auto reveal-text">
+            <table class="w-full text-left bg-white rounded-xl overflow-hidden border border-gray-200 comparison-table shadow-sm">
+                <thead>
+                    <tr class="bg-black text-white text-xs uppercase font-mono tracking-widest">
+                        <th class="p-6 bg-black"><span class="lang-en">Project</span><span class="lang-zh">項目</span></th>
+                        <th class="p-6 bg-black"><span class="lang-en">Issuer</span><span class="lang-zh">發行機構</span></th>
+                        <th class="p-6 bg-black"><span class="lang-en">Peg</span><span class="lang-zh">錨定貨幣</span></th>
+                        <th class="p-6 bg-black"><span class="lang-en">Regulation</span><span class="lang-zh">監管狀態</span></th>
+                        <th class="p-6 bg-black"><span class="lang-en">Vertical Use</span><span class="lang-zh">垂直應用</span></th>
+                        <th class="p-6 bg-black"><span class="lang-en">Ecosystem</span><span class="lang-zh">生態整合</span></th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    <tr class="bg-gray-50 font-bold border-b border-gray-200">
+                        <td class="p-6 text-black">AIF-HKD</td>
+                        <td class="p-6">HKAIIFF</td>
+                        <td class="p-6">HKD</td>
+                        <td class="p-6 text-green-600">✓ <span class="lang-en">HKMA</span><span class="lang-zh">香港金管局</span></td>
+                        <td class="p-6 text-green-600">✓ <span class="lang-en">AI Film</span><span class="lang-zh">AI電影產業</span></td>
+                        <td class="p-6 text-green-600">✓ <span class="lang-en">Deep Integration</span><span class="lang-zh">深度整合</span></td>
+                    </tr>
+                    <tr class="border-b border-gray-100 text-gray-500">
+                        <td class="p-6 font-bold text-gray-700">USDT</td>
+                        <td class="p-6">Tether Ltd.</td>
+                        <td class="p-6">USD</td>
+                        <td class="p-6 text-yellow-600">⚠ <span class="lang-en">Partial</span><span class="lang-zh">部分監管</span></td>
+                        <td class="p-6 text-red-400">✕ <span class="lang-en">General</span><span class="lang-zh">通用</span></td>
+                        <td class="p-6 text-red-400">✕ <span class="lang-en">Infrastructure</span><span class="lang-zh">基礎設施</span></td>
+                    </tr>
+                    <tr class="border-b border-gray-100 text-gray-500">
+                        <td class="p-6 font-bold text-gray-700">USDC</td>
+                        <td class="p-6">Circle</td>
+                        <td class="p-6">USD</td>
+                        <td class="p-6 text-green-600">✓ <span class="lang-en">US Regulated</span><span class="lang-zh">美國合規</span></td>
+                        <td class="p-6 text-red-400">✕ <span class="lang-en">General</span><span class="lang-zh">通用</span></td>
+                        <td class="p-6 text-yellow-600">⚠ <span class="lang-en">Infrastructure</span><span class="lang-zh">基礎設施</span></td>
+                    </tr>
+                    <tr class="text-gray-500">
+                        <td class="p-6 font-bold text-gray-700">PYUSD</td>
+                        <td class="p-6">PayPal</td>
+                        <td class="p-6">USD</td>
+                        <td class="p-6 text-green-600">✓ <span class="lang-en">US Regulated</span><span class="lang-zh">美國合規</span></td>
+                        <td class="p-6 text-yellow-600">⚠ <span class="lang-en">Payment</span><span class="lang-zh">支付</span></td>
+                        <td class="p-6 text-yellow-600">⚠ <span class="lang-en">PayPal Only</span><span class="lang-zh">PayPal生態</span></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </section>
 
     <!-- Technology Section -->
-    <section class="py-20" id="technology">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-4xl font-bold mb-6 section-title center">Technology Architecture</h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                    AIF-HKD employs a multi-layer blockchain architecture combined with robust smart contracts and strict reserve management mechanisms to ensure system stability, security, and scalability.
-                </p>
-            </div>
-
-            <!-- Architecture Overview -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-                <div class="animate-slide-up">
-                    <h3 class="text-3xl font-bold mb-8">Blockchain Infrastructure</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="card p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
-                                    <span class="text-white font-bold">L1</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold">Layer 1 (Ethereum)</h4>
-                                    <p class="text-gray-400">Core smart contract deployment, token minting, critical transaction confirmation</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
-                                    <span class="text-white font-bold">L2</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold">Layer 2 (Polygon/Arbitrum)</h4>
-                                    <p class="text-gray-400">High-frequency transaction processing, reduced transaction fees</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-database text-white"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold">Storage Layer (Filecoin/IPFS)</h4>
-                                    <p class="text-gray-400">Media files and creative asset storage</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-bridge text-white"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold">Cross-chain Bridge</h4>
-                                    <p class="text-gray-400">Enables interoperability with other blockchain networks</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="animate-slide-up" style="animation-delay: 0.2s;">
-                    <h3 class="text-3xl font-bold mb-8">Smart Contract System</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="card p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-cyan-600 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-cogs text-white"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold">Minting & Burning Contracts</h4>
-                                    <p class="text-gray-400">Automatically mint when HKD deposited, burn when redeemed</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-vault text-white"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold">Reserve Management Contracts</h4>
-                                    <p class="text-gray-400">Ensure precise match between token supply and reserve volume</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-vote-yea text-white"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold">Governance Contracts</h4>
-                                    <p class="text-gray-400">Enable decentralized governance and parameter adjustments</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="card p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mr-4">
-                                    <i class="fas fa-shield-check text-white"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xl font-bold">Compliance Monitoring Contracts</h4>
-                                    <p class="text-gray-400">Automated compliance mechanisms meeting HK regulatory requirements</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reserve Management -->
-            <div class="card p-8 animate-fade-in">
-                <h3 class="text-3xl font-bold mb-8 text-center">Reserve Asset Management</h3>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                    <div>
-                        <h4 class="text-2xl font-bold mb-6">Reserve Asset Composition</h4>
-                        
-                        <div class="space-y-4">
-                            <div class="reserve-breakdown bg-gray-800 bg-opacity-50 rounded-lg p-4">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-medium">Cash & Bank Deposits</span>
-                                    <span class="text-blue-400 font-bold">60-70%</span>
-                                </div>
-                                <div class="w-full bg-gray-700 rounded-full h-4">
-                                    <div class="bg-blue-500 h-4 rounded-full" style="width: 65%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="reserve-breakdown bg-gray-800 bg-opacity-50 rounded-lg p-4">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-medium">Short-term HK Gov Bonds (<1 yr)</span>
-                                    <span class="text-green-400 font-bold">20-30%</span>
-                                </div>
-                                <div class="w-full bg-gray-700 rounded-full h-4">
-                                    <div class="bg-green-500 h-4 rounded-full" style="width: 25%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="reserve-breakdown bg-gray-800 bg-opacity-50 rounded-lg p-4">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-medium">Money Market Funds</span>
-                                    <span class="text-purple-400 font-bold">5-10%</span>
-                                </div>
-                                <div class="w-full bg-gray-700 rounded-full h-4">
-                                    <div class="bg-purple-500 h-4 rounded-full" style="width: 7%"></div>
-                                </div>
-                            </div>
-                            
-                            <div class="reserve-breakdown bg-gray-800 bg-opacity-50 rounded-lg p-4">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="font-medium">Bank Term Deposits</span>
-                                    <span class="text-orange-400 font-bold">5-10%</span>
-                                </div>
-                                <div class="w-full bg-gray-700 rounded-full h-4">
-                                    <div class="bg-orange-500 h-4 rounded-full" style="width: 3%"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-2xl font-bold mb-6">Risk Management Measures</h4>
-                        
-                        <div class="space-y-4">
-                            <div class="flex items-start">
-                                <div class="text-green-400 mr-4 mt-1 text-xl">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-bold text-lg mb-2">100% Overcollateralization</h5>
-                                    <p class="text-gray-400">Reserve asset value always exceeds circulating token value</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <div class="text-blue-400 mr-4 mt-1 text-xl">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-bold text-lg mb-2">Liquidity Stress Testing</h5>
-                                    <p class="text-gray-400">Monthly extreme market scenario liquidity stress tests</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <div class="text-purple-400 mr-4 mt-1 text-xl">
-                                    <i class="fas fa-user-shield"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-bold text-lg mb-2">Multi-signature Wallets</h5>
-                                    <p class="text-gray-400">Reserve assets managed by multi-signature wallets controlled by 7 independent entities</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-start">
-                                <div class="text-orange-400 mr-4 mt-1 text-xl">
-                                    <i class="fas fa-lock"></i>
-                                </div>
-                                <div>
-                                    <h5 class="font-bold text-lg mb-2">Smart Contract Security Audits</h5>
-                                    <p class="text-gray-400">Quarterly comprehensive audits by top security firms</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <section id="technology" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto">
+        <div class="mb-16 reveal-text">
+            <h2 class="text-3xl font-bold mb-4"><span class="lang-en">Technical Architecture</span><span class="lang-zh">技術架構</span></h2>
+            <p class="text-gray-500 max-w-2xl"><span class="lang-en">Multi-layer blockchain architecture combining robust smart contracts and strict reserve management.</span><span class="lang-zh">多層區塊鏈架構，結合穩健的智能合約體系和嚴格的儲備管理機制。</span></p>
         </div>
-    </section>
 
-    <!-- Ecosystem Applications -->
-    <section class="py-20 bg-gray-900 bg-opacity-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-4xl font-bold mb-6 section-title center">Ecosystem Applications</h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                    As the core stablecoin of the HKAIIFF ecosystem, AIF-HKD plays a key role in multiple application scenarios, providing comprehensive financial infrastructure support for the AI film industry.
-                </p>
-            </div>
-
-            <!-- Tab Navigation -->
-            <div class="tab-nav">
-                <button class="tab-btn active" data-tab="payments">Cross-border Payments</button>
-                <button class="tab-btn" data-tab="trading">Digital Asset Trading</button>
-                <button class="tab-btn" data-tab="financing">Project Financing</button>
-                <button class="tab-btn" data-tab="rewards">Reward Distribution</button>
-            </div>
-
-            <!-- Tab Contents -->
-            <div class="tab-content active" id="payments">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div class="animate-slide-up">
-                        <h3 class="text-3xl font-bold mb-6">Cross-border Film Submission Settlement</h3>
-                        <p class="text-lg text-gray-300 mb-6">
-                            AIF-HKD simplifies global film submission processes at AIF.Center by providing a stable, low-cost payment method, enabling instant, transparent cross-border settlements.
-                        </p>
-                        
-                        <div class="space-y-4">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4">
-                                    <i class="fas fa-check text-white text-sm"></i>
-                                </div>
-                                <span>Instant submission fee settlement</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4">
-                                    <i class="fas fa-check text-white text-sm"></i>
-                                </div>
-                                <span>Transparent localization service payments</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4">
-                                    <i class="fas fa-check text-white text-sm"></i>
-                                </div>
-                                <span>Low-cost, efficient distribution</span>
-                            </div>
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-4">
-                                    <i class="fas fa-check text-white text-sm"></i>
-                                </div>
-                                <span>Automated prize distribution</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="animate-slide-right">
-                        <div class="card p-6">
-                            <h4 class="text-xl font-bold mb-4">Payment Comparison</h4>
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center p-3 bg-green-600 bg-opacity-20 rounded-lg border border-green-500 border-opacity-30">
-                                    <span>AIF-HKD Cross-border</span>
-                                    <span class="text-green-400 font-bold">0.1% + Instant</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-red-600 bg-opacity-20 rounded-lg border border-red-500 border-opacity-30">
-                                    <span>Traditional Bank Wire</span>
-                                    <span class="text-red-400 font-bold">3-5% + 3-5 Days</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-yellow-600 bg-opacity-20 rounded-lg border border-yellow-500 border-opacity-30">
-                                    <span>Other Cryptocurrencies</span>
-                                    <span class="text-yellow-400 font-bold">Volatile Rates</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <!-- Left: Layers -->
+            <div class="space-y-6 reveal-text">
+                <div class="border border-gray-200 p-6 rounded-lg relative overflow-hidden bg-white">
+                    <span class="absolute top-0 left-0 w-1 h-full bg-black"></span>
+                    <h4 class="font-bold text-lg mb-2">Layer 1 (Ethereum)</h4>
+                    <p class="text-sm text-gray-500"><span class="lang-en">Core smart contract deployment, token minting, key transaction confirmation.</span><span class="lang-zh">核心智能合約部署、代幣鑄造、關鍵交易確認。</span></p>
+                </div>
+                <div class="border border-gray-200 p-6 rounded-lg relative overflow-hidden bg-white">
+                    <span class="absolute top-0 left-0 w-1 h-full bg-gray-400"></span>
+                    <h4 class="font-bold text-lg mb-2">Layer 2 (Polygon/Arbitrum)</h4>
+                    <p class="text-sm text-gray-500"><span class="lang-en">High-frequency transaction processing, reduced transaction fees.</span><span class="lang-zh">高頻交易處理、降低交易費用。</span></p>
+                </div>
+                <div class="border border-gray-200 p-6 rounded-lg relative overflow-hidden bg-white">
+                    <span class="absolute top-0 left-0 w-1 h-full bg-gray-300"></span>
+                    <h4 class="font-bold text-lg mb-2">Storage (Filecoin/IPFS)</h4>
+                    <p class="text-sm text-gray-500"><span class="lang-en">Storage for media files and creative assets.</span><span class="lang-zh">媒體文件和創意資產存儲。</span></p>
                 </div>
             </div>
 
-            <div class="tab-content" id="trading">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div class="animate-slide-up">
-                        <h3 class="text-3xl font-bold mb-6">Digital Asset Trading</h3>
-                        <p class="text-lg text-gray-300 mb-6">
-                            On the AIF Exchange, AIF-HKD serves as the primary stable trading pair for AIF, FilmToken, and ACA, enhancing ecosystem token liquidity and enabling efficient price discovery.
-                        </p>
-                        
-                        <div class="space-y-4">
-                            <div class="card p-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-medium">AIF/AIF-HKD</span>
-                                    <div class="text-right">
-                                        <div class="text-green-400 font-bold">8.45 AIF-HKD</div>
-                                        <div class="text-xs text-gray-400">+2.3% 24h</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card p-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-medium">FilmToken/AIF-HKD</span>
-                                    <div class="text-right">
-                                        <div class="text-green-400 font-bold">12.67 AIF-HKD</div>
-                                        <div class="text-xs text-gray-400">+1.8% 24h</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="card p-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="font-medium">ACA/AIF-HKD</span>
-                                    <div class="text-right">
-                                        <div class="text-green-400 font-bold">3.21 AIF-HKD</div>
-                                        <div class="text-xs text-gray-400">+0.9% 24h</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Right: Smart Contracts -->
+            <div class="bg-gray-50 p-8 rounded-2xl border border-gray-200 reveal-text delay-100">
+                <h3 class="text-xl font-bold mb-6"><span class="lang-en">Smart Contract System</span><span class="lang-zh">智能合約體系</span></h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded border border-gray-100">
+                        <div class="text-xs font-mono text-gray-400 uppercase mb-2">01 / Mint & Burn</div>
+                        <h4 class="font-bold text-sm mb-1"><span class="lang-en">Automated Supply</span><span class="lang-zh">鑄造與銷毀</span></h4>
+                        <p class="text-xs text-gray-500"><span class="lang-en">Auto-mint on deposit, auto-burn on redemption.</span><span class="lang-zh">港幣存入時自動鑄造，贖回時自動銷毀。</span></p>
                     </div>
-                    
-                    <div class="animate-slide-right">
-                        <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Digital Asset Trading" class="w-full h-auto rounded-xl">
+                    <div class="bg-white p-4 rounded border border-gray-100">
+                        <div class="text-xs font-mono text-gray-400 uppercase mb-2">02 / Reserve</div>
+                        <h4 class="font-bold text-sm mb-1"><span class="lang-en">Reserve Management</span><span class="lang-zh">儲備管理</span></h4>
+                        <p class="text-xs text-gray-500"><span class="lang-en">Ensures supply matches reserves exactly.</span><span class="lang-zh">確保代幣供應量與儲備量精確匹配。</span></p>
                     </div>
-                </div>
-            </div>
-
-            <div class="tab-content" id="financing">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div class="animate-slide-up">
-                        <h3 class="text-3xl font-bold mb-6">Project Financing Support</h3>
-                        <p class="text-lg text-gray-300 mb-6">
-                            AIF-HKD provides a stable financing environment for AI film projects, reducing exchange rate volatility risks and allowing creators to focus on content creation.
-                        </p>
-                        
-                        <div class="space-y-6">
-                            <div class="card p-6">
-                                <h4 class="text-xl font-bold mb-4">Financing Advantages</h4>
-                                <ul class="space-y-2">
-                                    <li class="flex items-center">
-                                        <i class="fas fa-star text-yellow-400 mr-3"></i>
-                                        <span>Stable currency, no exchange rate risk</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <i class="fas fa-star text-yellow-400 mr-3"></i>
-                                        <span>Instant settlement, rapid project launch</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <i class="fas fa-star text-yellow-400 mr-3"></i>
-                                        <span>Transparent fund flows, enhanced trust</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <i class="fas fa-star text-yellow-400 mr-3"></i>
-                                        <span>Smart contract automation</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div class="bg-white p-4 rounded border border-gray-100">
+                        <div class="text-xs font-mono text-gray-400 uppercase mb-2">03 / Governance</div>
+                        <h4 class="font-bold text-sm mb-1"><span class="lang-en">DAO Governance</span><span class="lang-zh">治理合約</span></h4>
+                        <p class="text-xs text-gray-500"><span class="lang-en">Decentralized parameter adjustment.</span><span class="lang-zh">實現去中心化治理和參數調整。</span></p>
                     </div>
-                    
-                    <div class="animate-slide-right">
-                        <div class="card p-6">
-                            <h4 class="text-xl font-bold mb-4">Financing Process</h4>
-                            <div class="space-y-6">
-                                <div class="flex items-start">
-                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-4 text-white font-bold">1</div>
-                                    <div>
-                                        <h5 class="font-bold">Project Submission</h5>
-                                        <p class="text-gray-400 text-sm">Creators submit AI film project plans</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-start">
-                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-4 text-white font-bold">2</div>
-                                    <div>
-                                        <h5 class="font-bold">Community Review</h5>
-                                        <p class="text-gray-400 text-sm">Community voting determines project feasibility</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-start">
-                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-4 text-white font-bold">3</div>
-                                    <div>
-                                        <h5 class="font-bold">Fundraising</h5>
-                                        <p class="text-gray-400 text-sm">Investors participate using AIF-HKD</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="flex items-start">
-                                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-4 text-white font-bold">4</div>
-                                    <div>
-                                        <h5 class="font-bold">Project Launch</h5>
-                                        <p class="text-gray-400 text-sm">Automatic fund release upon reaching targets</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-content" id="rewards">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div class="animate-slide-up">
-                        <h3 class="text-3xl font-bold mb-6">Rewards & Revenue Distribution</h3>
-                        <p class="text-lg text-gray-300 mb-6">
-                            Automated reward distribution through smart contracts ensures all participants receive their due earnings promptly and transparently.
-                        </p>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="card p-4 text-center">
-                                <div class="text-2xl font-bold text-blue-400">Instant</div>
-                                <div class="text-sm text-gray-400">Reward Distribution</div>
-                            </div>
-                            <div class="card p-4 text-center">
-                                <div class="text-2xl font-bold text-green-400">0%</div>
-                                <div class="text-sm text-gray-400">Transaction Fees</div>
-                            </div>
-                            <div class="card p-4 text-center">
-                                <div class="text-2xl font-bold text-purple-400">100%</div>
-                                <div class="text-sm text-gray-400">Transparency</div>
-                            </div>
-                            <div class="card p-4 text-center">
-                                <div class="text-2xl font-bold text-orange-400">24/7</div>
-                                <div class="text-sm text-gray-400">Availability</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="animate-slide-right">
-                        <div class="card p-6">
-                            <h4 class="text-xl font-bold mb-4">Reward Types</h4>
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center p-3 bg-blue-600 bg-opacity-20 rounded-lg">
-                                    <span>Competition Prizes</span>
-                                    <span class="text-blue-400 font-bold">1,000-50,000 AIF-HKD</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-green-600 bg-opacity-20 rounded-lg">
-                                    <span>Revenue Sharing</span>
-                                    <span class="text-green-400 font-bold">Smart Contract Based</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-purple-600 bg-opacity-20 rounded-lg">
-                                    <span>Staking Rewards</span>
-                                    <span class="text-purple-400 font-bold">3-8% APY</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-orange-600 bg-opacity-20 rounded-lg">
-                                    <span>Referral Rewards</span>
-                                    <span class="text-orange-400 font-bold">1-5% Cashback</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="bg-white p-4 rounded border border-gray-100">
+                        <div class="text-xs font-mono text-gray-400 uppercase mb-2">04 / Compliance</div>
+                        <h4 class="font-bold text-sm mb-1"><span class="lang-en">Compliance Monitor</span><span class="lang-zh">合規監控</span></h4>
+                        <p class="text-xs text-gray-500"><span class="lang-en">Automated regulatory checks.</span><span class="lang-zh">滿足香港監管要求的自動化合規機制。</span></p>
                     </div>
                 </div>
             </div>
@@ -2046,562 +634,226 @@
     </section>
 
     <!-- Compliance Section -->
-    <section class="py-20" id="compliance">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-4xl font-bold mb-6 section-title center">Compliance Framework</h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                    AIF-HKD strictly adheres to HKMA's Stablecoin Ordinance and global regulatory requirements, establishing a comprehensive compliance system to ensure project legitimacy and sustainable development.
+    <section id="compliance" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto bg-gray-50 border-t border-gray-200">
+        <div class="text-center mb-16 reveal-text">
+            <h2 class="text-3xl font-bold mb-4"><span class="lang-en">Regulatory Compliance</span><span class="lang-zh">合規框架</span></h2>
+            <p class="text-gray-500"><span class="lang-en">Strictly adhering to HKMA Stablecoin Ordinance (Effective Aug 1, 2025).</span><span class="lang-zh">嚴格遵守香港金管局《穩定幣條例》（2025年8月1日生效）。</span></p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center reveal-text">
+            <div class="bg-white p-8 rounded-xl border border-gray-200">
+                <div class="text-4xl font-mono font-bold mb-4 text-gray-300">01</div>
+                <h3 class="text-lg font-bold mb-2">May 21, 2025</h3>
+                <p class="text-sm text-gray-500">
+                    <span class="lang-en">LegCo passes Stablecoin Bill</span>
+                    <span class="lang-zh">香港立法會正式通過《穩定幣條例草案》</span>
                 </p>
             </div>
-
-            <!-- Regulatory Milestones -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-                <div class="card p-8 text-center animate-slide-up">
-                    <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-calendar-check text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">May 21, 2025</h3>
-                    <p class="text-gray-300">Hong Kong Legislative Council formally passes the Stablecoin Bill</p>
-                </div>
-                
-                <div class="card p-8 text-center animate-slide-up" style="animation-delay: 0.2s;">
-                    <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-file-contract text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">May 30, 2025</h3>
-                    <p class="text-gray-300">Ordinance officially gazetted as law</p>
-                </div>
-                
-                <div class="card p-8 text-center animate-slide-up" style="animation-delay: 0.4s;">
-                    <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-rocket text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4">August 1, 2025</h3>
-                    <p class="text-gray-300">Stablecoin Ordinance officially takes effect</p>
-                </div>
+            <div class="bg-white p-8 rounded-xl border border-gray-200">
+                <div class="text-4xl font-mono font-bold mb-4 text-gray-300">02</div>
+                <h3 class="text-lg font-bold mb-2">May 30, 2025</h3>
+                <p class="text-sm text-gray-500">
+                    <span class="lang-en">Ordinance Gazetted</span>
+                    <span class="lang-zh">條例正式刊憲成為法例</span>
+                </p>
             </div>
-
-            <!-- Global Regulatory Landscape -->
-            <div>
-                <h3 class="text-3xl font-bold mb-8 text-center">Global Regulatory Landscape</h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="card p-6 text-center">
-                        <img src="https://flagcdn.com/w80/us.png" alt="USA" class="w-12 h-8 mx-auto mb-4 rounded">
-                        <h4 class="font-bold mb-2">United States</h4>
-                        <p class="text-sm text-gray-400">GENIUS Act procedural motion passed, requiring 100% reserve backing</p>
-                    </div>
-                    
-                    <div class="card p-6 text-center">
-                        <img src="https://flagcdn.com/w80/eu.png" alt="EU" class="w-12 h-8 mx-auto mb-4 rounded">
-                        <h4 class="font-bold mb-2">European Union</h4>
-                        <p class="text-sm text-gray-400">MiCA (Markets in Crypto-Assets) stablecoin provisions in effect</p>
-                    </div>
-                    
-                    <div class="card p-6 text-center">
-                        <img src="https://flagcdn.com/w80/sg.png" alt="Singapore" class="w-12 h-8 mx-auto mb-4 rounded">
-                        <h4 class="font-bold mb-2">Singapore</h4>
-                        <p class="text-sm text-gray-400">2023 stablecoin framework requiring 100% low-risk asset backing</p>
-                    </div>
-                    
-                    <div class="card p-6 text-center">
-                        <img src="https://flagcdn.com/w80/jp.png" alt="Japan" class="w-12 h-8 mx-auto mb-4 rounded">
-                        <h4 class="font-bold mb-2">Japan</h4>
-                        <p class="text-sm text-gray-400">Feb 2025 eased restrictions, allowing up to 50% investment in government bonds</p>
-                    </div>
-                </div>
+            <div class="bg-black text-white p-8 rounded-xl border border-black shadow-xl transform md:-translate-y-4">
+                <div class="text-4xl font-mono font-bold mb-4 text-gray-500">03</div>
+                <h3 class="text-lg font-bold mb-2">Aug 1, 2025</h3>
+                <p class="text-sm text-gray-400">
+                    <span class="lang-en">Officially Effective</span>
+                    <span class="lang-zh">《穩定幣條例》正式生效實施</span>
+                </p>
             </div>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-20 bg-gray-900 bg-opacity-50">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-4xl font-bold mb-6 section-title center">Frequently Asked Questions</h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                    Answers to common questions about AIF-HKD to help you better understand our stablecoin project.
-                </p>
-            </div>
-
-            <div class="max-w-4xl mx-auto">
-                <div class="space-y-6">
-                    <div class="card p-6 animate-slide-up">
-                        <details class="group">
-                            <summary class="flex justify-between items-center cursor-pointer list-none">
-                                <h3 class="text-xl font-bold">What is AIF-HKD?</h3>
-                                <span class="transition group-open:rotate-180">
-                                    <i class="fas fa-chevron-down"></i>
-                                </span>
-                            </summary>
-                            <div class="mt-4 text-gray-300 leading-relaxed">
-                                AIF-HKD is the world's first HKD-pegged stablecoin designed specifically for the AI film industry, maintaining a 1:1 peg with the Hong Kong Dollar. It aims to become the core digital financial infrastructure for the AI-native film industry, providing a stable, efficient, and compliant solution for cross-border transactions, digital asset trading, and transparent settlements.
-                            </div>
-                        </details>
-                    </div>
-
-                    <div class="card p-6 animate-slide-up" style="animation-delay: 0.1s;">
-                        <details class="group">
-                            <summary class="flex justify-between items-center cursor-pointer list-none">
-                                <h3 class="text-xl font-bold">How is AIF-HKD different from other stablecoins?</h3>
-                                <span class="transition group-open:rotate-180">
-                                    <i class="fas fa-chevron-down"></i>
-                                </span>
-                            </summary>
-                            <div class="mt-4 text-gray-300 leading-relaxed">
-                                AIF-HKD is designed specifically for the AI film industry and deeply integrated with the HKAIIFF ecosystem. Unlike general-purpose stablecoins like USDT and USDC, we focus on vertical industry applications, providing specialized financial services such as project financing, copyright trading, and cross-border film submission settlements. Additionally, we benefit from HKMA's clear regulatory framework support, giving us a first-mover advantage.
-                            </div>
-                        </details>
-                    </div>
-
-                    <div class="card p-6 animate-slide-up" style="animation-delay: 0.2s;">
-                        <details class="group">
-                            <summary class="flex justify-between items-center cursor-pointer list-none">
-                                <h3 class="text-xl font-bold">What is the regulatory compliance status?</h3>
-                                <span class="transition group-open:rotate-180">
-                                    <i class="fas fa-chevron-down"></i>
-                                </span>
-                            </summary>
-                            <div class="mt-4 text-gray-300 leading-relaxed">
-                                AIF-HKD strictly complies with the Hong Kong Monetary Authority's Stablecoin Ordinance (effective August 1, 2025) and will apply for a stablecoin issuer license. We have established comprehensive AML/KYC procedures, data protection mechanisms, and ongoing compliance monitoring systems to ensure legal operations in Hong Kong and other major global markets.
-                            </div>
-                        </details>
-                    </div>
-
-                    <div class="card p-6 animate-slide-up" style="animation-delay: 0.3s;">
-                        <details class="group">
-                            <summary class="flex justify-between items-center cursor-pointer list-none">
-                                <h3 class="text-xl font-bold">How is stability and security ensured?</h3>
-                                <span class="transition group-open:rotate-180">
-                                    <i class="fas fa-chevron-down"></i>
-                                </span>
-                            </summary>
-                            <div class="mt-4 text-gray-300 leading-relaxed">
-                                AIF-HKD employs a fiat currency collateral model, 100% backed by high-quality, liquid HKD-denominated assets. We have established an overcollateralization mechanism, daily reserve monitoring, monthly independent audits, and a transparent reserve proof system to ensure absolute stability and security.
-                            </div>
-                        </details>
-                    </div>
-
-                    <div class="card p-6 animate-slide-up" style="animation-delay: 0.4s;">
-                        <details class="group">
-                            <summary class="flex justify-between items-center cursor-pointer list-none">
-                                <h3 class="text-xl font-bold">How can I participate in the AIF-HKD ecosystem?</h3>
-                                <span class="transition group-open:rotate-180">
-                                    <i class="fas fa-chevron-down"></i>
-                                </span>
-                            </summary>
-                            <div class="mt-4 text-gray-300 leading-relaxed">
-                                You can participate in multiple ways: as an AI film creator using AIF-HKD for project financing, as an investor participating in film project investments, as a user trading NFTs on AIF.Market, or as a student paying course fees at HKAIFA. We will provide complete onboarding guides and technical support.
-                            </div>
-                        </details>
-                    </div>
+    <section class="py-24 px-6 md:px-8 max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold mb-12 text-center reveal-text"><span class="lang-en">FAQ</span><span class="lang-zh">常見問題</span></h2>
+        
+        <div class="space-y-4 reveal-text">
+            <details class="group bg-white border border-gray-200 rounded-lg overflow-hidden cursor-pointer">
+                <summary class="flex justify-between items-center p-6 font-medium hover:bg-gray-50 transition-colors">
+                    <span><span class="lang-en">What is AIF-HKD?</span><span class="lang-zh">什麼是 AIF-HKD？</span></span>
+                    <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="px-6 pb-6 text-sm text-gray-500 leading-relaxed border-t border-gray-100 pt-4 bg-gray-50/50">
+                    <span class="lang-en">AIF-HKD is the world's first HKD-pegged stablecoin designed for the AI film industry. It aims to be the core digital financial infrastructure for the AI-native film industry, offering stable, efficient, and compliant solutions for cross-border transactions and settlements.</span>
+                    <span class="lang-zh">AIF-HKD是全球首款專為AI電影產業設計的港幣錨定穩定幣，與港幣保持1:1的錨定關係。它旨在成為AI原生電影產業的核心數字金融基礎設施，為跨境交易、數字資產交易和透明結算提供穩定、高效且合規的解決方案。</span>
                 </div>
-            </div>
-        </div>
-    </section>
+            </details>
 
-    <!-- Newsletter Section -->
-    <section class="py-16 bg-gradient-to-r from-blue-900 to-purple-900">
-        <div class="container mx-auto px-4">
-            <div class="max-w-3xl mx-auto text-center">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6">Join the AIF-HKD Community</h2>
-                <p class="text-xl text-gray-200 mb-8">
-                    Subscribe to our newsletter to be the first to receive updates on AIF-HKD developments, technical advancements, and compliance progress. Stay connected with global AI film industry pioneers.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto mb-8">
-                    <input type="email" placeholder="Enter your email" class="input-field rounded-full px-6 py-3 w-full">
-                    <button class="btn-primary px-8 py-3 rounded-full font-medium whitespace-nowrap">
-                        Subscribe Now
-                    </button>
+            <details class="group bg-white border border-gray-200 rounded-lg overflow-hidden cursor-pointer">
+                <summary class="flex justify-between items-center p-6 font-medium hover:bg-gray-50 transition-colors">
+                    <span><span class="lang-en">How does it differ from other stablecoins?</span><span class="lang-zh">與其他穩定幣有何不同？</span></span>
+                    <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="px-6 pb-6 text-sm text-gray-500 leading-relaxed border-t border-gray-100 pt-4 bg-gray-50/50">
+                    <span class="lang-en">Unlike general stablecoins like USDT/USDC, AIF-HKD is vertically specialized for the AI film industry, deeply integrated with the HKAIIFF ecosystem. It offers specific financial services like project financing and copyright trading, backed by HKMA's regulatory framework.</span>
+                    <span class="lang-zh">AIF-HKD專為AI電影產業設計，深度整合HKAIIFF生態系統。與USDT、USDC等通用穩定幣不同，我們專注於垂直領域應用，提供特定的金融服務如項目融資、版權交易、跨境征片結算等。同時，我們擁有香港金管局的明確監管框架支持。</span>
                 </div>
-                
-                <!-- Social Links -->
-                <div class="flex justify-center space-x-6">
-                    <a href="#" class="w-12 h-12 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition">
-                        <i class="fab fa-twitter text-xl"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition">
-                        <i class="fab fa-telegram text-xl"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition">
-                        <i class="fab fa-discord text-xl"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition">
-                        <i class="fab fa-medium text-xl"></i>
-                    </a>
-                    <a href="#" class="w-12 h-12 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition">
-                        <i class="fab fa-github text-xl"></i>
-                    </a>
+            </details>
+
+            <details class="group bg-white border border-gray-200 rounded-lg overflow-hidden cursor-pointer">
+                <summary class="flex justify-between items-center p-6 font-medium hover:bg-gray-50 transition-colors">
+                    <span><span class="lang-en">How do you ensure stability?</span><span class="lang-zh">如何確保穩定性和安全性？</span></span>
+                    <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div class="px-6 pb-6 text-sm text-gray-500 leading-relaxed border-t border-gray-100 pt-4 bg-gray-50/50">
+                    <span class="lang-en">AIF-HKD uses a fiat-collateralized model, 100% backed by high-quality, liquid HKD assets. We maintain over-collateralization, daily reserve monitoring, monthly independent audits, and a transparent proof-of-reserve system.</span>
+                    <span class="lang-zh">AIF-HKD採用法定貨幣抵押模式，100%由高質量、流動性強的港幣計價資產提供支持。我們建立了超額抵押機制、每日儲備監控、月度獨立審計和公開透明的儲備證明系統，確保絕對的穩定性和安全性。</span>
                 </div>
-            </div>
+            </details>
         </div>
     </section>
 
     <!-- Partners Section -->
-    <section class="py-20 bg-gray-900 bg-opacity-50" id="partners">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-16 animate-fade-in">
-                <h2 class="text-4xl font-bold mb-6 section-title center">Ecosystem Partners</h2>
-                <p class="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-                    AIF-HKD establishes strategic partnerships with global top blockchain platforms, technology partners, and industry institutions to jointly promote the development of the AI film industry.
-                </p>
-            </div>
+    <section id="partners" class="py-24 px-6 md:px-8 max-w-[1920px] mx-auto border-t border-gray-200">
+        <div class="text-center mb-16 reveal-text">
+            <h2 class="text-3xl font-bold mb-4"><span class="lang-en">Strategic Partners</span><span class="lang-zh">生態伙伴</span></h2>
+            <p class="text-gray-500"><span class="lang-en">Collaborating with global leaders in Blockchain, AI, and Media.</span><span class="lang-zh">與全球頂級區塊鏈平台、技術伙伴和行業機構建立戰略合作。</span></p>
+        </div>
 
-            <div class="partners-grid">
-                <!-- Ecosystem Partners -->
-                <div class="partner-card animate-slide-up">
-                    <h3 class="text-xl font-bold mb-6">Ecosystem Partners</h3>
-                    <div class="partner-list">
-                        <div class="partner-item">Hong Kong AI International Film Festival Association</div>
-                        <div class="partner-item">Hong Kong AI International Film Awards</div>
-                        <div class="partner-item">Hong Kong AI Film Market</div>
-                        <div class="partner-item">Hong Kong AI Film Academy</div>
-                        <div class="partner-item">Hong Kong AI Film Submission Center</div>
-                        <div class="partner-item">Hong Kong AI Film Standards Committee</div>
-                        <div class="partner-item">Hong Kong AI Film Foundation</div>
-                    </div>
-                </div>
-                
-                <!-- Blockchain Support -->
-                <div class="partner-card animate-slide-up" style="animation-delay: 0.2s;">
-                    <h3 class="text-xl font-bold mb-6">Blockchain Support</h3>
-                    <div class="partner-list">
-                        <div class="partner-item">Ethereum</div>
-                        <div class="partner-item">Polygon</div>
-                        <div class="partner-item">Arbitrum</div>
-                        <div class="partner-item">Binance Smart Chain</div>
-                        <div class="partner-item">Avalanche</div>
-                        <div class="partner-item">Solana</div>
-                        <div class="partner-item">Optimism</div>
-                    </div>
-                </div>
-                
-                <!-- Mainstream Cryptocurrencies -->
-                <div class="partner-card animate-slide-up" style="animation-delay: 0.4s;">
-                    <h3 class="text-xl font-bold mb-6">Mainstream Cryptocurrencies</h3>
-                    <div class="partner-list">
-                        <div class="partner-item">Bitcoin (BTC)</div>
-                        <div class="partner-item">Ethereum (ETH)</div>
-                        <div class="partner-item">USDT</div>
-                        <div class="partner-item">USDC</div>
-                        <div class="partner-item">Binance Coin (BNB)</div>
-                        <div class="partner-item">Cardano (ADA)</div>
-                        <div class="partner-item">Polygon (MATIC)</div>
-                    </div>
-                </div>
-                
-                <!-- Media Partners -->
-                <div class="partner-card animate-slide-up" style="animation-delay: 0.6s;">
-                    <h3 class="text-xl font-bold mb-6">Film & Media Partners</h3>
-                    <div class="partner-list">
-                        <div class="partner-item">BBC Studios</div>
-                        <div class="partner-item">Warner Bros</div>
-                        <div class="partner-item">Disney Studios</div>
-                        <div class="partner-item">Universal Pictures</div>
-                        <div class="partner-item">Paramount Pictures</div>
-                        <div class="partner-item">Netflix Studios</div>
-                        <div class="partner-item">Apple Studios</div>
-                    </div>
-                </div>
-                
-                <!-- AI Technology Partners -->
-                <div class="partner-card animate-slide-up" style="animation-delay: 0.8s;">
-                    <h3 class="text-xl font-bold mb-6">AI Technology Partners</h3>
-                    <div class="partner-list">
-                        <div class="partner-item">OpenAI</div>
-                        <div class="partner-item">Anthropic</div>
-                        <div class="partner-item">Midjourney</div>
-                        <div class="partner-item">Stable Diffusion</div>
-                        <div class="partner-item">NVIDIA</div>
-                        <div class="partner-item">Google AI</div>
-                        <div class="partner-item">Microsoft AI</div>
-                    </div>
-                </div>
-            </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 reveal-text">
+            <!-- Blockchain -->
+            <div class="col-span-2 md:col-span-4 lg:col-span-6 text-xs font-mono uppercase text-gray-400 tracking-widest text-center mb-4 mt-8">Blockchain Support</div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Ethereum</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Polygon</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Arbitrum</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Solana</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">BSC</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Optimism</span></div>
+
+            <!-- AI Tech -->
+            <div class="col-span-2 md:col-span-4 lg:col-span-6 text-xs font-mono uppercase text-gray-400 tracking-widest text-center mb-4 mt-8">AI Technology</div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">OpenAI</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Anthropic</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Midjourney</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">NVIDIA</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Google AI</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Microsoft</span></div>
+
+            <!-- Media -->
+            <div class="col-span-2 md:col-span-4 lg:col-span-6 text-xs font-mono uppercase text-gray-400 tracking-widest text-center mb-4 mt-8">Media Partners</div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">BBC Studios</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Warner Bros</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Disney</span></div>
+            <div class="partner-item border border-gray-100 p-6 flex items-center justify-center grayscale hover:grayscale-0 hover:border-black transition-all rounded-lg"><span class="font-bold text-lg">Netflix</span></div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 bg-black bg-opacity-50">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <div class="hkaifm-logo mb-4">
-                        <div class="logo-font">AIF-HKD</div>
-                        <div class="logo-sub">HKAIIFF STABLECOIN</div>
-                    </div>
-                    <p class="text-gray-400 mb-4">
-                        The world's first HKD stablecoin designed specifically for the AI film industry, providing stable, efficient, and compliant digital payment infrastructure for the creative economy.
+    <footer class="bg-black text-white pt-24 pb-8 px-6 md:px-8 mt-24">
+        <div class="max-w-[1920px] mx-auto">
+            <div class="flex flex-col items-center justify-center mb-24 text-center reveal-text">
+                <h2 class="text-[8vw] font-bold tracking-tighter leading-none mb-8">
+                    Infrastructure.
+                </h2>
+                <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+                    <input type="email" placeholder="Enter your email" class="flex-1 bg-white/10 border border-white/20 rounded-full px-6 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors text-sm">
+                    <button class="bg-white text-black rounded-full px-8 py-4 font-bold hover:bg-gray-200 transition-colors">
+                        <span class="lang-en">Subscribe</span><span class="lang-zh">訂閱</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 border-t border-white/20 pt-12">
+                <div class="col-span-1 md:col-span-2">
+                    <a href="#" class="text-2xl font-bold block mb-4">AIF-HKD.</a>
+                    <p class="text-gray-400 text-sm max-w-xs leading-relaxed">
+                        <span class="lang-en">World's first AI-film industry stablecoin, providing stable, efficient, and compliant digital payment infrastructure for the creative economy.</span>
+                        <span class="lang-zh">全球首款專為AI電影產業設計的港幣穩定幣，為創意經濟提供穩定、高效且合規的數字支付基礎設施。</span>
                     </p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-blue-400"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-blue-400"><i class="fab fa-telegram"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-blue-400"><i class="fab fa-discord"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-blue-400"><i class="fab fa-medium"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-blue-400"><i class="fab fa-github"></i></a>
-                    </div>
                 </div>
+                
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">Product</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#about" class="text-gray-400 hover:text-blue-400">About AIF-HKD</a></li>
-                        <li><a href="#technology" class="text-gray-400 hover:text-blue-400">Technology</a></li>
-                        <li><a href="#ecosystem" class="text-gray-400 hover:text-blue-400">Ecosystem Applications</a></li>
-                        <li><a href="#comparison" class="text-gray-400 hover:text-blue-400">Comparison Advantages</a></li>
-                        <li><a href="#compliance" class="text-gray-400 hover:text-blue-400">Compliance Framework</a></li>
+                    <h4 class="text-xs font-bold uppercase tracking-wider mb-4 text-gray-500">Product</h4>
+                    <ul class="space-y-3 text-sm font-medium text-gray-300">
+                        <li><a href="#about" class="hover:text-white transition-colors"><span class="lang-en">About</span><span class="lang-zh">關於項目</span></a></li>
+                        <li><a href="#technology" class="hover:text-white transition-colors"><span class="lang-en">Technology</span><span class="lang-zh">技術架構</span></a></li>
+                        <li><a href="#ecosystem" class="hover:text-white transition-colors"><span class="lang-en">Ecosystem</span><span class="lang-zh">生態應用</span></a></li>
+                        <li><a href="#compliance" class="hover:text-white transition-colors"><span class="lang-en">Compliance</span><span class="lang-zh">合規框架</span></a></li>
                     </ul>
                 </div>
+
                 <div>
-                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#whitepaper" class="text-gray-400 hover:text-blue-400">Whitepaper</a></li>
-                        <li><a href="#documentation" class="text-gray-400 hover:text-blue-400">Technical Documentation</a></li>
-                        <li><a href="#audit" class="text-gray-400 hover:text-blue-400">Audit Reports</a></li>
-                        <li><a href="#api" class="text-gray-400 hover:text-blue-400">Developer API</a></li>
-                        <li><a href="#support" class="text-gray-400 hover:text-blue-400">Technical Support</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Legal</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#terms" class="text-gray-400 hover:text-blue-400">Terms of Service</a></li>
-                        <li><a href="#privacy" class="text-gray-400 hover:text-blue-400">Privacy Policy</a></li>
-                        <li><a href="#compliance-policy" class="text-gray-400 hover:text-blue-400">Compliance Policy</a></li>
-                        <li><a href="#risk" class="text-gray-400 hover:text-blue-400">Risk Disclosure</a></li>
-                        <li><a href="#contact" class="text-gray-400 hover:text-blue-400">Contact Us</a></li>
+                    <h4 class="text-xs font-bold uppercase tracking-wider mb-4 text-gray-500">Legal</h4>
+                    <ul class="space-y-3 text-sm font-medium text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-en">Terms</span><span class="lang-zh">服務條款</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-en">Privacy</span><span class="lang-zh">隱私政策</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-en">Risk Disclosure</span><span class="lang-zh">風險披露</span></a></li>
+                        <li><a href="#" class="hover:text-white transition-colors"><span class="lang-en">Audit Reports</span><span class="lang-zh">審計報告</span></a></li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 mt-12 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-500 text-sm mb-4 md:mb-0">
-                        © 2025 AIF-HKD. All Rights Reserved. Hong Kong AI International Film Festival Ecosystem.
-                    </p>
-                    <div class="flex items-center space-x-4 text-sm text-gray-500">
-                        <span>Regulated by HKMA</span>
-                        <span>|</span>
-                        <span>Reserve Proof Verified</span>
-                        <span>|</span>
-                        <span>Security Audits Completed</span>
-                    </div>
+            
+            <div class="mt-20 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase text-gray-500 font-mono gap-4">
+                <p>&copy; 2026 AIF-HKD. All Rights Reserved.</p>
+                <div class="flex gap-4">
+                    <span>HKMA Regulated</span>
+                    <span>|</span>
+                    <span>Verified Reserves</span>
+                    <span>|</span>
+                    <span>Security Audited</span>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
-        // Add random data streams
-        function createDataStreams() {
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    const stream = document.createElement('div');
-                    stream.className = 'data-stream';
-                    stream.style.left = Math.random() * 100 + '%';
-                    stream.style.animationDelay = Math.random() * 2 + 's';
-                    document.body.appendChild(stream);
-                    
-                    // Remove after animation
-                    setTimeout(() => {
-                        stream.remove();
-                    }, 4000);
-                }, i * 3000);
+        // Language Toggle
+        function toggleLanguage() {
+            const body = document.body;
+            const currentLang = body.getAttribute('data-lang');
+            const newLang = currentLang === 'en' ? 'zh' : 'en';
+            body.setAttribute('data-lang', newLang);
+            
+            // Save preference
+            localStorage.setItem('aif_lang', newLang);
+        }
+
+        // Load Language Preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('aif_lang');
+            if (savedLang) {
+                document.body.setAttribute('data-lang', savedLang);
+            }
+        });
+
+        // Intersection Observer for Reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal-text').forEach(el => observer.observe(el));
+
+        // Mobile Menu Logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMobileMenuBtn = document.getElementById('close-mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            const isHidden = mobileMenu.classList.contains('translate-x-full');
+            if (isHidden) {
+                mobileMenu.classList.remove('translate-x-full');
+                document.body.style.overflow = 'hidden';
+            } else {
+                mobileMenu.classList.add('translate-x-full');
+                document.body.style.overflow = '';
             }
         }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        closeMobileMenuBtn.addEventListener('click', toggleMenu);
         
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Start data streams
-            createDataStreams();
-            setInterval(createDataStreams, 15000);
-            
-            // Add scroll animations
-            const animatedElements = document.querySelectorAll('.animate-fade-in, .animate-slide-up, .animate-slide-right');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        if (entry.target.classList.contains('animate-slide-up')) {
-                            entry.target.style.transform = 'translateY(0)';
-                        }
-                        if (entry.target.classList.contains('animate-slide-right')) {
-                            entry.target.style.transform = 'translateX(0)';
-                        }
-                        if (entry.target.classList.contains('animate-fade-in')) {
-                            entry.target.style.transform = 'scale(1)';
-                        }
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            animatedElements.forEach(el => {
-                el.style.opacity = '0';
-                if (el.classList.contains('animate-slide-up')) {
-                    el.style.transform = 'translateY(50px)';
-                }
-                if (el.classList.contains('animate-slide-right')) {
-                    el.style.transform = 'translateX(-50px)';
-                }
-                if (el.classList.contains('animate-fade-in')) {
-                    el.style.transform = 'scale(0.95)';
-                }
-                observer.observe(el);
-            });
-            
-            // Mobile menu functionality
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const mobileMenuClose = document.querySelector('.mobile-menu-close');
-            
-            if (mobileMenuBtn && mobileMenu && mobileMenuClose) {
-                mobileMenuBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    mobileMenu.classList.add('open');
-                    document.body.style.overflow = 'hidden';
-                });
-                
-                mobileMenuClose.addEventListener('click', () => {
-                    mobileMenu.classList.remove('open');
-                    document.body.style.overflow = 'auto';
-                });
-                
-                // Close mobile menu when clicking outside
-                mobileMenu.addEventListener('click', (e) => {
-                    if (e.target === mobileMenu) {
-                        mobileMenu.classList.remove('open');
-                        document.body.style.overflow = 'auto';
-                    }
-                });
-            }
-            
-            // Tab functionality
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tabId = btn.getAttribute('data-tab');
-                    
-                    // Remove active class from all tabs
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-                    
-                    // Add active class to clicked tab
-                    btn.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-            
-            // Smooth scrolling for navigation links
-            const navLinks = document.querySelectorAll('a[href^="#"]');
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    
-                    if (targetElement) {
-                        const offsetTop = targetElement.offsetTop - 80; // Account for fixed navbar
-                        window.scrollTo({
-                            top: offsetTop,
-                            behavior: 'smooth'
-                        });
-                        
-                        // Close mobile menu if open
-                        if (mobileMenu && mobileMenu.classList.contains('open')) {
-                            mobileMenu.classList.remove('open');
-                            document.body.style.overflow = 'auto';
-                        }
-                    }
-                });
-            });
-            
-            // Update real-time status
-            function updateRealtimeStatus() {
-                const exchangeRate = document.querySelector('.text-green-400');
-                const reserveRate = document.querySelectorAll('.text-blue-400')[0];
-                
-                if (exchangeRate && exchangeRate.textContent.includes('1 AIF-HKD')) {
-                    // Simulate minor fluctuations around 1:1 peg
-                    const fluctuation = (Math.random() - 0.5) * 0.002; // ±0.1% fluctuation
-                    const rate = 1 + fluctuation;
-                    exchangeRate.textContent = `1 AIF-HKD = ${rate.toFixed(4)} HKD`;
-                }
-                
-                if (reserveRate && reserveRate.textContent.includes('%')) {
-                    // Simulate reserve rate fluctuations
-                    const baseRate = 103.5;
-                    const fluctuation = (Math.random() - 0.5) * 1; // ±0.5% fluctuation
-                    const newRate = Math.max(100, baseRate + fluctuation);
-                    reserveRate.textContent = newRate.toFixed(1) + '%';
-                }
-            }
-            
-            // Update real-time status every 10 seconds
-            setInterval(updateRealtimeStatus, 10000);
-            
-            // Trading pairs simulation
-            function updateTradingPairs() {
-                const tradingPairs = [
-                    { element: document.querySelector('#trading .card:nth-child(1) .text-green-400'), basePrice: 8.45, symbol: 'AIF-HKD' },
-                    { element: document.querySelector('#trading .card:nth-child(2) .text-green-400'), basePrice: 12.67, symbol: 'AIF-HKD' },
-                    { element: document.querySelector('#trading .card:nth-child(3) .text-green-400'), basePrice: 3.21, symbol: 'AIF-HKD' }
-                ];
-                
-                tradingPairs.forEach(pair => {
-                    if (pair.element) {
-                        const fluctuation = (Math.random() - 0.5) * 0.2; // ±10% fluctuation
-                        const newPrice = Math.max(0.01, pair.basePrice + fluctuation);
-                        pair.element.textContent = newPrice.toFixed(2) + ' ' + pair.symbol;
-                        
-                        // Update percentage change
-                        const changeElement = pair.element.parentElement.querySelector('.text-xs');
-                        if (changeElement) {
-                            const changePercent = ((newPrice - pair.basePrice) / pair.basePrice * 100);
-                            const changeClass = changePercent >= 0 ? 'text-green-400' : 'text-red-400';
-                            const changeSymbol = changePercent >= 0 ? '+' : '';
-                            changeElement.className = `text-xs ${changeClass}`;
-                            changeElement.textContent = `${changeSymbol}${changePercent.toFixed(1)}% 24h`;
-                        }
-                    }
-                });
-            }
-            
-            // Update trading pairs every 5 seconds
-            setInterval(updateTradingPairs, 5000);
-            
-            // Newsletter subscription
-            const subscribeBtn = document.querySelector('.btn-primary');
-            if (subscribeBtn && subscribeBtn.textContent.includes('立即訂閱')) {
-                subscribeBtn.addEventListener('click', () => {
-                    const emailInput = subscribeBtn.parentElement.querySelector('input[type="email"]');
-                    if (emailInput && emailInput.value) {
-                        alert('Thank you for subscribing! We will send you regular updates on AIF-HKD developments.');
-                        emailInput.value = '';
-                    } else {
-                        alert('Please enter a valid email address.');
-                    }
-                });
-            }
-            
-            // Add hover effects for cards
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', () => {
-                    if (!card.style.transform.includes('translateY')) {
-                        card.style.transform = 'translateY(-5px)';
-                    }
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                    if (card.style.transform.includes('translateY(-5px)')) {
-                        card.style.transform = 'translateY(0)';
-                    }
-                });
-            });
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
         });
     </script>
 </body>
