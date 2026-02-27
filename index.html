@@ -2,783 +2,725 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HKAIIFF 2026 | Global AI Co-Creation Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>HKAIIFF | AI Native Film Festival</title>
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700;800&family=Oswald:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;700&family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <style>
-        /* ==========================================================
-           1. TERMINAL BASE & CRT EFFECTS
-           ========================================================== */
-        :root {
-            --bg-color: #030303;
-            --main-red: #ff003c;
-            --main-red-glow: rgba(255, 0, 60, 0.6);
-            --cyan-glow: #00f3ff;
-            --text-main: #f0f0f0;
-            --text-dim: #666666;
-            --font-mono: 'JetBrains Mono', monospace;
-            --font-impact: 'Oswald', sans-serif;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: var(--bg-color); color: var(--text-main);
-            font-family: var(--font-mono); overflow: hidden;
-            height: 100vh; width: 100vw; display: flex; flex-direction: column;
-        }
-
-        /* CRT Effects */
-        .scanlines {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.3));
-            background-size: 100% 4px; z-index: 9999; pointer-events: none; opacity: 0.4;
-        }
-        .noise {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
-            opacity: 0.04; pointer-events: none; z-index: 9998;
-        }
-        .bg-gradient {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(255,0,60,0.05) 0%, transparent 70%);
-            z-index: 0; pointer-events: none;
-        }
-
-        /* ==========================================================
-           2. HEADER & LOGO (Fluid Core)
-           ========================================================== */
-        header {
-            width: 100%; padding: 25px 40px; display: flex; justify-content: space-between; align-items: flex-start; z-index: 100;
-        }
-
-        .brand-cluster { display: flex; align-items: center; gap: 20px; }
-        
-        .fluid-logo {
-            width: 45px; height: 45px; background: linear-gradient(45deg, var(--main-red), var(--cyan-glow));
-            animation: morph 4s ease-in-out infinite, spin 10s linear infinite;
-            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; box-shadow: 0 0 20px rgba(255, 0, 60, 0.5);
-        }
-        @keyframes morph {
-            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .logo-text { display: flex; flex-direction: column; }
-        .logo-text .main { font-family: var(--font-impact); font-size: 2.2rem; line-height: 1; font-weight: 900; letter-spacing: 2px; }
-        .logo-text .sub { font-size: 0.7rem; color: var(--cyan-glow); letter-spacing: 3px; }
-
-        /* Top Right Tools */
-        .header-tools { display: flex; align-items: flex-start; gap: 30px; }
-        
-        /* Micro Submission Button */
-        .btn-submit-micro {
-            display: flex; align-items: center; gap: 8px;
-            background: rgba(0, 243, 255, 0.05); color: var(--cyan-glow);
-            border: 1px solid rgba(0, 243, 255, 0.4);
-            font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700;
-            padding: 8px 15px; cursor: pointer; transition: all 0.3s;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn-submit-micro:hover { background: var(--cyan-glow); color: #000; box-shadow: 0 0 15px rgba(0, 243, 255, 0.6); }
-
-        .sys-info-box { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-        .sys-status { text-align: right; font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; }
-        .sys-status span { color: var(--main-red); font-weight: bold; }
-        select.lang-switch {
-            background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid #333; 
-            padding: 5px 10px; font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; outline: none;
-        }
-        select.lang-switch option { background: var(--bg-color); }
-
-        /* ==========================================================
-           3. CORE ENGINE (Center Countdown & Injector)
-           ========================================================== */
-        .main-stage {
-            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            position: relative; z-index: 50; padding: 0 20px;
-        }
-
-        .phase-indicator { 
-            font-size: clamp(0.9rem, 2vw, 1.2rem); font-weight: 700; color: var(--cyan-glow); 
-            letter-spacing: 3px; margin-bottom: 0px; text-transform: uppercase; display: flex; align-items: center; gap: 15px;
-        }
-
-        .btn-skip {
-            background: #222; border: 1px solid #555; color: #aaa; font-family: var(--font-mono);
-            font-size: 0.7rem; padding: 3px 8px; cursor: pointer; transition: all 0.2s;
-        }
-        .btn-skip:hover { background: var(--cyan-glow); color: #000; border-color: var(--cyan-glow); }
-
-        .giant-clock {
-            font-family: var(--font-impact); font-size: clamp(6rem, 15vw, 14rem); 
-            font-weight: 900; line-height: 1; color: #fff;
-            text-shadow: 0 0 40px var(--main-red-glow), 0 0 10px rgba(255,255,255,0.5);
-            font-variant-numeric: tabular-nums; margin-bottom: 30px; animation: pulse-shadow 2s infinite alternate;
-        }
-        @keyframes pulse-shadow {
-            0% { text-shadow: 0 0 40px var(--main-red-glow), 0 0 10px rgba(255,255,255,0.5); }
-            100% { text-shadow: 0 0 60px var(--main-red), 0 0 20px rgba(255,255,255,0.8); }
-        }
-        .ms-clock { font-size: 0.4em; color: var(--main-red); }
-
-        .action-cluster { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 20px; }
-
-        .injector-box {
-            background: rgba(10,10,10,0.7); border: 1px solid #222; border-left: 4px solid var(--cyan-glow);
-            padding: 25px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .input-group { display: flex; gap: 15px; margin-bottom: 25px; }
-        .input-group input {
-            flex: 1; background: transparent; border: none; border-bottom: 1px solid #555;
-            color: #fff; font-family: var(--font-mono); font-size: clamp(1rem, 1.5vw, 1.2rem); padding: 10px 5px; outline: none; transition: all 0.3s;
-        }
-        .input-group input:focus { border-bottom-color: var(--main-red); }
-        .btn-inject {
-            background: var(--text-main); color: var(--bg-color); border: none; padding: 0 30px;
-            font-family: var(--font-impact); font-size: 1.2rem; text-transform: uppercase; cursor: pointer; transition: all 0.3s;
-        }
-        .btn-inject:hover { background: var(--cyan-glow); color: #000; box-shadow: 0 0 15px var(--cyan-glow); }
-
-        /* Enhanced Auth Dimensions */
-        .auth-dimensions { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .auth-item { display: flex; flex-direction: column; gap: 8px; }
-        .auth-item-top { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #ccc; }
-        .auth-desc { font-size: 0.7rem; color: var(--text-dim); line-height: 1.3; }
-
-        .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 20px; }
-        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--main-red); }
-        input:checked + .slider:before { transform: translateX(18px); }
-
-        /* ==========================================================
-           4. RIGHT SIDE LIVE DATA FEED (Transparent & Non-intrusive)
-           ========================================================== */
-        .data-feed {
-            position: absolute; right: 30px; top: 30%; height: 35%; width: 260px;
-            overflow: hidden; font-size: 0.7rem; color: var(--text-dim);
-            opacity: 0.5; /* Subdued to prevent clash */
-            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-            z-index: 10; pointer-events: none; /* Never blocks clicks */
-        }
-        .feed-line { margin-bottom: 10px; animation: slideUp 0.4s ease-out; line-height: 1.4; }
-        .feed-line .user { color: var(--cyan-glow); font-weight: bold; }
-        .feed-line .act { color: var(--main-red); }
-        .feed-line .prompt { color: #888; font-style: italic; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* ==========================================================
-           5. BOTTOM ARCHIVE DOCK (10 Real Cases)
-           ========================================================== */
-        .archive-dock {
-            width: 100%; height: 26vh; min-height: 190px;
-            background: linear-gradient(to top, rgba(0,0,0,1) 30%, rgba(0,0,0,0.5)); border-top: 1px solid #222;
-            padding: 20px 40px; position: relative; z-index: 100; display: flex; flex-direction: column;
-        }
-        .archive-header {
-            font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
-        }
-        .archive-header::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--main-red); border-radius: 50%; animation: blink 2s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        .swiper-container { width: 100%; flex: 1; overflow: visible; }
-        .swiper-wrapper { display: flex; align-items: center; }
-        .swiper-slide { width: 260px; height: 100%; cursor: pointer; transition: transform 0.3s; }
-        .swiper-slide:hover { transform: translateY(-8px); }
-        
-        .vid-card { position: relative; height: 100%; width: 100%; background: #111; overflow: hidden; border: 1px solid #333; border-radius: 4px; }
-        .vid-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: opacity 0.3s, transform 0.5s; }
-        .vid-card:hover { border-color: var(--cyan-glow); }
-        .vid-card:hover img { opacity: 1; transform: scale(1.05); }
-        
-        .vid-info { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px 10px 10px; background: linear-gradient(transparent, rgba(0,0,0,0.95)); }
-        .vid-time { font-size: 0.7rem; color: var(--main-red); font-weight: bold; margin-bottom: 2px; }
-        .vid-title { font-size: 1rem; font-family: var(--font-impact); line-height: 1.1; margin-bottom: 2px; }
-        .vid-author { font-size: 0.7rem; color: var(--cyan-glow); }
-
-        /* ==========================================================
-           6. SUBMISSION MODAL (Full Form)
-           ========================================================== */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
-            z-index: 2000; display: none; justify-content: center; align-items: center;
-        }
-        .modal-overlay.active { display: flex; }
-        
-        .modal-content {
-            width: 90%; max-width: 900px; max-height: 85vh; background: #0a0a0a;
-            border: 1px solid #333; border-top: 4px solid var(--cyan-glow);
-            padding: 40px; overflow-y: auto; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-        }
-        .btn-close {
-            position: absolute; top: 20px; right: 20px; font-size: 2rem; color: #888;
-            cursor: pointer; border: none; background: none; font-family: var(--font-mono); transition: color 0.3s;
-        }
-        .btn-close:hover { color: var(--main-red); }
-
-        .modal-title { font-family: var(--font-impact); font-size: 2.5rem; margin-bottom: 5px; color: #fff; }
-        .modal-sub { color: var(--cyan-glow); font-size: 0.9rem; margin-bottom: 30px; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group.full { grid-column: 1 / -1; }
-        .form-group label { font-size: 0.85rem; color: #aaa; text-transform: uppercase; }
-        .form-group input, .form-group select, .form-group textarea {
-            background: #111; border: 1px solid #333; color: #fff; padding: 12px;
-            font-family: var(--font-mono); font-size: 1rem; outline: none; transition: border 0.3s;
-        }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--cyan-glow); }
-        .form-group textarea { resize: vertical; min-height: 100px; }
-        
-        .file-upload { border: 2px dashed #444; padding: 30px; text-align: center; cursor: pointer; color: #888; transition: all 0.3s; }
-        .file-upload:hover { border-color: var(--cyan-glow); color: var(--cyan-glow); background: rgba(0,243,255,0.05); }
-        .file-upload i { font-size: 2rem; margin-bottom: 10px; }
-
-        .btn-submit-final {
-            background: var(--main-red); color: #fff; border: none; padding: 15px; font-family: var(--font-impact);
-            font-size: 1.5rem; text-transform: uppercase; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.3s;
-        }
-        .btn-submit-final:hover { background: #fff; color: var(--main-red); }
-
-        /* ==========================================================
-           7. PREMIERE MODE (1-Min Fullscreen)
-           ========================================================== */
-        #premiere-mode {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; z-index: 3000; display: none; justify-content: center; align-items: center; flex-direction: column;
-        }
-        #premiere-mode.active { display: flex; }
-        .premiere-video-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
-        
-        .premiere-overlay-text { position: relative; z-index: 3001; text-align: center; background: rgba(0,0,0,0.5); padding: 40px; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px); }
-        .premiere-overlay-text h1 { font-family: var(--font-impact); font-size: clamp(3rem, 8vw, 8rem); color: #fff; text-shadow: 0 0 30px var(--main-red); line-height: 1; margin-bottom: 10px; }
-        .premiere-overlay-text p { font-size: clamp(1rem, 2vw, 1.5rem); color: var(--cyan-glow); font-family: var(--font-mono); }
-        
-        .premiere-header { position: absolute; top: 30px; left: 40px; z-index: 3001; color: var(--main-red); font-family: var(--font-impact); font-size: 1.5rem; letter-spacing: 2px; }
-        .premiere-timer { position: absolute; top: 30px; right: 40px; z-index: 3001; font-size: 2rem; font-family: var(--font-mono); font-weight: bold; }
-
-        /* ==========================================================
-           8. RESPONSIVE
-           ========================================================== */
-        @media (max-width: 1024px) {
-            .data-feed { display: none; }
-        }
-        @media (max-width: 768px) {
-            header { padding: 15px 20px; flex-direction: column; gap: 20px; }
-            .header-tools { width: 100%; justify-content: space-between; align-items: flex-start; flex-direction: row-reverse; }
-            .sys-info-box { align-items: flex-start; }
-            
-            .main-stage { padding-top: 15vh; justify-content: flex-start; }
-            .giant-clock { margin-bottom: 20px; font-size: 22vw; }
-            
-            .input-group { flex-direction: column; gap: 10px; }
-            .btn-inject { padding: 15px; width: 100%; }
-            .auth-dimensions { grid-template-columns: 1fr; gap: 15px; }
-            
-            .archive-dock { padding: 15px 20px; height: 22vh; min-height: 160px; }
-            .swiper-slide { width: 200px; }
-            
-            .form-grid { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="scanlines"></div>
-    <div class="noise"></div>
-    <div class="bg-gradient"></div>
-
-    <header>
-        <div class="brand-cluster">
-            <div class="fluid-logo"></div>
-            <div class="logo-text">
-                <div class="main">HKAIIFF</div>
-                <div class="sub">SYS.2026.LIVE</div>
-            </div>
-        </div>
-        <div class="header-tools">
-            <button class="btn-submit-micro" onclick="openModal('modal-submission')">
-                <i class="fa-solid fa-folder-plus"></i> <span id="txt-btn-submit">SUBMIT FILM</span>
-            </button>
-            
-            <div class="sys-info-box">
-                <div class="sys-status">
-                    <span id="txt-sys-time">SYS TIME:</span> <span id="current-time">00:00:00</span> JST<br>
-                    <span id="txt-fest-date" style="color:var(--text-dim); font-weight:normal;">FEST: JUL 15-25, 2026</span>
-                </div>
-                <select class="lang-switch" id="lang-switch" onchange="changeLanguage()">
-                    <option value="en">ENGLISH</option>
-                    <option value="zh-TW">繁體中文</option>
-                    <option value="ja">日本語</option>
-                    <option value="ko">한국어</option>
-                    <option value="th">ไทย</option>
-                    <option value="fr">FRANÇAIS</option>
-                    <option value="de">DEUTSCH</option>
-                    <option value="es">ESPAÑOL</option>
-                    <option value="ar">العربية</option>
-                </select>
-            </div>
-        </div>
-    </header>
-
-    <main class="main-stage" id="main-terminal">
-        <div class="phase-indicator">
-            <span id="phase-text">GLOBAL AI CO-CREATION IN PROGRESS...</span>
-            <button class="btn-skip" onclick="skipToPremiere()" title="Skip countdown for testing">[>> TEST: SKIP]</button>
-        </div>
-        
-        <div class="giant-clock">
-            <span id="min">09</span>:<span id="sec">00</span><span class="ms-clock">.<span id="ms">00</span></span>
-        </div>
-
-        <div class="action-cluster">
-            <div class="injector-box">
-                <div class="input-group">
-                    <input type="text" id="prompt-input" placeholder="Inject your vision / emotion..." autocomplete="off">
-                    <button class="btn-inject" id="btn-synthesize" onclick="injectPrompt()">Synthesize</button>
-                </div>
-                
-                <div class="auth-dimensions">
-                    <div class="auth-item">
-                        <div class="auth-item-top">
-                            <div><i class="fa-brands fa-x-twitter" style="color:var(--cyan-glow)"></i> <span id="txt-auth-soc">Social Media Auth</span></div>
-                            <label class="switch"><input type="checkbox" id="auth-social"><span class="slider"></span></label>
-                        </div>
-                        <div class="auth-desc" id="txt-desc-soc">Link social profile to extract your aesthetic & emotional vectors into the film's style.</div>
-                    </div>
-                    <div class="auth-item">
-                        <div class="auth-item-top">
-                            <div><i class="fa-solid fa-location-crosshairs" style="color:var(--main-red)"></i> <span id="txt-auth-geo">GEO Context</span></div>
-                            <label class="switch"><input type="checkbox" id="auth-geo"><span class="slider"></span></label>
-                        </div>
-                        <div class="auth-desc" id="txt-desc-geo">Enable location to seamlessly embed regional cultural aesthetics into the narrative.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <div class="data-feed" id="data-feed">
-        <div class="feed-line">SYS > Connection established. Listening to global nodes...</div>
-    </div>
-
-    <div class="archive-dock">
-        <div class="archive-header" id="txt-archive-title">1-MIN SYNTHESIZED ARCHIVE</div>
-        <div class="swiper-container archive-swiper">
-            <div class="swiper-wrapper" id="archive-wrapper">
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-10 MINS AGO</div><div class="vid-title">The Silicon Dream</div><div class="vid-author">By @Cyber_Director</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1634224143538-ce0221abf732?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-20 MINS AGO</div><div class="vid-title">Neural Echoes</div><div class="vid-author">By SYS.GEN_089</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-30 MINS AGO</div><div class="vid-title">Algorithmic Dawn</div><div class="vid-author">By @Neo_Tokyo</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-40 MINS AGO</div><div class="vid-title">Beyond the Pixel</div><div class="vid-author">By @Visual_AI</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-50 MINS AGO</div><div class="vid-title">The Labyrinth</div><div class="vid-author">By SYS.GEN_088</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-60 MINS AGO</div><div class="vid-title">Neon Rainfall</div><div class="vid-author">By @Future_Lens</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-70 MINS AGO</div><div class="vid-title">Synthetic Tears</div><div class="vid-author">By @Art_Bot_33</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-80 MINS AGO</div><div class="vid-title">Quantum Choice</div><div class="vid-author">By SYS.GEN_087</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1504333638930-c8787321fee0?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-90 MINS AGO</div><div class="vid-title">Echo Chamber</div><div class="vid-author">By @HK_Visionary</div></div></div></div>
-                <div class="swiper-slide"><div class="vid-card"><img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=500&q=80"><div class="vid-info"><div class="vid-time">T-100 MINS AGO</div><div class="vid-title">Digital Horizon</div><div class="vid-author">By SYS.GEN_086</div></div></div></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-submission">
-        <div class="modal-content">
-            <button class="btn-close" onclick="closeModal('modal-submission')">×</button>
-            <h2 class="modal-title" id="frm_title">HKAIIFF 2026 SUBMISSION</h2>
-            <p class="modal-sub" id="frm_sub">Upload your AI-native cinematic works to the core registry.</p>
-            
-            <form id="submission-form" class="form-grid" onsubmit="event.preventDefault(); alert('Submitting to HKAIIFF Node...'); closeModal('modal-submission');">
-                <div class="form-group">
-                    <label id="frm_l_name">Film Title</label>
-                    <input type="text" required placeholder="e.g. Neon Rainfall">
-                </div>
-                <div class="form-group">
-                    <label id="frm_l_dir">Director / Prompt Engineer</label>
-                    <input type="text" required placeholder="Creator Name">
-                </div>
-                
-                <div class="form-group">
-                    <label id="frm_l_cat">Category</label>
-                    <select required>
-                        <option value="gen">Generative Cinema (40%-70% AI)</option>
-                        <option value="int">Interactive Narrative</option>
-                        <option value="pro">Procedural / Emergent</option>
-                        <option value="syn">Synthetic Performance</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label id="frm_l_ai">AI Participation (%)</label>
-                    <input type="number" min="40" max="100" required placeholder="e.g. 75">
-                </div>
-
-                <div class="form-group full">
-                    <label id="frm_l_tools">Primary AI Tools Used</label>
-                    <input type="text" required placeholder="e.g. Midjourney v6, Runway Gen-2, ElevenLabs">
-                </div>
-
-                <div class="form-group full">
-                    <label id="frm_l_synopsis">Logline / Synopsis</label>
-                    <textarea required placeholder="Brief description of the narrative..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label id="frm_l_vid">Video File Upload</label>
-                    <div class="file-upload">
-                        <i class="fa-solid fa-file-video"></i>
-                        <div id="frm_up_vid">Select MP4/MOV (Max 5GB)</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label id="frm_l_pos">Poster Upload</label>
-                    <div class="file-upload">
-                        <i class="fa-solid fa-image"></i>
-                        <div id="frm_up_pos">Select JPG/PNG (Max 20MB)</div>
-                    </div>
-                </div>
-
-                <div class="form-group full">
-                    <button type="submit" class="btn-submit-final" id="frm_btn_sub">UPLOAD TO REGISTRY</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="premiere-mode">
-        <div class="premiere-header">HKAIIFF WORLD PREMIERE</div>
-        <div class="premiere-timer">00:<span id="p-sec">59</span></div>
-        <video class="premiere-video-bg" autoplay loop muted playsinline>
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-lines-loop-27354-large.mp4" type="video/mp4">
-        </video>
-        <div class="premiere-overlay-text">
-            <h1 id="txt-premiere-title">GENERATED PREMIERE</h1>
-            <p id="premiere-credits">Co-created by Global Nodes & HKAIIFF AI</p>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     <script>
-        // 1. Real-time Clock
-        function updateRealTime() {
-            const now = new Date();
-            document.getElementById('current-time').innerText = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
-        }
-        setInterval(updateRealTime, 1000);
-        updateRealTime();
-
-        // 2. The Deterministic 10-Minute Engine
-        let engineState = 'COLLECT'; 
-        let timeLeft = 9 * 60 * 1000; // Start at exactly 9:00.00
-        let lastTimestamp = performance.now();
-
-        const elMin = document.getElementById('min');
-        const elSec = document.getElementById('sec');
-        const elMs = document.getElementById('ms');
-        const elPSec = document.getElementById('p-sec'); 
-        
-        const phaseText = document.getElementById('phase-text');
-        const premiereMode = document.getElementById('premiere-mode');
-        const mainTerminal = document.getElementById('main-terminal');
-        const currentLang = () => document.getElementById('lang-switch').value;
-
-        let recentInjectUser = null;
-
-        function updateEngine(timestamp) {
-            const delta = timestamp - lastTimestamp;
-            lastTimestamp = timestamp;
-            timeLeft -= delta;
-
-            if (timeLeft <= 0) {
-                if (engineState === 'COLLECT') {
-                    engineState = 'PREMIERE';
-                    timeLeft = 1 * 60 * 1000; 
-                    
-                    mainTerminal.style.display = 'none';
-                    premiereMode.classList.add('active');
-                    closeModal('modal-submission');
-                    
-                    const prefix = dict[currentLang()]["premiere_sub"];
-                    document.getElementById('premiere-credits').innerText = recentInjectUser ? `${prefix} @${recentInjectUser}` : dict[currentLang()]["premiere_def"];
-                    
-                } else {
-                    engineState = 'COLLECT';
-                    timeLeft = 9 * 60 * 1000; 
-                    
-                    premiereMode.classList.remove('active');
-                    mainTerminal.style.display = 'flex';
-                    addToArchive(); // Add generation to archive
-                    recentInjectUser = null;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { heavy: ['"Oswald"', 'sans-serif'], mono: ['"Space Mono"', 'monospace'], zh: ['"Noto Sans TC"', 'sans-serif'] },
+                    colors: { void: '#050505', signal: '#CCFF00', honey: '#FFC107', danger: '#FF3333', aif: '#00E599', glass: 'rgba(10, 10, 10, 0.85)' }
                 }
             }
-
-            if (engineState === 'COLLECT') {
-                elMin.innerText = Math.floor(timeLeft / 60000).toString().padStart(2, '0');
-                elSec.innerText = Math.floor((timeLeft % 60000) / 1000).toString().padStart(2, '0');
-                elMs.innerText = Math.floor((timeLeft % 1000) / 10).toString().padStart(2, '0');
-                phaseText.innerText = dict[currentLang()]["phase_collect"];
-            } else {
-                elPSec.innerText = Math.floor(timeLeft / 1000).toString().padStart(2, '0');
-            }
-            requestAnimationFrame(updateEngine);
         }
-        requestAnimationFrame(updateEngine);
+    </script>
 
-        // Skip to 3 seconds before Premiere
-        function skipToPremiere() {
-            if (engineState === 'COLLECT') timeLeft = 3000; 
-        }
+    <style>
+        /* 基礎重置與隱藏滾動條 */
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #FFF; overflow: hidden; font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+        body[data-lang="ar"] { direction: rtl; } body[data-lang="ar"] .ltr-force { direction: ltr; }
 
-        // 3. Right Side Data Feed Simulator
-        const dataFeed = document.getElementById('data-feed');
-        const dummyPrompts = ["Cybernetic love story in neon city.", "Abstract visual poem about quantum physics.", "Procedural horror in a spaceship.", "AI generated documentary about nature.", "Retro anime aesthetic action sequence."];
+        /* 視圖切換系統 */
+        .view-container { position: absolute; inset: 0; width: 100%; height: 100%; display: none; opacity: 0; transition: opacity 0.3s ease; z-index: 1; padding-bottom: 80px; background: #050505; overflow-y: auto; overflow-x: hidden; }
+        .view-container.active { display: block; opacity: 1; z-index: 2; }
+
+        /* Feed 流 (TikTok 樣式) */
+        #view-feed { padding-bottom: 0; background: #000; }
+        #feed-scroll { height: 100%; width: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+        .feed-item { height: 100%; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; position: relative; overflow: hidden; background: #000; }
+        .bg-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.75; z-index: 0; transition: transform 0.3s; }
         
-        function addFeedLine(user, prompt) {
-            const line = document.createElement('div');
-            line.className = 'feed-line';
-            line.innerHTML = `[<span class="user">@${user}</span>] <span class="act">INJECTED:</span> <span class="prompt">"${prompt}"</span>`;
-            dataFeed.appendChild(line);
-            if(dataFeed.children.length > 8) dataFeed.removeChild(dataFeed.firstChild);
-        }
+        /* 交互層面 */
+        .ui-layer { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 90px; pointer-events: none;}
+        .ui-content { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 16px 20px 16px; pointer-events: none;}
+        .ui-left { flex: 1; padding-right: 40px; pointer-events: auto; }
+        .ui-right { width: 60px; display: flex; flex-direction: column; gap: 24px; items-center; pointer-events: auto; z-index: 20; position: relative;}
 
-        setInterval(() => {
-            if(engineState === 'COLLECT' && Math.random() > 0.4) {
-                const u = "Node_" + Math.floor(Math.random()*9999);
-                const p = dummyPrompts[Math.floor(Math.random() * dummyPrompts.length)];
-                addFeedLine(u, p);
-            }
-        }, 2500);
-
-        // 4. User Injection Logic
-        function injectPrompt() {
-            const input = document.getElementById('prompt-input');
-            if(!input.value.trim()) return;
-            
-            recentInjectUser = "User_" + Math.floor(Math.random()*999);
-            addFeedLine(recentInjectUser, input.value.trim()); // Show in feed immediately
-            
-            const btn = document.getElementById('btn-synthesize');
-            const originalText = btn.innerText;
-            btn.innerText = dict[currentLang()]["btn_injected"];
-            btn.style.background = "var(--main-red)";
-            btn.style.color = "#fff";
-            
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.style.background = "var(--text-main)";
-                btn.style.color = "var(--bg-color)";
-                input.value = '';
-            }, 1500);
-        }
-        document.getElementById('prompt-input').addEventListener('keypress', e => { if (e.key === 'Enter') injectPrompt(); });
-
-        // 5. Archive Swiper
-        const archiveWrapper = document.getElementById('archive-wrapper');
-        const imgPool = ['https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=500&q=80','https://images.unsplash.com/photo-1634224143538-ce0221abf732?auto=format&fit=crop&w=500&q=80','https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80','https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=500&q=80','https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80'];
-        let genCount = 100;
+        /* 平行宇宙 (用戶互動作本) 雙層滑動架構 */
+        .layer-original { position: absolute; inset: 0; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s; z-index: 1; }
+        .layer-user { position: absolute; inset: 0; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 5; background: #050505; pointer-events: none; border-left: 2px solid #CCFF00; }
+        .show-user .layer-original { transform: translateX(-40%); filter: brightness(0.2) grayscale(0.8); pointer-events: none; }
+        .show-user .layer-user { transform: translateX(0); pointer-events: auto; }
         
-        function addToArchive() {
-            genCount++;
-            const slide = document.createElement('div');
-            slide.className = 'swiper-slide';
-            const userLabel = recentInjectUser ? `@${recentInjectUser}` : `SYS.GEN_${genCount}`;
-            const imgUrl = imgPool[genCount % imgPool.length];
-            slide.innerHTML = `<div class="vid-card"><img src="${imgUrl}"><div class="vid-info"><div class="vid-time">JUST NOW</div><div class="vid-title">Co-Created Vision</div><div class="vid-author">By ${userLabel}</div></div></div>`;
-            archiveWrapper.prepend(slide);
-            archiveSwiper.update();
-            archiveSwiper.slideTo(0);
-        }
+        /* 用戶版本的視覺區分邊框 */
+        .user-frame { position: absolute; inset: 4px; border: 1px solid rgba(204,255,0,0.3); border-radius: 12px; pointer-events: none; z-index: 10; }
+        .user-frame::before { content: ''; position: absolute; top: -1px; left: 20px; width: 60px; height: 2px; background: #CCFF00; }
+        .user-frame::after { content: ''; position: absolute; bottom: -1px; right: 20px; width: 60px; height: 2px; background: #CCFF00; }
 
-        const archiveSwiper = new Swiper('.archive-swiper', {
-            slidesPerView: 'auto', spaceBetween: 20, freeMode: true, grabCursor: true, mousewheel: true,
-        });
+        /* 滑動提示動畫 */
+        @keyframes pulse-x { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(-5px); opacity: 1; } }
+        .animate-swipe-left { animation: pulse-x 1.5s infinite; }
 
-        // 6. Modal Functions
-        function openModal(id) { document.getElementById(id).classList.add('active'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        /* 互動按鈕彈出菜單 (橫向滑動) */
+        .interact-menu { position: absolute; right: 60px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border: 1px solid #333; border-radius: 30px; padding: 6px; width: 0; opacity: 0; overflow: hidden; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: right center; z-index: 30; }
+        .interact-menu.expanded { width: 260px; opacity: 1; pointer-events: auto; box-shadow: 0 0 20px rgba(204,255,0,0.15); overflow-x: auto; }
+        .interact-btn-sm { width: 40px; height: 40px; border-radius: 50%; background: #111; border: 1px solid #444; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: all 0.2s; cursor: pointer; }
+        .interact-btn-sm:active { background: #CCFF00; color: #000; border-color: #CCFF00; transform: scale(0.9); }
 
-        // 7. Multi-Language Dictionary
-        const dict = {
-            "en": {
-                "txt-sys-time": "SYS TIME:", "txt-fest-date": "FEST: JUL 15-25, 2026",
-                "txt-btn-submit": "SUBMIT FILM",
-                "phase_collect": "GLOBAL AI CO-CREATION IN PROGRESS...",
-                "input_ph": "Inject your vision / emotion...",
-                "btn-synthesize": "Synthesize", "btn_injected": "INJECTED",
-                "txt-auth-soc": "Social Media Auth", "txt-desc-soc": "Link social profile to extract your aesthetic & emotional vectors into the film's style.",
-                "txt-auth-geo": "GEO Location Auth", "txt-desc-geo": "Enable location to seamlessly embed regional cultural aesthetics into the narrative.",
-                "txt-archive-title": "1-MIN SYNTHESIZED ARCHIVE",
-                "txt-premiere-title": "GENERATED PREMIERE",
-                "premiere_sub": "Vision prompted by", "premiere_def": "Co-created by Global Nodes & AI",
-                // Form
-                "frm_title": "HKAIIFF 2026 SUBMISSION", "frm_sub": "Upload your AI-native cinematic works to the core registry.",
-                "frm_l_name": "Film Title", "frm_l_dir": "Director / Prompt Engineer", "frm_l_cat": "Category", "frm_l_ai": "AI Participation (%)",
-                "frm_l_tools": "Primary AI Tools Used", "frm_l_synopsis": "Logline / Synopsis", "frm_l_vid": "Video File Upload", "frm_l_pos": "Poster Upload",
-                "frm_up_vid": "Select MP4/MOV (Max 5GB)", "frm_up_pos": "Select JPG/PNG (Max 20MB)", "frm_btn_sub": "UPLOAD TO REGISTRY"
+        /* 按鈕樣式 */
+        .brutal-btn { font-family: 'Oswald', sans-serif; text-transform: uppercase; font-weight: bold; padding: 14px; display: flex; align-items: center; justify-content: center; background: #CCFF00; color: #000; transition: all 0.2s; cursor: pointer; border-radius: 8px;}
+        .brutal-btn:active { transform: scale(0.98); }
+        .brutal-btn.secondary { background: #111; color: #FFF; border: 1px solid #444; }
+        .brutal-btn.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+    </style>
+</head>
+<body data-lang="en">
+
+    <div id="top-bar" class="fixed top-0 left-0 w-full z-30 px-4 pt-12 flex justify-between items-start pointer-events-none transition-opacity duration-300">
+        <div class="pointer-events-auto flex flex-col items-start cursor-pointer group">
+            <div class="font-heavy text-4xl tracking-tighter text-white flex items-center gap-2 drop-shadow-md">HKAIIFF</div>
+            <div class="text-[8px] font-mono text-signal tracking-widest uppercase drop-shadow-md">Hong Kong AI International Film Festival</div>
+        </div>
+        
+        <div class="pointer-events-auto cursor-pointer" onclick="app.openModal('langModal')">
+            <div class="w-9 h-9 rounded-full bg-black/60 backdrop-blur border border-[#444] flex items-center justify-center text-gray-300 hover:text-signal hover:border-signal transition-all shadow-lg">
+                <i class="fas fa-globe text-sm"></i>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-feed" class="view-container active">
+        <div id="feed-scroll">
+            </div>
+    </div>
+
+    <div id="view-discover" class="view-container bg-void px-4 pt-28">
+        <h1 class="font-heavy text-4xl mb-2 text-white" data-i18n="nav_discover">DISCOVER</h1>
+        <p class="font-mono text-xs text-gray-400 mb-6 leading-relaxed" data-i18n="lbs_desc">Exclusive screenings controlled by Location-Based Services (LBS) and conditional smart contracts.</p>
+        <div id="lbs-list" class="space-y-4">
+            </div>
+    </div>
+
+    <div id="view-upload" class="view-container bg-void px-4 pt-28 pb-32">
+        <h1 class="font-heavy text-3xl mb-6 border-b border-[#333] pb-4 text-white flex items-center gap-3">
+            <i class="fas fa-cloud-upload-alt text-signal"></i> <span data-i18n="submit_film">SUBMIT FILM</span>
+        </h1>
+        
+        <div id="upload-step-1" class="animate-fade-in">
+            <div class="bg-signal/10 border border-signal/30 p-3 rounded-lg mb-6">
+                <p class="text-[10px] font-mono text-signal leading-relaxed" data-i18n="up_notice">HKAIIFF 2026 runs July 15-21. Ensure AI generation exceeds 51% of total production effort.</p>
+            </div>
+            <div class="space-y-4 mb-8">
+                <div class="font-mono text-[10px] text-gray-500 mb-1" data-i18n="form_title">PROJECT TITLE</div>
+                <input type="text" id="upTitle" class="w-full bg-[#111] border border-[#333] p-4 rounded-lg text-sm text-white focus:border-signal outline-none mb-4" placeholder="e.g. THE LAST TURING">
+                
+                <div class="font-mono text-[10px] text-gray-500 mb-1" data-i18n="form_desc">DETAILED PROJECT DESCRIPTION</div>
+                <textarea class="w-full bg-[#111] border border-[#333] p-4 rounded-lg text-sm text-white focus:border-signal outline-none h-32" placeholder="Full Synopsis, Background, Cast, and Production methods..."></textarea>
+                
+                <div class="font-mono text-[10px] text-gray-500 mb-1 mt-4" data-i18n="form_assets">ASSETS UPLOAD</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="border border-dashed border-[#444] bg-[#111] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-400 transition-colors h-24" onclick="this.innerHTML='<i class=\\\'fas fa-check-circle text-signal text-2xl mb-1\\\'></i><span class=\\\'text-[9px] font-mono text-signal\\\'>UPLOADED</span>'">
+                        <i class="fas fa-image mb-2 text-xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_poster">POSTER</span>
+                    </div>
+                    <div class="border border-dashed border-[#444] bg-[#111] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-400 transition-colors h-24" onclick="this.innerHTML='<i class=\\\'fas fa-check-circle text-signal text-2xl mb-1\\\'></i><span class=\\\'text-[9px] font-mono text-signal\\\'>UPLOADED</span>'">
+                        <i class="fas fa-video mb-2 text-xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_film">FULL FILM</span>
+                    </div>
+                    <div class="border border-dashed border-[#444] bg-[#111] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-400 transition-colors h-24" onclick="this.innerHTML='<i class=\\\'fas fa-check-circle text-signal text-2xl mb-1\\\'></i><span class=\\\'text-[9px] font-mono text-signal\\\'>UPLOADED</span>'">
+                        <i class="fas fa-file-contract mb-2 text-xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_rights">RIGHTS</span>
+                    </div>
+                </div>
+            </div>
+            <button class="brutal-btn w-full text-lg" onclick="app.goToPayment()" data-i18n="btn_next">PROCEED TO PAYMENT <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+
+        <div id="upload-step-2" class="hidden animate-fade-in">
+            <button class="text-gray-500 hover:text-white mb-6 font-mono text-xs flex items-center gap-2" onclick="app.backToForm()"><i class="fas fa-arrow-left"></i> <span data-i18n="btn_back">BACK</span></button>
+            <div class="bg-[#111] border border-[#333] p-5 rounded-xl mb-6 shadow-lg relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-signal/10 rounded-bl-full"></div>
+                <div class="text-[10px] font-mono text-gray-400 mb-4" data-i18n="fee_desc">FESTIVAL SUBMISSION FEE</div>
+                <div class="grid grid-cols-1 gap-4 relative z-10">
+                    <button onclick="app.processPayment('fiat')" class="brutal-btn secondary flex items-center justify-between px-6 h-20 hover:border-white transition-all">
+                        <div class="text-left"><span class="font-mono text-[10px] text-gray-400 block" data-i18n="pay_fiat">FIAT PAYMENT</span><span class="font-bold text-2xl">$500</span></div>
+                        <i class="fab fa-cc-visa text-3xl opacity-50"></i>
+                    </button>
+                    <button onclick="app.processPayment('crypto')" class="brutal-btn bg-aif text-black flex items-center justify-between px-6 h-20 shadow-[0_4px_15px_rgba(0,229,153,0.3)]">
+                        <div class="text-left"><span class="font-mono text-[10px] opacity-80 block" data-i18n="pay_crypto">ON-CHAIN (50% OFF)</span><span class="font-bold text-2xl">2500 AIF</span></div>
+                        <i class="fa-brands fa-solana text-3xl opacity-80"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="upload-step-3" class="hidden animate-fade-in text-center pt-8">
+            <div class="w-full aspect-[3/4] bg-gradient-to-br from-[#111] to-black border-2 border-signal p-6 rounded-xl relative shadow-[0_0_30px_rgba(204,255,0,0.2)] mb-8 flex flex-col items-center justify-center">
+                <div class="absolute inset-2 border border-signal/30 rounded-lg pointer-events-none"></div>
+                <i class="fas fa-award text-6xl text-signal mb-4"></i>
+                <h3 class="font-heavy text-2xl text-white mb-1" data-i18n="cert_title">OFFICIAL SELECTION</h3>
+                <p class="font-mono text-xs text-gray-400 mb-6">HKAIIFF 2026</p>
+                <div class="w-full bg-black/50 p-4 rounded border border-[#333] font-mono text-left">
+                    <div class="text-[9px] text-gray-500 mb-1">PROJECT</div>
+                    <div class="text-sm text-white font-bold mb-3 truncate" id="certProjectName">...</div>
+                    <div class="text-[9px] text-gray-500 mb-1">TX HASH</div>
+                    <div class="text-[10px] text-signal truncate" id="certHash">...</div>
+                </div>
+            </div>
+            <button class="brutal-btn w-full text-lg" onclick="app.nav('me')" data-i18n="btn_check_status">CHECK STATUS IN ME <i class="fas fa-user ml-2"></i></button>
+        </div>
+    </div>
+
+    <div id="view-messages" class="view-container bg-void px-4 pt-28">
+        <h1 class="font-heavy text-4xl mb-6 border-b border-[#333] pb-4 text-white" data-i18n="nav_msg">SYSTEM MESSAGES</h1>
+        <div class="space-y-3" id="msg-list">
+            <div class="bg-[#111] p-5 rounded-lg border border-[#333] flex gap-4 hover:border-signal transition-colors cursor-pointer" onclick="app.toast('Universe Rendered Successfully')">
+                <div class="w-10 h-10 rounded-full bg-signal/20 border border-signal text-signal flex items-center justify-center flex-shrink-0"><i class="fas fa-video"></i></div>
+                <div>
+                    <div class="text-sm font-bold text-white mb-1">Interactive Film Ready</div>
+                    <div class="text-[11px] text-gray-400 leading-snug">The parallel universe based on your bio-data has been rendered. Swipe left on feed to view.</div>
+                    <div class="text-[9px] text-gray-500 font-mono mt-2">10 MINS AGO</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-me" class="view-container bg-void px-4 pt-28 pb-32">
+        <h1 class="font-heavy text-4xl mb-6 text-white" data-i18n="nav_me">ME</h1>
+        <div class="flex items-center gap-5 mb-8 bg-[#111] p-5 rounded-xl border border-[#333]">
+            <div class="relative">
+                <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Janus" class="w-20 h-20 bg-black rounded-full border-2 border-signal p-1">
+                <div class="absolute bottom-0 right-0 w-6 h-6 bg-signal rounded-full border-2 border-black flex items-center justify-center text-[10px] text-black"><i class="fas fa-check"></i></div>
+            </div>
+            <div class="flex-1">
+                <h2 class="font-heavy text-2xl text-white mb-1">Janus J. Jiao</h2>
+                <div class="text-[9px] text-gray-400 font-mono mb-2">Chairman, HKAIIFF</div>
+                <div class="text-[10px] font-mono text-gray-400 bg-black border border-[#222] px-2 py-1 rounded inline-flex items-center gap-2 ltr-force">
+                    <i class="fas fa-wallet text-signal"></i> 0x8F3...A21C
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 mb-8">
+            <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg">
+                <div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2" data-i18n="aif_balance"><i class="fas fa-coins"></i> AIF BALANCE</div>
+                <div class="text-3xl font-heavy text-white ltr-force flex items-baseline gap-1">
+                    <span class="text-aif text-lg">₳</span>14,500
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg">
+                <div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2" data-i18n="interacted_films"><i class="fas fa-film"></i> INTERACTED</div>
+                <div class="text-3xl font-heavy text-white">12</div>
+            </div>
+        </div>
+        
+        <h3 class="font-heavy text-xl mb-4 border-b border-[#333] pb-2 text-white" data-i18n="my_subs">MY SUBMISSIONS</h3>
+        <div class="space-y-3 mb-8" id="my-submissions-list">
+            <div class="text-center text-xs text-gray-500 font-mono py-6 border border-dashed border-[#333] rounded-lg">No submissions yet.</div>
+        </div>
+
+        <h3 class="font-heavy text-xl mb-4 border-b border-[#333] pb-2 text-white" data-i18n="history">INTERACTION HISTORY</h3>
+        <div class="space-y-3">
+            <div class="border border-[#222] bg-[#111] rounded-lg p-3 flex gap-4 items-center cursor-pointer hover:border-signal transition-colors">
+                <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=200" class="w-16 h-12 object-cover rounded">
+                <div class="flex-1">
+                    <div class="text-sm font-bold text-white">NEON DYNASTY (V2)</div>
+                    <div class="text-[10px] text-gray-500 font-mono mt-1">Rendered from: Bio Data</div>
+                </div>
+                <button class="text-signal"><i class="fas fa-play-circle text-2xl"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 left-0 w-full z-40 bg-black/95 backdrop-blur-xl border-t border-[#222] pb-safe pt-2 px-2 flex justify-between items-center h-[80px]">
+        <button class="nav-item active flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors" onclick="app.nav('feed', this)"><i class="fas fa-home text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_feed">FEED</span></button>
+        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors" onclick="app.nav('discover', this)"><i class="fas fa-compass text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_discover">DISCOVER</span></button>
+        <button class="flex flex-col items-center gap-1 w-1/5 relative -top-6 group" onclick="app.nav('upload', this); app.resetUploadFlow();">
+            <div class="w-14 h-14 bg-signal text-black rounded-2xl flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(204,255,0,0.3)] rotate-45 group-active:scale-95 transition-all border-2 border-black"><i class="fas fa-plus -rotate-45"></i></div>
+        </button>
+        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors" onclick="app.nav('messages', this)"><i class="fas fa-envelope text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_msg">MSG</span></button>
+        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors" onclick="app.nav('me', this)"><i class="fas fa-user text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_me">ME</span></button>
+    </div>
+
+    <div id="infoModal" class="fixed inset-0 z-[200] bg-[#050505] hidden flex flex-col transform translate-y-full transition-transform duration-300">
+        <div class="relative w-full h-64 flex-shrink-0 bg-black">
+            <img id="infoPoster" src="" class="w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
+            <button onclick="app.closeModal('infoModal')" class="absolute top-12 right-4 w-10 h-10 bg-black/50 backdrop-blur rounded-full text-white flex items-center justify-center border border-white/20"><i class="fas fa-times text-lg"></i></button>
+            <div class="absolute bottom-4 left-5">
+                <div class="tag bg-signal text-black text-[10px] font-bold px-2 py-0.5 inline-block mb-1 rounded-sm" id="infoCreator">STUDIO</div>
+                <h2 class="font-heavy text-3xl text-white leading-none shadow-black drop-shadow-md" id="infoTitle">TITLE</h2>
+            </div>
+        </div>
+        
+        <div class="p-5 overflow-y-auto flex-1 pb-24 space-y-8" id="infoContent">
+            <section>
+                <h3 class="font-heavy text-lg text-signal mb-2 border-l-4 border-signal pl-2" data-i18n="info_overview">OVERVIEW & SYNOPSIS</h3>
+                <p class="font-mono text-sm text-gray-300 leading-relaxed text-justify" id="infoSyn">Synopsis...</p>
+            </section>
+            
+            <section class="grid grid-cols-2 gap-4 border-y border-[#222] py-6">
+                <div><div class="text-[10px] text-gray-500 font-mono mb-1" data-i18n="info_cast">CORE CAST (DIGITAL)</div><div class="text-sm text-white font-bold" id="infoCast">...</div></div>
+                <div><div class="text-[10px] text-gray-500 font-mono mb-1" data-i18n="info_dir">CONDUCTOR & TEAM</div><div class="text-sm text-white font-bold" id="infoDir">...</div></div>
+                <div><div class="text-[10px] text-gray-500 font-mono mb-1" data-i18n="info_tech">TECH PROVIDERS</div><div class="text-sm text-honey font-bold" id="infoTech">...</div></div>
+                <div><div class="text-[10px] text-gray-500 font-mono mb-1" data-i18n="info_region">BROADCAST REGION</div><div class="text-sm text-white font-bold" id="infoRegion">...</div></div>
+            </section>
+
+            <section class="bg-[#111] border border-[#333] p-4 rounded-lg relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-1 h-full bg-danger"></div>
+                <h3 class="font-heavy text-lg text-white mb-2 flex items-center gap-2"><i class="fas fa-lock text-danger"></i> <span data-i18n="info_limits">PLAYBACK RESTRICTIONS</span></h3>
+                <ul class="text-xs font-mono text-gray-400 space-y-2 list-disc pl-4" id="infoLimits"></ul>
+            </section>
+        </div>
+    </div>
+
+    <div id="creatorModal" class="fixed inset-0 z-[200] bg-[#050505] hidden flex flex-col transform translate-y-full transition-transform duration-300 overflow-y-auto">
+        <div class="h-56 w-full bg-gradient-to-b from-gray-800 to-black relative overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=800" class="absolute inset-0 w-full h-full object-cover opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent"></div>
+            <button onclick="app.closeModal('creatorModal')" class="absolute top-12 right-4 bg-black/50 w-10 h-10 rounded-full flex items-center justify-center text-white backdrop-blur border border-white/20"><i class="fas fa-times text-lg"></i></button>
+        </div>
+        
+        <div class="px-6 -mt-16 relative z-10 pb-24">
+            <div class="flex justify-between items-end mb-4">
+                <img id="cAvt" src="" class="w-28 h-28 border-4 border-[#050505] rounded-full bg-black shadow-[0_0_20px_rgba(204,255,0,0.3)]">
+                <button class="brutal-btn py-2 px-6 text-xs shadow-lg" data-i18n="btn_follow"><i class="fas fa-plus mr-2"></i> FOLLOW</button>
+            </div>
+            
+            <h1 class="font-heavy text-4xl text-white mb-2 flex items-center gap-2">
+                <span id="cName">Name</span> <i class="fas fa-check-circle text-signal text-xl"></i>
+            </h1>
+            
+            <div class="flex flex-wrap gap-4 text-[11px] font-mono text-gray-400 mb-6 border-b border-[#222] pb-6">
+                <span id="cPop" class="flex items-center gap-1 text-orange-500"><i class="fas fa-fire text-sm"></i></span>
+                <span id="cWorks" class="flex items-center gap-1 text-gray-300"><i class="fas fa-film text-sm"></i></span>
+                <span id="cRoi" class="flex items-center gap-1 text-signal font-bold"><i class="fas fa-chart-line text-sm"></i></span>
+            </div>
+
+            <div class="space-y-8">
+                <section>
+                    <h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-signal pl-3" data-i18n="about">ABOUT STUDIO</h3>
+                    <p class="text-sm text-gray-300 font-mono leading-relaxed text-justify" id="cBio">Bio...</p>
+                </section>
+                <section>
+                    <h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-white pl-3" data-i18n="tech_stack">TECH STACK</h3>
+                    <div class="flex flex-wrap gap-2" id="cTech"></div>
+                </section>
+                <section>
+                    <h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-gray-500 pl-3" data-i18n="team">CORE TEAM</h3>
+                    <div class="space-y-3" id="cTeam"></div>
+                </section>
+                <section>
+                    <h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-aif pl-3" data-i18n="portfolio">TRACK RECORD</h3>
+                    <div class="space-y-3" id="cPortfolio"></div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div id="shareModal" class="fixed inset-0 z-[250] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300" onclick="app.closeModal('shareModal')">
+        <div class="w-full bg-[#111] p-8 pb-12 rounded-t-3xl transform translate-y-full transition-transform duration-300 border-t border-[#333]" onclick="event.stopPropagation()" id="shareContent">
+            <h3 class="font-heavy text-2xl mb-6 text-center text-white" data-i18n="share">FORWARD & SHARE</h3>
+            <div class="grid grid-cols-4 gap-4 text-center">
+                <div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fab fa-twitter"></i></div><span class="text-[10px] font-mono text-gray-400">X</span></div>
+                <div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fab fa-instagram"></i></div><span class="text-[10px] font-mono text-gray-400">IG</span></div>
+                <div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-white text-black group-hover:bg-signal transition-colors rounded-full flex items-center justify-center text-2xl"><i class="fas fa-download"></i></div><span class="text-[10px] font-mono text-gray-400" data-i18n="save_poster">POSTER</span></div>
+                <div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fas fa-link"></i></div><span class="text-[10px] font-mono text-gray-400">LINK</span></div>
+            </div>
+            <button class="w-full mt-8 py-4 bg-[#222] text-white font-heavy text-lg rounded-xl" onclick="app.closeModal('shareModal')" data-i18n="btn_cancel">CANCEL</button>
+        </div>
+    </div>
+
+    <div id="sysModal" class="fixed inset-0 z-[300] bg-black/90 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300 px-6">
+        <div class="bg-[#111] border border-[#333] w-full max-w-sm rounded-xl p-6 text-center transform scale-95 transition-transform duration-300" id="sysContent">
+            <div id="sysIcon" class="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 bg-black border border-[#333]"></div>
+            <h3 class="font-heavy text-2xl text-white mb-2" id="sysTitle">Title</h3>
+            <p class="font-mono text-xs text-gray-400 mb-8 leading-relaxed" id="sysDesc">Desc</p>
+            <button class="brutal-btn w-full" onclick="app.closeModal('sysModal')" data-i18n="btn_ack">ACKNOWLEDGE</button>
+        </div>
+    </div>
+
+    <div id="langModal" class="fixed inset-0 z-[300] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300">
+        <div class="w-full bg-[#0a0a0a] border-t border-[#333] rounded-t-3xl transform translate-y-full transition-transform duration-300 pb-safe" id="langContent">
+            <div class="p-6 pb-2 border-b border-[#222] flex justify-between items-center">
+                <h3 class="font-heavy text-2xl text-white" data-i18n="sel_lang">SELECT LANGUAGE</h3>
+                <button onclick="app.closeModal('langModal')" class="text-gray-500 hover:text-white"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto" id="langGrid"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 shadow-[0_5px_30px_rgba(204,255,0,0.3)] font-mono text-xs font-bold z-[400] transform -translate-y-40 transition-transform duration-300 rounded-full whitespace-nowrap flex items-center gap-2">
+        <i class="fas fa-terminal text-signal bg-black rounded-full w-5 h-5 flex items-center justify-center"></i> <span id="toastMsg">READY</span>
+    </div>
+
+    <script>
+        const I18N = {
+            en: {
+                nav_feed:"FEED", nav_discover:"DISCOVER", nav_msg:"MSG", nav_me:"ME", 
+                interact:"INTERACT", share:"FORWARD", swipe_hint:"USER VER", 
+                interactive_ready:"YOUR PARALLEL UNIVERSE", interactive_desc:"Rendered based on your specific hash.", mint_to_chain:"MINT TO CHAIN", 
+                lbs_desc:"Exclusive screenings controlled by Location-Based Services (LBS).", 
+                submit_film:"SUBMIT FILM", up_notice:"HKAIIFF 2026 runs July 15-21. Ensure AI generation > 51%.", form_title:"PROJECT TITLE", form_desc:"DETAILED PROJECT DESCRIPTION", form_assets:"ASSETS UPLOAD", up_poster:"POSTER", up_film:"FULL FILM", up_rights:"RIGHTS", btn_next:"PROCEED TO PAYMENT", btn_back:"BACK", fee_desc:"FESTIVAL SUBMISSION FEE", pay_fiat:"FIAT PAYMENT", pay_crypto:"ON-CHAIN (50% OFF)", cert_title:"OFFICIAL SELECTION", btn_check_status:"CHECK STATUS IN ME",
+                aif_balance:"AIF BALANCE", interacted_films:"INTERACTED", my_subs:"MY SUBMISSIONS", history:"INTERACTION HISTORY", 
+                info_overview:"OVERVIEW & SYNOPSIS", info_cast:"CORE CAST (DIGITAL)", info_dir:"CONDUCTOR & TEAM", info_tech:"TECH PROVIDERS", info_region:"BROADCAST REGION", info_limits:"PLAYBACK RESTRICTIONS", 
+                about:"ABOUT STUDIO", tech_stack:"TECH STACK", team:"CORE TEAM", portfolio:"TRACK RECORD", btn_follow:"FOLLOW", save_poster:"POSTER", btn_cancel:"CANCEL", btn_ack:"ACKNOWLEDGE", sel_lang:"SELECT LANGUAGE"
             },
-            "zh-TW": {
-                "txt-sys-time": "系統時間:", "txt-fest-date": "電影節: 2026年7月15-25日",
-                "txt-btn-submit": "提交影片",
-                "phase_collect": "全球 AI 共創融合中...",
-                "input_ph": "注入您的願景 / 情感...",
-                "btn-synthesize": "開始合成", "btn_injected": "已注入",
-                "txt-auth-soc": "社媒授權", "txt-desc-soc": "授權社媒數據，提取您的獨特美學與情緒特徵注入影片風格中。",
-                "txt-auth-geo": "地理位置授權", "txt-desc-geo": "開啟地理位置，將地域文化印記無縫融入生成的影像敘事中。",
-                "txt-archive-title": "1分鐘已生成影像檔案",
-                "txt-premiere-title": "實時共創首映",
-                "premiere_sub": "願景提供", "premiere_def": "全球節點與 AI 共同創作",
-                "frm_title": "HKAIIFF 2026 官方徵片", "frm_sub": "將您的AI原生影像作品上傳至核心庫。",
-                "frm_l_name": "電影片名", "frm_l_dir": "導演 / 提示詞工程師", "frm_l_cat": "參賽類別", "frm_l_ai": "AI 參與度 (%)",
-                "frm_l_tools": "主要使用的 AI 工具", "frm_l_synopsis": "故事大綱 / 簡介", "frm_l_vid": "正片視頻上傳", "frm_l_pos": "電影海報上傳",
-                "frm_up_vid": "選擇 MP4/MOV (最大 5GB)", "frm_up_pos": "選擇 JPG/PNG (最大 20MB)", "frm_btn_sub": "提交作品至核心庫"
+            zh: {
+                nav_feed:"首映流", nav_discover:"發現", nav_msg:"消息", nav_me:"我的", 
+                interact:"互動", share:"轉發", swipe_hint:"用戶版本", 
+                interactive_ready:"專屬平行宇宙", interactive_desc:"基於您提交的獨有哈希值渲染生成。", mint_to_chain:"鑄造上鏈", 
+                lbs_desc:"基於 LBS 服務與智能合約限制的獨家展映電影。", 
+                submit_film:"提交參展影片", up_notice:"HKAIIFF 2026 將於7月15日至21日舉行。請確保 AI 生成貢獻率超過 51%。", form_title:"影片項目名稱", form_desc:"項目詳細介紹", form_assets:"資料與資產上傳", up_poster:"海報/預告片", up_film:"完整正片", up_rights:"權利證明", btn_next:"前往支付流程", btn_back:"返回修改", fee_desc:"參賽展映費用", pay_fiat:"法幣通道", pay_crypto:"鏈上支付 (享5折優惠)", cert_title:"官方入圍證書", btn_check_status:"前往 ME 查詢狀態",
+                aif_balance:"AIF 餘額", interacted_films:"已互動影片", my_subs:"我的參展項目", history:"互動歷史記錄", 
+                info_overview:"概要與劇本", info_cast:"核心演員 (數位)", info_dir:"指揮家與團隊", info_tech:"技術供應商", info_region:"發行地區", info_limits:"播放限制條件", 
+                about:"製作方簡介", tech_stack:"技術架構", team:"核心團隊", portfolio:"過往經歷", btn_follow:"關注", save_poster:"保存海報", btn_cancel:"取消", btn_ack:"我知道了", sel_lang:"選擇語言"
             },
-            "ja": {
-                "txt-sys-time": "システム時刻:", "txt-fest-date": "映画祭: 2026年7月15-25日",
-                "txt-btn-submit": "作品を提出",
-                "phase_collect": "グローバルAI共創が進行中...",
-                "input_ph": "ビジョン / 感情を注入する...",
-                "btn-synthesize": "合成する", "btn_injected": "注入完了",
-                "txt-auth-soc": "SNS認証", "txt-desc-soc": "SNSを連携し、独自の美学と感情ベクトルを映画のスタイルに抽出します。",
-                "txt-auth-geo": "位置情報認証", "txt-desc-geo": "位置情報を有効にして、地域文化の美学を物語にシームレスに組み込みます。",
-                "txt-archive-title": "1分間 生成済みアーカイブ",
-                "txt-premiere-title": "生成プレミア",
-                "premiere_sub": "ビジョン提供", "premiere_def": "グローバルノードとAIの共作",
-                "frm_title": "HKAIIFF 2026 応募フォーム", "frm_sub": "AIネイティブ映画作品をコアレジストリにアップロードします。",
-                "frm_l_name": "作品名", "frm_l_dir": "監督 / プロンプトエンジニア", "frm_l_cat": "カテゴリー", "frm_l_ai": "AI関与度 (%)",
-                "frm_l_tools": "主に使用したAIツール", "frm_l_synopsis": "あらすじ", "frm_l_vid": "動画のアップロード", "frm_l_pos": "ポスターのアップロード",
-                "frm_up_vid": "MP4/MOVを選択 (最大5GB)", "frm_up_pos": "JPG/PNGを選択 (最大20MB)", "frm_btn_sub": "レジストリにアップロード"
+            ja: { nav_feed:"フィード", nav_discover:"発見", nav_msg:"メッセージ", nav_me:"私", interact:"交流", share:"転送", submit_film:"提出", btn_next:"次へ", pay_fiat:"法定通貨", pay_crypto:"暗号資産", my_subs:"私の提出物" },
+            ko: { nav_feed:"피드", nav_discover:"발견", nav_msg:"메시지", nav_me:"나", interact:"상호 작용", share:"전달", submit_film:"제출", btn_next:"다음", pay_fiat:"법정 화폐", pay_crypto:"암호화폐", my_subs:"내 제출물" },
+            th: { nav_feed:"ฟีด", nav_discover:"ค้นพบ", nav_msg:"ข้อความ", nav_me:"ฉัน", interact:"โต้ตอบ", share:"ส่งต่อ", submit_film:"ส่ง", btn_next:"ต่อไป" },
+            fr: { nav_feed:"FLUX", nav_discover:"DÉCOUVRIR", nav_msg:"MSG", nav_me:"MOI", interact:"INTERAGIR", share:"TRANSFÉRER", submit_film:"SOUMETTRE", btn_next:"SUIVANT" },
+            de: { nav_feed:"FEED", nav_discover:"ENTDECKEN", nav_msg:"NACHRICHTEN", nav_me:"ICH", interact:"INTERAGIEREN", share:"WEITERLEITEN", submit_film:"EINREICHEN", btn_next:"WEITER" },
+            es: { nav_feed:"INICIO", nav_discover:"DESCUBRIR", nav_msg:"MENSAJES", nav_me:"YO", interact:"INTERACTUAR", share:"REENVIAR", submit_film:"ENVIAR", btn_next:"SIGUIENTE" },
+            ar: { nav_feed:"تغذية", nav_discover:"اكتشف", nav_msg:"رسائل", nav_me:"أنا", interact:"تفاعل", share:"إرسال", submit_film:"إرسال", btn_next:"التالي" }
+        };
+
+        const LANGS = [
+            { code: 'en', name: 'English', sub: 'EN' }, { code: 'zh', name: '繁體中文', sub: 'ZH' },
+            { code: 'ja', name: '日本語', sub: 'JA' }, { code: 'ko', name: '한국어', sub: 'KO' },
+            { code: 'th', name: 'ไทย', sub: 'TH' }, { code: 'fr', name: 'Français', sub: 'FR' },
+            { code: 'de', name: 'Deutsch', sub: 'DE' }, { code: 'es', name: 'Español', sub: 'ES' },
+            { code: 'ar', name: 'العربية', sub: 'AR' }
+        ];
+
+        // --- 核心數據 ---
+        const FILMS = [
+            { 
+                id: 1, title: "THE LAST TURING", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800",
+                synopsis: "In 2084, an AI ethicist is murdered. His digital assistant 'Ava' claims she possesses a soul. A non-linear interrogation begins.",
+                hasInteract: true, timeLeft: 540, hasUserVersion: false,
+                info: { cast: "Ava (Gen-Model 04), Det. Li (CGI)", dir: "Conductor: Neo Li", tech: "Sora v2 API, ComfyUI", region: "Global (Web3)", limits: ["Requires Web3 Wallet authentication.", "Interaction window closes at midnight."] }
             },
-            "ko": {
-                "txt-sys-time": "시스템 시간:", "txt-fest-date": "영화제: 2026년 7월 15-25일",
-                "txt-btn-submit": "출품하기",
-                "phase_collect": "글로벌 AI 공동 창작 진행 중...",
-                "input_ph": "비전 / 감정을 주입하세요...",
-                "btn-synthesize": "합성 시작", "btn_injected": "주입됨",
-                "txt-auth-soc": "소셜 미디어 인증", "txt-desc-soc": "소셜 프로필을 연결하여 독특한 미학과 감정 벡터를 추출합니다.",
-                "txt-auth-geo": "위치 정보 인증", "txt-desc-geo": "위치 정보를 활성화하여 지역 문화 요소를 내러티브에 포함시킵니다.",
-                "txt-archive-title": "1분 생성 아카이브",
-                "txt-premiere-title": "실시간 프리미어",
-                "premiere_sub": "비전 제공", "premiere_def": "글로벌 노드와 AI의 공동 창작",
-                "frm_title": "HKAIIFF 2026 출품", "frm_sub": "AI 네이티브 영화 작품을 업로드하세요.",
-                "frm_l_name": "영화 제목", "frm_l_dir": "감독 / 프롬프트 엔지니어", "frm_l_cat": "카테고리", "frm_l_ai": "AI 참여도 (%)",
-                "frm_l_tools": "주요 AI 도구", "frm_l_synopsis": "시놉시스", "frm_l_vid": "동영상 업로드", "frm_l_pos": "포스터 업로드",
-                "frm_up_vid": "MP4/MOV 선택 (최대 5GB)", "frm_up_pos": "JPG/PNG 선택 (최대 20MB)", "frm_btn_sub": "업로드 완료"
+            { 
+                id: 2, title: "CYBER TAOISM", creator: "ZEN AI", video: "https://images.unsplash.com/photo-1515462277126-2dd0c162007a?q=80&w=800",
+                synopsis: "Digital monks attempt to achieve Nirvana by compiling the perfect smart contract in Neo-Tokyo's underground.",
+                hasInteract: true, timeLeft: 60, hasUserVersion: false,
+                info: { cast: "Environmental / Procedural", dir: "Conductor: Master K", tech: "Stable Diffusion, LoRA", region: "Asia Pacific", limits: ["LBS: Available only in Neo-Tokyo zone.", "Time Limit: Interaction ends in 1 min."] }
             },
-            "th": {
-                "txt-sys-time": "เวลาของระบบ:", "txt-fest-date": "เทศกาล: 15-25 ก.ค. 2026",
-                "txt-btn-submit": "ส่งภาพยนตร์",
-                "phase_collect": "กำลังดำเนินการสร้างสรรค์ AI ร่วมกันทั่วโลก...",
-                "input_ph": "ใส่จินตนาการ / อารมณ์ของคุณ...",
-                "btn-synthesize": "สังเคราะห์", "btn_injected": "ฉีดแล้ว",
-                "txt-auth-soc": "บัญชีโซเชียล", "txt-desc-soc": "เชื่อมโยงโปรไฟล์โซเชียลเพื่อดึงความสวยงามและอารมณ์ของคุณเข้าสู่สไตล์ของภาพยนตร์",
-                "txt-auth-geo": "ตำแหน่ง", "txt-desc-geo": "เปิดใช้งานตำแหน่งเพื่อฝังวัฒนธรรมระดับภูมิภาคลงในการเล่าเรื่อง",
-                "txt-archive-title": "คลังข้อมูลที่สร้างขึ้น 1 นาที",
-                "txt-premiere-title": "รอบปฐมทัศน์โลก",
-                "premiere_sub": "วิสัยทัศน์โดย", "premiere_def": "สร้างสรรค์ร่วมกันโดยโหนดทั่วโลกและ AI",
-                "frm_title": "การส่ง HKAIIFF 2026", "frm_sub": "อัปโหลดผลงาน AI ของคุณ",
-                "frm_l_name": "ชื่อภาพยนตร์", "frm_l_dir": "ผู้กำกับ", "frm_l_cat": "หมวดหมู่", "frm_l_ai": "การมีส่วนร่วมของ AI (%)",
-                "frm_l_tools": "เครื่องมือ AI หลัก", "frm_l_synopsis": "เรื่องย่อ", "frm_l_vid": "อัปโหลดวิดีโอ", "frm_l_pos": "อัปโหลดโปสเตอร์",
-                "frm_up_vid": "เลือก MP4/MOV (สูงสุด 5GB)", "frm_up_pos": "เลือก JPG/PNG (สูงสุด 20MB)", "frm_btn_sub": "อัปโหลด"
+            { 
+                id: 3, title: "MARS FAILURE", creator: "RED PLANET", video: "https://images.unsplash.com/photo-1614728853975-002fb4eb9ca2?q=80&w=800",
+                synopsis: "A documentary simulated by Unreal Engine 5 showing the collapse of the first Mars colony due to oxygen failure.",
+                hasInteract: false, timeLeft: 0, hasUserVersion: false,
+                info: { cast: "Simulated Colonists", dir: "Conductor: Elon_Sim", tech: "Unreal Engine 5, Houdini", region: "Global", limits: ["No restrictions. Permanent playback."] }
             },
-            "fr": {
-                "txt-sys-time": "HEURE SYS:", "txt-fest-date": "FEST: 15-25 JUIL 2026",
-                "txt-btn-submit": "SOUMETTRE",
-                "phase_collect": "CO-CRÉATION IA GLOBALE EN COURS...",
-                "input_ph": "Injectez votre vision / émotion...",
-                "btn-synthesize": "Synthétiser", "btn_injected": "INJECTÉ",
-                "txt-auth-soc": "Auth Sociale", "txt-desc-soc": "Liez votre profil social pour extraire votre esthétique unique.",
-                "txt-auth-geo": "Localisation GEO", "txt-desc-geo": "Activez la localisation pour intégrer la culture régionale.",
-                "txt-archive-title": "ARCHIVES SYNTHÉTISÉES (1 MIN)",
-                "txt-premiere-title": "PREMIÈRE MONDIALE",
-                "premiere_sub": "Vision par", "premiere_def": "Co-créé par les nœuds globaux & IA",
-                "frm_title": "SOUMISSION HKAIIFF 2026", "frm_sub": "Téléchargez vos œuvres IA.",
-                "frm_l_name": "Titre du Film", "frm_l_dir": "Réalisateur", "frm_l_cat": "Catégorie", "frm_l_ai": "Participation IA (%)",
-                "frm_l_tools": "Outils IA utilisés", "frm_l_synopsis": "Synopsis", "frm_l_vid": "Fichier Vidéo", "frm_l_pos": "Affiche",
-                "frm_up_vid": "MP4/MOV (Max 5Go)", "frm_up_pos": "JPG/PNG (Max 20Mo)", "frm_btn_sub": "SOUMETTRE"
+            { 
+                id: 4, title: "NEON DYNASTY", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=800",
+                synopsis: "A revival of Kowloon Walled City where gang warfare is fought with hash rate instead of guns.",
+                hasInteract: false, timeLeft: 0, hasUserVersion: true, userVideo: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=800", userHash: "0x8F2A...9C11",
+                info: { cast: "Synthetic Triad Members", dir: "Conductor: J.W. Protocol", tech: "Luma Dream Machine", region: "Hong Kong SAR", limits: ["Parallel universe unlocked via User Bio-data."] }
+            }
+        ];
+
+        const LBS_FILMS = [
+            { state: 'locked_geo', title: "WEST LAKE ANOMALY", location: "West Lake, Hangzhou", img: "https://images.unsplash.com/photo-1480796927426-f609979314bd?q=80&w=400", req: "Geo-Lock: Must be physically within 500m of West Lake.", icon: "fa-lock text-danger", border: "border-danger" },
+            { state: 'locked_cond', title: "THE MIDNIGHT EXPRESS", location: "Global (Time Locked)", img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=400", req: "Condition: Playback only unlocks between 00:00 - 02:00 local time.", icon: "fa-clock text-honey", border: "border-honey" },
+            { state: 'unlocked', title: "FLAGSHIP IMMERSION", location: "Apple Store, Causeway Bay", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400", req: "LBS matched. You are currently in the allowed zone.", icon: "fa-play-circle text-signal", border: "border-signal" }
+        ];
+
+        const CREATOR_DATA = {
+            "NEO STUDIOS": { heat: "142k", works: 4, roi: "+240%", bio: "Neo Studios is a pioneering collective. We believe AI is an amplifier for imagination, not a replacement. Our core philosophy is 'Algorithmic Narrative'.", tech: ["Sora v2 API", "ComfyUI", "Berachain"], team: [{ role: "Conductor", name: "Neo Li" }, { role: "Prompt Engineer", name: "Sarah" }], portfolio: [{ year: "2025", title: "NEON GENESIS (Short)", desc: "Best Visuals at AIFF." }] },
+            "ZEN AI": { heat: "88k", works: 2, roi: "+110%", bio: "Eastern aesthetics laboratory merging Zen philosophy with machine learning.", tech: ["Midjourney v6", "ControlNet"], team: [{ role: "Digital Artist", name: "Master K" }], portfolio: [{ year: "2025", title: "MONK", desc: "Interactive meditation film." }] },
+            "RED PLANET": { heat: "50k", works: 1, roi: "-20%", bio: "Hard sci-fi simulations.", tech: ["Unreal Engine 5", "Houdini"], team: [{ role: "Tech Artist", name: "Elon_Sim" }], portfolio: [{ year: "2024", title: "MARS COLONY", desc: "Simulation failure case." }] },
+            "HK NOIR": { heat: "210k", works: 5, roi: "+500%", bio: "Masters of the action genre reconstructed with raw compute.", tech: ["Luma Dream Machine", "Mocap"], team: [{ role: "Conductor", name: "J.W. Protocol" }], portfolio: [{ year: "2024", title: "KOWLOON REBOOT", desc: "Top grossing action." }] }
+        };
+
+        const app = {
+            lang: 'en', currentView: 'feed', mySubmissions: [],
+
+            init() {
+                this.renderFeed();
+                this.renderLBS();
+                this.renderLangs();
+                this.startTimers();
+                this.setupSwipeLogic();
             },
-            "de": {
-                "txt-sys-time": "SYS ZEIT:", "txt-fest-date": "FEST: 15.-25. JULI 2026",
-                "txt-btn-submit": "FILM EINREICHEN",
-                "phase_collect": "GLOBALE KI-CO-KREATION LÄUFT...",
-                "input_ph": "Injiziere deine Vision / Emotion...",
-                "btn-synthesize": "Synthetisieren", "btn_injected": "INJIZIERT",
-                "txt-auth-soc": "Social Auth", "txt-desc-soc": "Soziales Profil verknüpfen, um deine Ästhetik zu extrahieren.",
-                "txt-auth-geo": "GEO-Standort", "txt-desc-geo": "Standort aktivieren, um regionale Kultur zu integrieren.",
-                "txt-archive-title": "1-MIN SYNTHETISIERTES ARCHIV",
-                "txt-premiere-title": "WELTPREMIERE",
-                "premiere_sub": "Vision von", "premiere_def": "Co-kreiert von globalen Knoten & KI",
-                "frm_title": "HKAIIFF 2026 EINREICHUNG", "frm_sub": "Lade deine KI-Werke hoch.",
-                "frm_l_name": "Filmtitel", "frm_l_dir": "Regisseur", "frm_l_cat": "Kategorie", "frm_l_ai": "KI-Anteil (%)",
-                "frm_l_tools": "KI-Tools", "frm_l_synopsis": "Synopsis", "frm_l_vid": "Video-Upload", "frm_l_pos": "Poster-Upload",
-                "frm_up_vid": "MP4/MOV (Max 5GB)", "frm_up_pos": "JPG/PNG (Max 20MB)", "frm_btn_sub": "EINREICHEN"
+
+            // --- Navigation ---
+            nav(view, btnNode) {
+                document.querySelectorAll('.view-container').forEach(el => {
+                    if (el.id !== `view-${view}`) { el.classList.remove('active'); el.classList.add('opacity-0'); setTimeout(() => { if (!el.classList.contains('active')) el.style.display = 'none'; }, 300); }
+                });
+                const target = document.getElementById(`view-${view}`);
+                target.style.display = 'block'; setTimeout(() => { target.classList.add('active'); target.classList.remove('opacity-0'); }, 20);
+                this.currentView = view;
+                
+                if(btnNode) {
+                    document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('active', 'text-white'); el.classList.add('text-gray-400'); });
+                    btnNode.classList.add('active', 'text-white'); btnNode.classList.remove('text-gray-400');
+                }
             },
-            "es": {
-                "txt-sys-time": "HORA SIS:", "txt-fest-date": "FEST: 15-25 JUL 2026",
-                "txt-btn-submit": "ENVIAR PELÍCULA",
-                "phase_collect": "CO-CREACIÓN DE IA GLOBAL EN CURSO...",
-                "input_ph": "Inyecta tu visión / emoción...",
-                "btn-synthesize": "Sintetizar", "btn_injected": "INYECTADO",
-                "txt-auth-soc": "Auth Social", "txt-desc-soc": "Vincula el perfil social para extraer tu estética única.",
-                "txt-auth-geo": "Ubicación GEO", "txt-desc-geo": "Activa la ubicación para integrar la cultura regional.",
-                "txt-archive-title": "ARCHIVO SINTETIZADO (1 MIN)",
-                "txt-premiere-title": "ESTRENO MUNDIAL",
-                "premiere_sub": "Visión por", "premiere_def": "Co-creado por nodos globales e IA",
-                "frm_title": "PRESENTACIÓN HKAIIFF 2026", "frm_sub": "Sube tus obras de IA.",
-                "frm_l_name": "Título", "frm_l_dir": "Director", "frm_l_cat": "Categoría", "frm_l_ai": "Participación IA (%)",
-                "frm_l_tools": "Herramientas IA", "frm_l_synopsis": "Sinopsis", "frm_l_vid": "Video", "frm_l_pos": "Póster",
-                "frm_up_vid": "MP4/MOV (Max 5GB)", "frm_up_pos": "JPG/PNG (Max 20MB)", "frm_btn_sub": "ENVIAR"
+
+            // --- FEED 渲染與滑動邏輯 ---
+            renderFeed() {
+                const c = document.getElementById('feed-scroll');
+                c.innerHTML = '';
+                FILMS.forEach((f) => {
+                    
+                    const creatorBtn = `<div onclick="app.openCreator('${f.creator}')" class="relative cursor-pointer group mb-2 active:scale-95 transition-transform"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${f.creator}" class="w-12 h-12 border-2 border-white rounded-full bg-black shadow-lg"><div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow">+</div></div>`;
+                    
+                    let interactHTML = '';
+                    if (f.hasInteract) {
+                        interactHTML = `
+                        <div class="relative flex flex-col items-center justify-end w-full" id="interact-wrapper-${f.id}">
+                            <div id="menu-${f.id}" class="interact-menu no-scrollbar">
+                                <button class="interact-btn-sm" onclick="app.submitData('Text', ${f.id})"><i class="fas fa-font"></i></button>
+                                <button class="interact-btn-sm" onclick="app.submitData('Audio', ${f.id})"><i class="fas fa-microphone"></i></button>
+                                <button class="interact-btn-sm" onclick="app.submitData('Photo', ${f.id})"><i class="fas fa-camera"></i></button>
+                                <button class="interact-btn-sm" onclick="app.submitData('Geo', ${f.id})"><i class="fas fa-map-marker-alt"></i></button>
+                                <button class="interact-btn-sm" onclick="app.submitData('Bio', ${f.id})"><i class="fas fa-heartbeat"></i></button>
+                            </div>
+                            <div onclick="app.toggleInteractMenu(${f.id})" class="cursor-pointer flex flex-col items-center gap-1 relative z-10 active:scale-95 transition-transform">
+                                <div class="w-11 h-11 bg-black/60 backdrop-blur border border-signal flex items-center justify-center text-signal rounded-full shadow-[0_0_15px_rgba(204,255,0,0.4)]"><i class="fas fa-fingerprint text-xl"></i></div>
+                                <div class="bg-black/80 px-1.5 rounded border border-[#333] text-[9px] font-mono font-bold text-signal flex items-center gap-1 mt-1"><i class="fas fa-clock"></i> <span id="timer-${f.id}">--:--</span></div>
+                            </div>
+                        </div>`;
+                    }
+
+                    const forwardBtn = `<div onclick="app.openModal('shareModal')" class="cursor-pointer flex flex-col items-center gap-1 group active:scale-95 transition-transform"><div class="w-10 h-10 bg-glass backdrop-blur border border-[#444] flex items-center justify-center text-white rounded-full shadow-lg"><i class="fas fa-share text-sm"></i></div><span class="text-[9px] font-mono" data-i18n="share">FORWARD</span></div>`;
+                    const infoBtn = `<div onclick="app.openInfo(${f.id})" class="cursor-pointer flex flex-col items-center gap-1 active:scale-95 transition-transform w-full"><div class="w-10 h-10 bg-glass backdrop-blur border border-[#444] flex items-center justify-center text-white rounded-full shadow-lg"><i class="fas fa-info text-sm"></i></div><span class="text-[9px] font-mono" data-i18n="info">INFO</span></div>`;
+
+                    let userLayerHTML = '';
+                    let swipeIndicator = '';
+                    if (f.hasUserVersion) {
+                        swipeIndicator = `<div class="absolute top-1/2 left-4 -translate-y-1/2 flex flex-col items-center animate-swipe-left pointer-events-none z-20"><i class="fas fa-chevron-left text-signal text-3xl drop-shadow-[0_0_10px_rgba(204,255,0,0.8)]"></i><span class="text-[9px] font-mono text-signal font-bold mt-1 bg-black/50 px-1 rounded" data-i18n="swipe_hint">USER VER</span></div>`;
+                        userLayerHTML = `
+                        <div class="layer-user flex flex-col justify-end pb-24 px-4 bg-cover bg-center" style="background-image: linear-gradient(to top, #000 0%, transparent 50%), url('${f.userVideo}')">
+                            <div class="user-frame"></div>
+                            <h2 class="font-heavy text-4xl text-white mb-1 drop-shadow-md flex items-center gap-2" data-i18n="interactive_ready">YOUR PARALLEL UNIVERSE</h2>
+                            <p class="font-mono text-xs text-gray-300 mb-4 w-4/5" data-i18n="interactive_desc">Rendered based on your specific hash: <span class="text-signal">${f.userHash}</span></p>
+                            <button class="brutal-btn w-full max-w-xs mt-2 text-sm" onclick="app.toast('Minting to chain...')" data-i18n="mint_to_chain"><i class="fas fa-link mr-2"></i> MINT TO CHAIN</button>
+                        </div>`;
+                    }
+
+                    c.innerHTML += `
+                        <div class="feed-item" data-id="${f.id}" data-has-user="${f.hasUserVersion}">
+                            <div class="layer-original">
+                                <img src="${f.video}" class="bg-media">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                                ${swipeIndicator}
+                                <div class="ui-layer"><div class="ui-content">
+                                    <div class="ui-left pb-2">
+                                        <div class="tag bg-white text-black text-[10px] font-bold px-2 py-1 inline-block mb-2 rounded-sm">${f.creator}</div>
+                                        <h2 class="font-heavy text-4xl text-white drop-shadow-lg mb-2 leading-none">${f.title}</h2>
+                                        <p class="font-mono text-xs text-gray-300 drop-shadow line-clamp-2 w-full">${f.synopsis}</p>
+                                    </div>
+                                    <div class="ui-right">${creatorBtn}${interactHTML}${forwardBtn}${infoBtn}</div>
+                                </div></div>
+                            </div>
+                            ${userLayerHTML}
+                        </div>`;
+                });
+                this.updateUITexts();
             },
-            "ar": {
-                "txt-sys-time": "وقت النظام:", "txt-fest-date": "المهرجان: 15-25 يوليو 2026",
-                "txt-btn-submit": "إرسال فيلم",
-                "phase_collect": "الإبداع المشترك العالمي للذكاء الاصطناعي قيد التقدم...",
-                "input_ph": "أدخل رؤيتك / مشاعرك...",
-                "btn-synthesize": "توليف", "btn_injected": "تم الإدخال",
-                "txt-auth-soc": "المصادقة الاجتماعية", "txt-desc-soc": "اربط ملفك الاجتماعي لاستخراج جمالياتك الفريدة.",
-                "txt-auth-geo": "الموقع الجغرافي", "txt-desc-geo": "قم بتمكين الموقع لدمج الثقافة الإقليمية في السرد.",
-                "txt-archive-title": "أرشيف الدقيقة الواحدة",
-                "txt-premiere-title": "العرض الأول المولد",
-                "premiere_sub": "رؤية بواسطة", "premiere_def": "تم إنشاؤه بواسطة العقد العالمية والذكاء الاصطناعي",
-                "frm_title": "تقديم HKAIIFF 2026", "frm_sub": "قم بتحميل أعمال الذكاء الاصطناعي الخاصة بك.",
-                "frm_l_name": "عنوان الفيلم", "frm_l_dir": "المخرج", "frm_l_cat": "الفئة", "frm_l_ai": "مشاركة الذكاء الاصطناعي (%)",
-                "frm_l_tools": "أدوات الذكاء الاصطناعي", "frm_l_synopsis": "ملخص", "frm_l_vid": "تحميل الفيديو", "frm_l_pos": "تحميل الملصق",
-                "frm_up_vid": "اختر MP4/MOV (كحد أقصى 5 جيجابايت)", "frm_up_pos": "اختر JPG/PNG (كحد أقصى 20 ميجابايت)", "frm_btn_sub": "تقديم"
+            
+            setupSwipeLogic() {
+                const scrollContainer = document.getElementById('feed-scroll');
+                let startX = 0, startY = 0;
+                scrollContainer.addEventListener('touchstart', e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; });
+                scrollContainer.addEventListener('touchend', e => {
+                    if (this.currentView !== 'feed') return;
+                    let diffX = startX - e.changedTouches[0].clientX; let diffY = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
+                        const items = Array.from(document.querySelectorAll('.feed-item'));
+                        const index = Math.round(scrollContainer.scrollTop / window.innerHeight);
+                        if(items[index] && items[index].getAttribute('data-has-user') === 'true') {
+                            if (diffX > 0) items[index].classList.add('show-user'); // Swipe Left
+                            else items[index].classList.remove('show-user'); // Swipe Right
+                        }
+                    }
+                });
+            },
+
+            // --- 互動按鈕與定時器 ---
+            toggleInteractMenu(id) {
+                const menu = document.getElementById(`menu-${id}`);
+                document.querySelectorAll('.interact-menu').forEach(m => { if(m.id !== `menu-${id}`) m.classList.remove('expanded'); });
+                menu.classList.toggle('expanded');
+            },
+            submitData(type, id) {
+                document.getElementById(`menu-${id}`).classList.remove('expanded');
+                this.toast(`${type} Data Processed. Rendering...`);
+            },
+            startTimers() {
+                setInterval(() => {
+                    FILMS.forEach(f => {
+                        if (f.hasInteract && f.timeLeft > 0) {
+                            f.timeLeft--;
+                            const el = document.getElementById(`timer-${f.id}`);
+                            if (el) {
+                                el.innerText = `${Math.floor(f.timeLeft / 60).toString().padStart(2,'0')}:${(f.timeLeft % 60).toString().padStart(2,'0')}`;
+                                if (f.timeLeft <= 0) {
+                                    const wrap = document.getElementById(`interact-wrapper-${f.id}`);
+                                    if(wrap) wrap.innerHTML = `<div class="w-10 h-10 bg-[#111] border border-[#333] flex items-center justify-center text-gray-600 rounded-full mx-auto shadow-inner"><i class="fas fa-ban text-sm"></i></div><div class="text-[9px] font-mono text-gray-600 mt-1 text-center">EXPIRED</div>`;
+                                    f.hasInteract = false;
+                                }
+                            }
+                        }
+                    });
+                }, 1000);
+            },
+
+            // --- LBS 邏輯 ---
+            renderLBS() {
+                const c = document.getElementById('lbs-list');
+                c.innerHTML = '';
+                LBS_FILMS.forEach(l => {
+                    c.innerHTML += `
+                        <div class="border ${l.border} rounded-xl overflow-hidden relative cursor-pointer h-40 bg-black" onclick="app.handleLBSClick('${l.state}', '${l.title}', '${l.req}')">
+                            <img src="${l.img}" class="absolute inset-0 w-full h-full object-cover opacity-40">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-4">
+                                <h3 class="font-heavy text-white text-2xl mb-1">${l.title}</h3>
+                                <div class="text-xs font-mono text-gray-300 mb-2"><i class="fas fa-map-marker-alt mr-1"></i> ${l.location}</div>
+                            </div>
+                            <div class="absolute top-4 right-4 bg-black/80 backdrop-blur border ${l.border} text-[10px] px-3 py-1.5 rounded-full text-white font-mono flex items-center gap-2 shadow-lg"><i class="fas ${l.icon} text-sm"></i></div>
+                        </div>`;
+                });
+            },
+            handleLBSClick(state, title, req) {
+                if(state === 'locked_geo') this.showSysModal("ACCESS DENIED", req, "fa-map-marker-alt text-danger");
+                else if(state === 'locked_cond') this.showSysModal("TIME RESTRICTED", req, "fa-clock text-honey");
+                else if(state === 'unlocked') this.toast("LBS Verified. Initializing Stream...");
+            },
+
+            // --- 上傳與支付流程 (Upload Flow) ---
+            resetUploadFlow() {
+                document.getElementById('upload-step-1').classList.remove('hidden');
+                document.getElementById('upload-step-2').classList.add('hidden');
+                document.getElementById('upload-step-3').classList.add('hidden');
+                document.getElementById('upTitle').value = '';
+            },
+            goToPayment() {
+                const title = document.getElementById('upTitle').value;
+                if(!title) return this.toast("Please enter a Project Title.");
+                document.getElementById('upload-step-1').classList.add('hidden');
+                document.getElementById('upload-step-2').classList.remove('hidden');
+            },
+            backToForm() {
+                document.getElementById('upload-step-2').classList.add('hidden');
+                document.getElementById('upload-step-1').classList.remove('hidden');
+            },
+            processPayment(method) {
+                const amt = method === 'fiat' ? '$500' : '2500 AIF';
+                this.toast(`Processing ${amt}...`);
+                const title = document.getElementById('upTitle').value || 'UNTITLED';
+                const hash = '0x' + Math.random().toString(16).substr(2, 40);
+                
+                setTimeout(() => {
+                    document.getElementById('upload-step-2').classList.add('hidden');
+                    document.getElementById('upload-step-3').classList.remove('hidden');
+                    document.getElementById('certProjectName').innerText = title.toUpperCase();
+                    document.getElementById('certHash').innerText = hash;
+                    
+                    // Add to ME Submissions
+                    this.mySubmissions.push({ title: title, status: "ON-CHAIN", hash: hash.substr(0,10)+"..." });
+                    this.renderMeTab();
+                }, 1500);
+            },
+            renderMeTab() {
+                const c = document.getElementById('my-submissions-list');
+                if (this.mySubmissions.length === 0) { c.innerHTML = `<div class="text-center text-xs text-gray-500 font-mono py-6 border border-dashed border-[#333] rounded-lg">No submissions yet.</div>`; return; }
+                c.innerHTML = this.mySubmissions.map(s => `
+                    <div class="border border-signal/30 bg-[#111] rounded-lg p-4 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute left-0 top-0 w-1 h-full bg-signal"></div>
+                        <div>
+                            <div class="text-sm font-heavy text-white mb-1">${s.title}</div>
+                            <div class="text-[9px] font-mono text-gray-500">Hash: ${s.hash}</div>
+                        </div>
+                        <div class="bg-signal/20 text-signal border border-signal px-2 py-1 rounded text-[9px] font-bold tracking-widest">${s.status}</div>
+                    </div>
+                `).join('');
+            },
+
+            // --- Modals ---
+            openInfo(id) {
+                const f = FILMS.find(x => x.id === id);
+                document.getElementById('infoTitle').innerText = f.title;
+                document.getElementById('infoCreator').innerText = f.creator;
+                document.getElementById('infoPoster').src = f.video;
+                document.getElementById('infoSyn').innerText = f.synopsis;
+                document.getElementById('infoCast').innerText = f.info.cast;
+                document.getElementById('infoDir').innerText = f.info.dir;
+                document.getElementById('infoTech').innerText = f.info.tech;
+                document.getElementById('infoRegion').innerText = f.info.region;
+                document.getElementById('infoLimits').innerHTML = f.info.limits.map(l => `<li>${l}</li>`).join('');
+                this.openModal('infoModal');
+            },
+            openCreator(name) {
+                const d = CREATOR_DATA[name];
+                document.getElementById('cName').innerText = name;
+                document.getElementById('cPop').innerHTML = `<i class="fas fa-fire text-sm"></i> ${d.heat}`;
+                document.getElementById('cWorks').innerHTML = `<i class="fas fa-film text-sm"></i> ${d.works}`;
+                document.getElementById('cRoi').innerHTML = `<i class="fas fa-chart-line text-sm"></i> ${d.roi}`;
+                document.getElementById('cBio').innerText = d.bio;
+                document.getElementById('cAvt').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${name}`;
+                document.getElementById('cTech').innerHTML = d.tech.map(t => `<span class="bg-[#111] border border-[#333] px-3 py-1.5 rounded-lg text-xs text-gray-300 font-mono">${t}</span>`).join('');
+                document.getElementById('cTeam').innerHTML = d.team.map(t => `<div class="flex items-center gap-3 bg-[#111] p-3 rounded-lg border border-[#222]"><div class="w-10 h-10 bg-black rounded-full flex items-center justify-center text-gray-500 border border-[#333]"><i class="fas fa-user"></i></div><div><div class="text-sm font-bold text-white">${t.name}</div><div class="text-[10px] text-gray-500 font-mono">${t.role}</div></div></div>`).join('');
+                document.getElementById('cPortfolio').innerHTML = d.portfolio.map(p => `<div class="bg-[#111] p-4 rounded-lg border border-[#222] flex justify-between items-center"><div class="flex-1"><div class="text-sm font-heavy text-white">${p.title}</div><div class="text-[10px] text-gray-400 mt-1">${p.desc}</div></div><div class="text-xs font-mono text-gray-600">${p.year}</div></div>`).join('');
+                this.openModal('creatorModal');
+            },
+            showSysModal(title, desc, iconClass) {
+                document.getElementById('sysTitle').innerText = title;
+                document.getElementById('sysDesc').innerText = desc;
+                document.getElementById('sysIcon').className = `w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 bg-black border border-[#333] fas ${iconClass}`;
+                this.openModal('sysModal');
+            },
+
+            // --- 語言與彈窗管理 ---
+            renderLangs() {
+                const grid = document.getElementById('langGrid');
+                grid.innerHTML = LANGS.map(l => `
+                    <div class="p-4 rounded-xl border ${l.code === this.lang ? 'border-signal bg-signal/10' : 'border-[#333] bg-[#111]'} cursor-pointer hover:border-signal transition-colors flex justify-between items-center group" onclick="app.setLang('${l.code}')">
+                        <div><div class="text-sm font-bold text-white">${l.name}</div><div class="text-[10px] text-gray-500 font-mono mt-1">${l.sub}</div></div>
+                        ${l.code === this.lang ? '<i class="fas fa-check-circle text-signal text-lg"></i>' : ''}
+                    </div>`).join('');
+            },
+            setLang(code) {
+                this.lang = code;
+                document.body.setAttribute('data-lang', code);
+                document.getElementById('currentLangDisplay').innerText = code.toUpperCase();
+                this.closeModal('langModal');
+                this.updateUITexts();
+                this.renderFeed(); // Re-render feed to apply translations to dynamic content
+                this.toast(`Language Switched to ${code.toUpperCase()}`);
+            },
+            updateUITexts() {
+                const dict = I18N[this.lang] || I18N['en'];
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (dict[key]) el.innerHTML = dict[key];
+                });
+            },
+            openModal(id) {
+                const el = document.getElementById(id);
+                el.classList.remove('hidden');
+                setTimeout(() => {
+                    if(id==='langModal') { el.classList.remove('opacity-0'); document.getElementById('langContent').classList.remove('translate-y-full'); }
+                    else if(id==='sysModal') { el.classList.remove('opacity-0'); document.getElementById('sysContent').classList.remove('scale-95'); }
+                    else if(id==='shareModal') { el.classList.remove('opacity-0'); document.getElementById('shareContent').classList.remove('translate-y-full'); }
+                    else el.classList.remove('translate-y-full');
+                }, 10);
+            },
+            closeModal(id) {
+                const el = document.getElementById(id);
+                if(id==='langModal') { el.classList.add('opacity-0'); document.getElementById('langContent').classList.add('translate-y-full'); }
+                else if(id==='sysModal') { el.classList.add('opacity-0'); document.getElementById('sysContent').classList.add('scale-95'); }
+                else if(id==='shareModal') { el.classList.add('opacity-0'); document.getElementById('shareContent').classList.add('translate-y-full'); }
+                else el.classList.add('translate-y-full');
+                setTimeout(() => el.classList.add('hidden'), 300);
+            },
+            toast(msg) {
+                const t = document.getElementById('toast');
+                document.getElementById('toastMsg').innerText = msg;
+                t.classList.remove('-translate-y-40');
+                setTimeout(()=>t.classList.add('-translate-y-40'), 2500);
             }
         };
 
-        function changeLanguage() {
-            const lang = document.getElementById('lang-switch').value;
-            const t = dict[lang];
-            
-            document.body.style.direction = (lang === 'ar') ? "rtl" : "ltr";
-            document.querySelector('.brand-cluster').style.flexDirection = (lang === 'ar') ? "row-reverse" : "row";
-
-            const ids = ["txt-sys-time", "txt-fest-date", "txt-btn-submit", "prompt-input", "btn-synthesize", 
-                         "txt-auth-soc", "txt-desc-soc", "txt-auth-geo", "txt-desc-geo", "txt-archive-title", 
-                         "txt-premiere-title", "frm_title", "frm_sub", "frm_l_name", "frm_l_dir", "frm_l_cat", 
-                         "frm_l_ai", "frm_l_tools", "frm_l_synopsis", "frm_l_vid", "frm_l_pos", "frm_up_vid", 
-                         "frm_up_pos", "frm_btn_sub"];
-            
-            ids.forEach(id => {
-                const el = document.getElementById(id);
-                if(el) {
-                    if(el.tagName === 'INPUT' && el.hasAttribute('placeholder')) el.placeholder = t[id] || t["input_ph"];
-                    else el.innerText = t[id];
-                }
-            });
-            
-            if(engineState === 'COLLECT') phaseText.innerText = t["phase_collect"];
-        }
-        
-        window.addEventListener("DOMContentLoaded", changeLanguage);
+        window.onload = () => app.init();
     </script>
 </body>
 </html>
