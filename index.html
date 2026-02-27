@@ -127,7 +127,9 @@
                     </div>
                 </div>
             </div>
-            <button class="brutal-btn w-full text-lg" onclick="app.goToPayment()" data-i18n="btn_next">PROCEED TO PAYMENT <i class="fas fa-arrow-right ml-2"></i></button>
+            <button class="brutal-btn w-full text-lg" onclick="app.goToPayment()">
+                <span data-i18n="btn_next">PROCEED TO PAYMENT</span> <i class="fas fa-arrow-right ml-2"></i>
+            </button>
         </div>
 
         <div id="upload-step-2" class="hidden animate-fade-in">
@@ -161,7 +163,9 @@
                     <div class="text-[10px] text-signal truncate" id="certHash">...</div>
                 </div>
             </div>
-            <button class="brutal-btn w-full text-lg" onclick="app.nav('me')" data-i18n="btn_check_status">CHECK STATUS IN ME <i class="fas fa-user ml-2"></i></button>
+            <button class="brutal-btn w-full text-lg" onclick="app.nav('me')">
+                <span data-i18n="btn_check_status">CHECK STATUS IN ME</span> <i class="fas fa-user ml-2"></i>
+            </button>
         </div>
     </div>
 
@@ -197,13 +201,13 @@
         
         <div class="grid grid-cols-2 gap-3 mb-8">
             <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg">
-                <div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2" data-i18n="aif_balance"><i class="fas fa-coins"></i> AIF BALANCE</div>
+                <div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2"><i class="fas fa-coins"></i> <span data-i18n="aif_balance">AIF BALANCE</span></div>
                 <div class="text-3xl font-heavy text-white ltr-force flex items-baseline gap-1">
                     <span class="text-aif text-lg">₳</span>14,500
                 </div>
             </div>
             <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg">
-                <div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2" data-i18n="interacted_films"><i class="fas fa-film"></i> INTERACTED</div>
+                <div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2"><i class="fas fa-film"></i> <span data-i18n="interacted_films">INTERACTED</span></div>
                 <div class="text-3xl font-heavy text-white">12</div>
             </div>
         </div>
@@ -278,7 +282,7 @@
         <div class="px-6 -mt-16 relative z-10 pb-24">
             <div class="flex justify-between items-end mb-4">
                 <img id="cAvt" src="" class="w-28 h-28 border-4 border-[#050505] rounded-full bg-black shadow-[0_0_20px_rgba(204,255,0,0.3)]">
-                <button class="brutal-btn py-2 px-6 text-xs shadow-lg" data-i18n="btn_follow"><i class="fas fa-plus mr-2"></i> FOLLOW</button>
+                <button class="brutal-btn py-2 px-6 text-xs shadow-lg"><i class="fas fa-plus mr-2"></i> <span data-i18n="btn_follow">FOLLOW</span></button>
             </div>
             
             <h1 class="font-heavy text-4xl text-white mb-2 flex items-center gap-2">
@@ -681,7 +685,16 @@
             setLang(code) {
                 this.lang = code;
                 document.body.setAttribute('data-lang', code);
-                document.getElementById('currentLangDisplay').innerText = code.toUpperCase();
+                
+                // 修改了這裡：增加存在性檢查，避免找不到元素導致報錯
+                const langDisplay = document.getElementById('currentLangDisplay');
+                if (langDisplay) {
+                    langDisplay.innerText = code.toUpperCase();
+                }
+
+                // 重新渲染語言列表，以更新打勾狀態
+                this.renderLangs();
+                
                 this.closeModal('langModal');
                 this.updateUITexts();
                 this.renderFeed(); // Re-render feed to apply translations to dynamic content
