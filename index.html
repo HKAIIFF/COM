@@ -21,7 +21,7 @@
     </script>
 
     <style>
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #FFF; overflow: hidden; font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; height: 100dvh; background: #000; color: #FFF; overflow: hidden; font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
         ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
         * { scrollbar-width: none; -ms-overflow-style: none; }
         body[data-lang="ar"] { direction: rtl; } body[data-lang="ar"] .ltr-force { direction: ltr; }
@@ -43,7 +43,6 @@
         .layer-user { position: absolute; inset: 0; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 5; background: #050505; pointer-events: none; border-left: 2px solid #CCFF00; }
         .show-user .layer-original { transform: translateX(-40%); filter: brightness(0.2) grayscale(0.8); pointer-events: none; }
         .show-user .layer-user { transform: translateX(0); pointer-events: auto; }
-        
         .user-frame { position: absolute; inset: 4px; border: 1px solid rgba(204,255,0,0.3); border-radius: 12px; pointer-events: none; z-index: 10; }
         .user-frame::before { content: ''; position: absolute; top: -1px; left: 20px; width: 60px; height: 2px; background: #CCFF00; }
         .user-frame::after { content: ''; position: absolute; bottom: -1px; right: 20px; width: 60px; height: 2px; background: #CCFF00; }
@@ -51,7 +50,6 @@
         @keyframes pulse-x { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(-5px); opacity: 1; } }
         .animate-swipe-left { animation: pulse-x 1.5s infinite; }
 
-        /* 修復：確保交互菜單支援橫向滑動並防止按鈕被壓縮 */
         .interact-menu { position: absolute; right: 60px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border: 1px solid #333; border-radius: 30px; padding: 6px; width: 0; opacity: 0; overflow: hidden; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: right center; z-index: 30; }
         .interact-menu.expanded { width: 230px; max-width: calc(100vw - 100px); opacity: 1; pointer-events: auto; box-shadow: 0 0 20px rgba(204,255,0,0.15); overflow-x: auto; scroll-behavior: smooth; }
         .interact-btn-sm { width: 40px; height: 40px; border-radius: 50%; background: #111; border: 1px solid #444; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: all 0.2s; cursor: pointer; }
@@ -60,20 +58,31 @@
         .brutal-btn { font-family: 'Oswald', sans-serif; text-transform: uppercase; font-weight: bold; padding: 14px; display: flex; align-items: center; justify-content: center; background: #CCFF00; color: #000; transition: all 0.2s; cursor: pointer; border-radius: 8px;}
         .brutal-btn:active { transform: scale(0.98); }
         .brutal-btn.secondary { background: #111; color: #FFF; border: 1px solid #444; }
-        .brutal-btn.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
+        .brutal-btn.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(1) brightness(0.5); cursor: not-allowed; }
+
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 12px; border-radius: 2px; background: #FFF; cursor: pointer; margin-top: -10px; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #333; border-radius: 2px; }
+        .range-danger::-webkit-slider-thumb { background: #FF3333; box-shadow: 0 0 10px rgba(255,51,51,0.5); }
+        .range-success::-webkit-slider-thumb { background: #CCFF00; box-shadow: 0 0 10px rgba(204,255,0,0.5); }
+
+        .cursor-blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
 <body data-lang="en">
 
     <input type="file" id="sysAudioInput" accept="audio/*" capture="microphone" class="hidden" onchange="app.handleFileSelected('Audio')">
     <input type="file" id="sysPhotoInput" accept="image/*" capture="environment" class="hidden" onchange="app.handleFileSelected('Photo')">
+    <input type="file" id="upPosterInput" accept="image/*" class="hidden" onchange="app.finishUpload('poster')">
+    <input type="file" id="upFilmInput" accept="video/*" class="hidden" onchange="app.finishUpload('film')">
+    <input type="file" id="upRightsInput" accept=".pdf,.doc,.docx" class="hidden" onchange="app.finishUpload('rights')">
 
     <div id="top-bar" class="fixed top-0 left-0 w-full z-30 px-4 pt-12 flex justify-between items-start pointer-events-none transition-opacity duration-300">
         <div class="pointer-events-auto flex flex-col items-start cursor-pointer group">
             <div class="font-heavy text-4xl tracking-tighter text-white flex items-center gap-2 drop-shadow-md">HKAIIFF</div>
             <div class="text-[8px] font-mono text-signal tracking-widest uppercase drop-shadow-md">Something has to change</div>
         </div>
-        
         <div class="pointer-events-auto cursor-pointer" onclick="app.openModal('langModal')">
             <div class="w-9 h-9 rounded-full bg-black/60 backdrop-blur border border-[#444] flex items-center justify-center text-gray-300 hover:text-signal hover:border-signal transition-all shadow-lg">
                 <i class="fas fa-globe text-sm"></i>
@@ -81,611 +90,512 @@
         </div>
     </div>
 
-    <div id="view-feed" class="view-container active">
-        <div id="feed-scroll"></div>
-    </div>
+    <div id="view-feed" class="view-container active"><div id="feed-scroll"></div></div>
 
     <div id="view-discover" class="view-container bg-void px-4 pt-28">
-        <h1 class="font-heavy text-4xl mb-2 text-white" data-i18n="nav_discover">DISCOVER</h1>
-        <p class="font-mono text-xs text-gray-400 mb-6 leading-relaxed" data-i18n="lbs_desc">Exclusive screenings controlled by Location-Based Services (LBS) and conditional smart contracts.</p>
-        <div id="lbs-list" class="space-y-4"></div>
+        <div class="flex justify-between items-end mb-2">
+            <h1 class="font-heavy text-4xl text-white" data-i18n="nav_discover">DISCOVER</h1>
+            <div class="flex items-center gap-2 mb-2 bg-[#111] px-2 py-1 rounded border border-[#333]"><div class="w-1.5 h-1.5 rounded-full bg-signal animate-pulse"></div><span class="font-mono text-[8px] text-signal tracking-widest uppercase" data-i18n="scanning_nodes">SCANNING LBS NODES...</span></div>
+        </div>
+        <p class="font-mono text-[10px] text-gray-400 mb-6 leading-relaxed border-l-2 border-[#333] pl-2" data-i18n="lbs_desc">Exclusive screenings controlled by Location-Based Services (LBS) and conditional smart contracts.</p>
+        <div id="lbs-list" class="space-y-4 pb-12"></div>
     </div>
 
     <div id="view-upload" class="view-container bg-void px-4 pt-28 pb-32">
-        <h1 class="font-heavy text-3xl mb-6 border-b border-[#333] pb-4 text-white flex items-center gap-3">
-            <i class="fas fa-cloud-upload-alt text-signal"></i> <span data-i18n="submit_film">SUBMIT FILM</span>
-        </h1>
+        <h1 class="font-heavy text-4xl mb-6 border-b border-[#333] pb-4 text-white flex items-center gap-3"><i class="fas fa-cloud-upload-alt text-signal"></i> <span data-i18n="submit_film">SUBMIT FILM</span></h1>
         
-        <div id="upload-step-1" class="animate-fade-in">
-            <div class="bg-signal/10 border border-signal/30 p-3 rounded-lg mb-6">
-                <p class="text-[10px] font-mono text-signal leading-relaxed" data-i18n="up_notice">HKAIIFF 2026 runs July 15-21. Ensure AI generation exceeds 51% of total production effort.</p>
+        <div id="upload-step-1" class="animate-fade-in block">
+            <div class="bg-[#111] border border-[#333] p-4 rounded-xl mb-6 shadow-lg relative overflow-hidden"><div class="absolute top-0 right-0 w-1 h-full bg-signal"></div><h3 class="font-heavy text-lg text-white mb-1 tracking-wide">HKAIIFF 2026</h3><p class="text-[10px] font-mono text-gray-400 leading-relaxed" data-i18n="up_notice">Festival runs July 15-21, 2026. Submissions must adhere to the AI-Native philosophy.</p></div>
+            <div class="space-y-6 mb-8">
+                <div><div class="font-mono text-[10px] text-gray-500 mb-2 flex justify-between"><span data-i18n="form_title">PROJECT TITLE</span><span class="text-danger">*</span></div><input type="text" id="upTitle" class="w-full bg-[#0a0a0a] border border-[#333] p-4 rounded-lg text-sm text-white focus:border-signal outline-none transition-colors" placeholder="e.g. NEON DYNASTY" oninput="app.checkUploadForm()"></div>
+                <div><div class="font-mono text-[10px] text-gray-500 mb-2" data-i18n="form_studio">CONDUCTOR / STUDIO</div><input type="text" id="upStudio" class="w-full bg-[#0a0a0a] border border-[#333] p-4 rounded-lg text-sm text-white focus:border-signal outline-none transition-colors" placeholder="e.g. HK NOIR"></div>
+                <div><div class="font-mono text-[10px] text-gray-500 mb-2" data-i18n="form_tech">TECH STACK (COMMA SEPARATED)</div><input type="text" id="upTech" class="w-full bg-[#0a0a0a] border border-[#333] p-4 rounded-lg text-sm text-white focus:border-signal outline-none transition-colors" placeholder="Sora, Midjourney, ComfyUI..."></div>
+                <div class="bg-[#111] border border-[#222] p-4 rounded-xl"><div class="flex justify-between items-end mb-4"><div class="font-mono text-[10px] text-gray-400" data-i18n="form_ai_ratio">AI CONTRIBUTION RATIO</div><div class="font-heavy text-3xl ltr-force" id="aiPctDisplay">0%</div></div><input type="range" id="upAiPct" min="0" max="100" value="0" class="w-full range-danger" oninput="app.updateAIPct(this.value)"><div id="aiPctWarning" class="text-[9px] font-mono text-danger mt-2 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> <span data-i18n="ai_warn">Must exceed 51% to qualify as AI-Native.</span></div></div>
+                <div><div class="font-mono text-[10px] text-gray-500 mb-2" data-i18n="form_desc">WORLDVIEW / SYNOPSIS</div><textarea id="upDesc" class="w-full bg-[#0a0a0a] border border-[#333] p-4 rounded-lg text-sm text-white focus:border-signal outline-none h-28 resize-none transition-colors" placeholder="Detailed background..."></textarea></div>
+                <div><div class="font-mono text-[10px] text-gray-500 mb-2" data-i18n="form_assets">ASSETS UPLOAD (ARWEAVE / IPFS)</div><div class="grid grid-cols-3 gap-3"><div id="box-poster" class="border border-dashed border-[#444] bg-[#0a0a0a] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-500 transition-colors h-28" onclick="document.getElementById('upPosterInput').click()"><i class="fas fa-image mb-2 text-2xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_poster">POSTER</span></div><div id="box-film" class="border border-dashed border-[#444] bg-[#0a0a0a] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-500 transition-colors h-28" onclick="document.getElementById('upFilmInput').click()"><i class="fas fa-video mb-2 text-2xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_film">FULL FILM</span></div><div id="box-rights" class="border border-dashed border-[#444] bg-[#0a0a0a] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-500 transition-colors h-28" onclick="document.getElementById('upRightsInput').click()"><i class="fas fa-file-contract mb-2 text-2xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_rights">RIGHTS</span></div></div></div>
             </div>
-            <div class="space-y-4 mb-8">
-                <div class="font-mono text-[10px] text-gray-500 mb-1" data-i18n="form_title">PROJECT TITLE</div>
-                <input type="text" id="upTitle" class="w-full bg-[#111] border border-[#333] p-4 rounded-lg text-sm text-white focus:border-signal outline-none mb-4" placeholder="e.g. THE LAST TURING">
-                
-                <div class="font-mono text-[10px] text-gray-500 mb-1" data-i18n="form_desc">DETAILED PROJECT DESCRIPTION</div>
-                <textarea class="w-full bg-[#111] border border-[#333] p-4 rounded-lg text-sm text-white focus:border-signal outline-none h-32" placeholder="Full Synopsis, Background, Cast, and Production methods..."></textarea>
-                
-                <div class="font-mono text-[10px] text-gray-500 mb-1 mt-4" data-i18n="form_assets">ASSETS UPLOAD</div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="border border-dashed border-[#444] bg-[#111] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-400 transition-colors h-24" onclick="this.innerHTML='<i class=\\\'fas fa-check-circle text-signal text-2xl mb-1\\\'></i><span class=\\\'text-[9px] font-mono text-signal\\\'>UPLOADED</span>'">
-                        <i class="fas fa-image mb-2 text-xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_poster">POSTER</span>
-                    </div>
-                    <div class="border border-dashed border-[#444] bg-[#111] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-400 transition-colors h-24" onclick="this.innerHTML='<i class=\\\'fas fa-check-circle text-signal text-2xl mb-1\\\'></i><span class=\\\'text-[9px] font-mono text-signal\\\'>UPLOADED</span>'">
-                        <i class="fas fa-video mb-2 text-xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_film">FULL FILM</span>
-                    </div>
-                    <div class="border border-dashed border-[#444] bg-[#111] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-400 transition-colors h-24" onclick="this.innerHTML='<i class=\\\'fas fa-check-circle text-signal text-2xl mb-1\\\'></i><span class=\\\'text-[9px] font-mono text-signal\\\'>UPLOADED</span>'">
-                        <i class="fas fa-file-contract mb-2 text-xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_rights">RIGHTS</span>
-                    </div>
-                </div>
-            </div>
-            <button class="brutal-btn w-full text-lg" onclick="app.goToPayment()">
-                <span data-i18n="btn_next">PROCEED TO PAYMENT</span> <i class="fas fa-arrow-right ml-2"></i>
-            </button>
+            <button id="btnProceed" class="brutal-btn w-full text-lg disabled" onclick="app.validateAndNext()"><span data-i18n="btn_next">PROCEED TO PAYMENT</span> <i class="fas fa-arrow-right ml-2"></i></button>
         </div>
 
         <div id="upload-step-2" class="hidden animate-fade-in">
-            <button class="text-gray-500 hover:text-white mb-6 font-mono text-xs flex items-center gap-2" onclick="app.backToForm()"><i class="fas fa-arrow-left"></i> <span data-i18n="btn_back">BACK</span></button>
-            <div class="bg-[#111] border border-[#333] p-5 rounded-xl mb-6 shadow-lg relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-16 h-16 bg-signal/10 rounded-bl-full"></div>
-                <div class="text-[10px] font-mono text-gray-400 mb-4" data-i18n="fee_desc">FESTIVAL SUBMISSION FEE</div>
-                <div class="grid grid-cols-1 gap-4 relative z-10">
-                    <button onclick="app.processPayment('fiat')" class="brutal-btn secondary flex items-center justify-between px-6 h-20 hover:border-white transition-all">
-                        <div class="text-left"><span class="font-mono text-[10px] text-gray-400 block" data-i18n="pay_fiat">FIAT PAYMENT</span><span class="font-bold text-2xl">$500</span></div>
-                        <i class="fab fa-cc-visa text-3xl opacity-50"></i>
-                    </button>
-                    <button onclick="app.processPayment('crypto')" class="brutal-btn bg-aif text-black flex items-center justify-between px-6 h-20 shadow-[0_4px_15px_rgba(0,229,153,0.3)]">
-                        <div class="text-left"><span class="font-mono text-[10px] opacity-80 block" data-i18n="pay_crypto">ON-CHAIN (50% OFF)</span><span class="font-bold text-2xl">2500 AIF</span></div>
-                        <i class="fa-brands fa-solana text-3xl opacity-80"></i>
-                    </button>
-                </div>
+            <button class="text-gray-500 hover:text-white mb-6 font-mono text-xs flex items-center gap-2 active:scale-90 transition-transform" onclick="app.switchUploadStep(1)"><i class="fas fa-arrow-left"></i> <span data-i18n="btn_back">BACK</span></button>
+            <div class="bg-gradient-to-br from-[#111] to-[#050505] border border-[#333] p-5 rounded-xl mb-6 shadow-lg"><div class="text-[10px] font-mono text-gray-500 mb-1">MINTING TARGET</div><div class="font-heavy text-2xl text-white mb-3 uppercase tracking-wide truncate" id="summaryTitle">...</div><div class="flex gap-4 border-t border-[#222] pt-3"><div><div class="text-[9px] font-mono text-gray-500">AI PURITY</div><div class="text-sm font-bold text-signal ltr-force" id="summaryAi">...</div></div><div><div class="text-[9px] font-mono text-gray-500">NETWORK</div><div class="text-sm font-bold text-white"><i class="fa-brands fa-solana text-aif"></i> SOL</div></div></div></div>
+            <div class="text-[10px] font-mono text-gray-500 mb-3 pl-1" data-i18n="fee_desc">FESTIVAL SUBMISSION FEE</div>
+            <div class="grid grid-cols-1 gap-4 relative z-10">
+                <button onclick="app.processPayment('fiat')" class="bg-[#111] border border-[#333] rounded-xl flex items-center justify-between p-5 hover:border-white transition-colors active:scale-[0.98]"><div class="text-left"><span class="font-mono text-[10px] text-gray-500 block mb-1" data-i18n="pay_fiat">FIAT PAYMENT</span><span class="font-heavy text-3xl text-white ltr-force">$500</span></div><i class="fab fa-cc-visa text-4xl text-gray-600"></i></button>
+                <button onclick="app.processPayment('crypto')" class="bg-gradient-to-r from-aif to-[#00b377] rounded-xl flex items-center justify-between p-5 shadow-[0_10px_30px_rgba(0,229,153,0.25)] active:scale-[0.98] transition-transform"><div class="text-left"><span class="font-mono text-[10px] text-black/70 block font-bold mb-1" data-i18n="pay_crypto">ON-CHAIN (50% OFF)</span><span class="font-heavy text-3xl text-black ltr-force">2500 AIF</span></div><i class="fa-brands fa-solana text-4xl text-black/80"></i></button>
+                <div class="text-center mt-2 text-[10px] font-mono text-gray-500 ltr-force">Wallet Balance: <span class="text-aif">14,500 AIF</span></div>
             </div>
+        </div>
+
+        <div id="upload-step-processing" class="hidden animate-fade-in pt-12">
+            <div class="w-full h-64 bg-[#050505] border border-[#333] rounded-lg p-4 font-mono text-[10px] text-gray-400 overflow-hidden shadow-inner relative flex flex-col justify-end"><div class="absolute top-0 left-0 w-full h-6 bg-[#111] border-b border-[#333] flex items-center px-3 gap-1.5"><div class="w-2 h-2 rounded-full bg-danger"></div><div class="w-2 h-2 rounded-full bg-honey"></div><div class="w-2 h-2 rounded-full bg-signal"></div></div><div id="terminalOutput" class="space-y-2 mt-8"></div><div class="mt-2 text-signal flex items-center gap-2"><i class="fas fa-chevron-right text-[8px]"></i><span class="cursor-blink">_</span></div></div>
         </div>
 
         <div id="upload-step-3" class="hidden animate-fade-in text-center pt-8">
-            <div class="w-full aspect-[3/4] bg-gradient-to-br from-[#111] to-black border-2 border-signal p-6 rounded-xl relative shadow-[0_0_30px_rgba(204,255,0,0.2)] mb-8 flex flex-col items-center justify-center">
-                <div class="absolute inset-2 border border-signal/30 rounded-lg pointer-events-none"></div>
-                <i class="fas fa-award text-6xl text-signal mb-4"></i>
-                <h3 class="font-heavy text-2xl text-white mb-1" data-i18n="cert_title">OFFICIAL SELECTION</h3>
-                <p class="font-mono text-xs text-gray-400 mb-6">HKAIIFF 2026</p>
-                <div class="w-full bg-black/50 p-4 rounded border border-[#333] font-mono text-left">
-                    <div class="text-[9px] text-gray-500 mb-1">PROJECT</div>
-                    <div class="text-sm text-white font-bold mb-3 truncate" id="certProjectName">...</div>
-                    <div class="text-[9px] text-gray-500 mb-1">TX HASH</div>
-                    <div class="text-[10px] text-signal truncate" id="certHash">...</div>
-                </div>
-            </div>
-            <button class="brutal-btn w-full text-lg" onclick="app.nav('me')">
-                <span data-i18n="btn_check_status">CHECK STATUS IN ME</span> <i class="fas fa-user ml-2"></i>
-            </button>
+            <div class="w-full aspect-[3/4] bg-gradient-to-br from-[#111] to-black border-2 border-signal p-6 rounded-xl relative shadow-[0_0_40px_rgba(204,255,0,0.15)] mb-8 flex flex-col items-center justify-center overflow-hidden"><div class="absolute inset-2 border border-signal/20 rounded-lg pointer-events-none"></div><div class="absolute -top-10 -right-10 w-32 h-32 bg-signal/10 rounded-full blur-2xl"></div><i class="fas fa-award text-6xl text-signal mb-4 drop-shadow-[0_0_15px_rgba(204,255,0,0.8)]"></i><h3 class="font-heavy text-2xl text-white mb-1 tracking-wide" data-i18n="cert_title">OFFICIAL SELECTION</h3><p class="font-mono text-[10px] text-gray-400 mb-6 tracking-widest">HKAIIFF 2026</p><div class="w-full bg-black/80 backdrop-blur p-4 rounded border border-[#333] font-mono text-left relative z-10 shadow-inner"><div class="text-[9px] text-gray-500 mb-1" data-i18n="form_title">PROJECT</div><div class="text-sm text-white font-bold mb-3 truncate" id="certProjectName">...</div><div class="text-[9px] text-gray-500 mb-1">TX HASH</div><div class="text-[10px] text-signal truncate ltr-force bg-[#111] p-1.5 rounded border border-signal/30" id="certHash">...</div></div></div>
+            <button class="brutal-btn w-full text-lg" onclick="app.nav('me')"><span data-i18n="btn_check_status">CHECK STATUS IN ME</span> <i class="fas fa-user ml-2"></i></button>
         </div>
     </div>
 
-    <div id="view-messages" class="view-container bg-void px-4 pt-28">
-        <h1 class="font-heavy text-4xl mb-6 border-b border-[#333] pb-4 text-white" data-i18n="nav_msg">SYSTEM MESSAGES</h1>
-        <div class="space-y-3" id="msg-list">
-            <div class="bg-[#111] p-5 rounded-lg border border-[#333] flex gap-4 hover:border-signal transition-colors cursor-pointer" onclick="app.toast('Universe Rendered Successfully')">
-                <div class="w-10 h-10 rounded-full bg-signal/20 border border-signal text-signal flex items-center justify-center flex-shrink-0"><i class="fas fa-video"></i></div>
-                <div>
-                    <div class="text-sm font-bold text-white mb-1">Interactive Film Ready</div>
-                    <div class="text-[11px] text-gray-400 leading-snug">The parallel universe based on your bio-data has been rendered. Swipe left on feed to view.</div>
-                    <div class="text-[9px] text-gray-500 font-mono mt-2">10 MINS AGO</div>
-                </div>
-            </div>
+    <div id="view-messages" class="view-container bg-void px-4 pt-28 pb-32">
+        <div class="flex justify-between items-end mb-4"><h1 class="font-heavy text-4xl text-white" data-i18n="msg_header">SYSTEM MESSAGES</h1><button onclick="app.markAllRead()" class="text-[10px] font-mono text-gray-500 hover:text-signal transition-colors flex items-center gap-1 active:scale-90"><i class="fas fa-check-double"></i> <span data-i18n="msg_mark_read">MARK ALL READ</span></button></div>
+        <div class="flex gap-4 border-b border-[#333] mb-6">
+            <button class="msg-tab active font-mono text-xs pb-2 border-b-2 border-signal text-white transition-colors" onclick="app.filterMessages('all', this)" data-i18n="msg_tab_all">ALL</button>
+            <button class="msg-tab font-mono text-xs pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition-colors" onclick="app.filterMessages('render', this)" data-i18n="msg_tab_render">RENDERS</button>
+            <button class="msg-tab font-mono text-xs pb-2 border-b-2 border-transparent text-gray-500 hover:text-gray-300 transition-colors" onclick="app.filterMessages('chain', this)" data-i18n="msg_tab_chain">ON-CHAIN</button>
         </div>
+        <div id="msg-list" class="space-y-3 pb-12"></div>
     </div>
 
     <div id="view-me" class="view-container bg-void px-4 pt-28 pb-32">
-        <h1 class="font-heavy text-4xl mb-6 text-white" data-i18n="nav_me">ME</h1>
-        <div class="flex items-center gap-5 mb-8 bg-[#111] p-5 rounded-xl border border-[#333]">
-            <div class="relative">
-                <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Janus" class="w-20 h-20 bg-black rounded-full border-2 border-signal p-1">
-                <div class="absolute bottom-0 right-0 w-6 h-6 bg-signal rounded-full border-2 border-black flex items-center justify-center text-[10px] text-black"><i class="fas fa-check"></i></div>
-            </div>
-            <div class="flex-1">
-                <h2 class="font-heavy text-2xl text-white mb-1">Janus J. Jiao</h2>
-                <div class="text-[9px] text-gray-400 font-mono mb-2">Chairman, HKAIIFF</div>
-                <div class="text-[10px] font-mono text-gray-400 bg-black border border-[#222] px-2 py-1 rounded inline-flex items-center gap-2 ltr-force">
-                    <i class="fas fa-wallet text-signal"></i> 0x8F3...A21C
-                </div>
-            </div>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-3 mb-8">
-            <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg">
-                <div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2"><i class="fas fa-coins"></i> <span data-i18n="aif_balance">AIF BALANCE</span></div>
-                <div class="text-3xl font-heavy text-white ltr-force flex items-baseline gap-1">
-                    <span class="text-aif text-lg">₳</span>14,500
-                </div>
-            </div>
-            <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg">
-                <div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2"><i class="fas fa-film"></i> <span data-i18n="interacted_films">INTERACTED</span></div>
-                <div class="text-3xl font-heavy text-white">12</div>
-            </div>
-        </div>
-        
-        <h3 class="font-heavy text-xl mb-4 border-b border-[#333] pb-2 text-white" data-i18n="my_subs">MY SUBMISSIONS</h3>
-        <div class="space-y-3 mb-8" id="my-submissions-list">
-            <div class="text-center text-xs text-gray-500 font-mono py-6 border border-dashed border-[#333] rounded-lg">No submissions yet.</div>
-        </div>
-
-        <h3 class="font-heavy text-xl mb-4 border-b border-[#333] pb-2 text-white" data-i18n="history">INTERACTION HISTORY</h3>
-        <div class="space-y-3">
-            <div class="border border-[#222] bg-[#111] rounded-lg p-3 flex gap-4 items-center cursor-pointer hover:border-signal transition-colors">
-                <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=200" class="w-16 h-12 object-cover rounded">
-                <div class="flex-1">
-                    <div class="text-sm font-bold text-white">NEON DYNASTY (V2)</div>
-                    <div class="text-[10px] text-gray-500 font-mono mt-1">Rendered from: Bio Data</div>
-                </div>
-                <button class="text-signal"><i class="fas fa-play-circle text-2xl"></i></button>
-            </div>
-        </div>
+        <div class="flex justify-between items-end mb-6"><h1 class="font-heavy text-4xl text-white" data-i18n="nav_me">ME</h1><div class="bg-signal/20 text-signal border border-signal px-2 py-1 rounded text-[9px] font-mono tracking-widest flex items-center gap-1"><div class="w-1.5 h-1.5 bg-signal rounded-full animate-pulse"></div>NODE ACTIVE</div></div>
+        <div class="flex items-center gap-5 mb-8 bg-[#111] p-5 rounded-xl border border-[#333] shadow-[0_0_20px_rgba(0,0,0,0.5)]"><div class="relative"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Janus" class="w-20 h-20 bg-black rounded-full border-2 border-signal p-1"><div class="absolute bottom-0 right-0 w-6 h-6 bg-signal rounded-full border-2 border-black flex items-center justify-center text-[10px] text-black"><i class="fas fa-check"></i></div></div><div class="flex-1"><h2 class="font-heavy text-2xl text-white mb-0.5 tracking-wide">Janus J. Jiao</h2><div class="text-[9px] text-gray-400 font-mono mb-2 tracking-wider uppercase">Chairman, HKAIIFF | Founder, AIF.BOT</div><div class="text-[10px] font-mono text-gray-400 bg-black border border-[#222] px-2 py-1.5 rounded inline-flex items-center gap-2 ltr-force cursor-pointer hover:text-signal transition-colors active:scale-95" onclick="app.toast('Wallet Address Copied')"><i class="fa-brands fa-solana text-signal"></i> 0x8F3...A21C <i class="fas fa-copy text-gray-600 ml-1"></i></div></div></div>
+        <div class="grid grid-cols-2 gap-3 mb-8"><div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg relative overflow-hidden group"><div class="absolute top-0 right-0 w-16 h-16 bg-signal/5 rounded-bl-full transition-colors group-hover:bg-signal/10"></div><div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2"><i class="fas fa-coins text-signal"></i> <span data-i18n="aif_balance">AIF BALANCE</span></div><div class="text-3xl font-heavy text-white ltr-force flex items-baseline gap-1">24,500 <span class="text-signal text-sm">AIF</span></div></div><div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg"><div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2"><i class="fas fa-network-wired text-honey"></i> <span data-i18n="interacted_films">NODE CONTRIBUTIONS</span></div><div class="text-3xl font-heavy text-white ltr-force">12 <span class="text-gray-500 text-sm font-mono tracking-widest pl-1">RENDERS</span></div></div></div>
+        <h3 class="font-heavy text-xl mb-4 border-b border-[#333] pb-2 text-white flex items-center gap-2"><i class="fas fa-film text-gray-500"></i> <span data-i18n="my_subs">MY SUBMISSIONS</span></h3>
+        <div class="space-y-3 mb-8" id="my-submissions-list"></div>
+        <h3 class="font-heavy text-xl mb-4 border-b border-[#333] pb-2 text-white flex items-center gap-2"><i class="fas fa-history text-gray-500"></i> <span data-i18n="history">INTERACTION HISTORY</span></h3>
+        <div class="space-y-3"><div class="border border-[#222] bg-[#111] rounded-lg p-3 flex gap-4 items-center cursor-pointer hover:border-signal transition-colors active:scale-[0.98]" onclick="app.toast('Loading parallel universe...')"><img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=200" class="w-16 h-12 object-cover rounded border border-[#333]"><div class="flex-1"><div class="text-sm font-bold text-white tracking-wide">NEON DYNASTY (V2)</div><div class="text-[9px] text-signal font-mono mt-1 bg-signal/10 inline-block px-1.5 py-0.5 rounded">Rendered via: Bio-Data</div></div><button class="text-gray-500 hover:text-white"><i class="fas fa-play-circle text-2xl"></i></button></div><div class="border border-[#222] bg-[#111] rounded-lg p-3 flex gap-4 items-center cursor-pointer hover:border-signal transition-colors active:scale-[0.98]" onclick="app.toast('Loading parallel universe...')"><img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=200" class="w-16 h-12 object-cover rounded border border-[#333]"><div class="flex-1"><div class="text-sm font-bold text-white tracking-wide">THE VOID PROTOCOL</div><div class="text-[9px] text-honey font-mono mt-1 bg-honey/10 inline-block px-1.5 py-0.5 rounded">Rendered via: Text Logic</div></div><button class="text-gray-500 hover:text-white"><i class="fas fa-play-circle text-2xl"></i></button></div></div>
     </div>
 
     <div class="fixed bottom-0 left-0 w-full z-40 bg-black/95 backdrop-blur-xl border-t border-[#222] pb-safe pt-2 px-2 flex justify-between items-center h-[80px]">
-        <button class="nav-item active flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors" onclick="app.nav('feed', this)"><i class="fas fa-home text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_feed">FEED</span></button>
-        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors" onclick="app.nav('discover', this)"><i class="fas fa-compass text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_discover">DISCOVER</span></button>
-        <button class="flex flex-col items-center gap-1 w-1/5 relative -top-6 group" onclick="app.nav('upload', this); app.resetUploadFlow();">
-            <div class="w-14 h-14 bg-signal text-black rounded-2xl flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(204,255,0,0.3)] rotate-45 group-active:scale-95 transition-all border-2 border-black"><i class="fas fa-plus -rotate-45"></i></div>
-        </button>
-        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors" onclick="app.nav('messages', this)"><i class="fas fa-envelope text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_msg">MSG</span></button>
-        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors" onclick="app.nav('me', this)"><i class="fas fa-user text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_me">ME</span></button>
+        <button class="nav-item active flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors cursor-pointer" onclick="app.nav('feed')"><i class="fas fa-home text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_feed">FEED</span></button>
+        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors cursor-pointer" onclick="app.nav('discover')"><i class="fas fa-compass text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_discover">DISCOVER</span></button>
+        <button class="flex flex-col items-center gap-1 w-1/5 relative -top-6 group cursor-pointer" onclick="app.nav('upload'); app.resetUploadFlow();"><div class="w-14 h-14 bg-signal text-black rounded-2xl flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(204,255,0,0.3)] rotate-45 group-active:scale-95 transition-all border-2 border-black"><i class="fas fa-plus -rotate-45"></i></div></button>
+        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors cursor-pointer" onclick="app.nav('messages')"><i class="fas fa-envelope text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_msg">MSG</span></button>
+        <button class="nav-item flex flex-col items-center gap-1 w-1/5 text-gray-400 hover:text-white transition-colors cursor-pointer" onclick="app.nav('me')"><i class="fas fa-user text-xl mb-0.5"></i><span class="text-[9px] font-mono tracking-wider" data-i18n="nav_me">ME</span></button>
     </div>
 
-    <button id="globalModalClose" onclick="app.closeAllModals()" class="fixed top-8 right-4 z-[9999] bg-black/70 w-11 h-11 rounded-full flex items-center justify-center text-white backdrop-blur-md border border-white/20 shadow-2xl hidden transition-opacity duration-300 opacity-0 active:scale-90">
-        <i class="fas fa-times text-xl"></i>
-    </button>
-
-    <div id="textModal" class="fixed inset-0 z-[400] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300" onclick="app.closeModal('textModal')">
-        <div class="w-full bg-[#111] p-6 pb-12 rounded-t-3xl transform translate-y-full transition-transform duration-300 border-t border-[#333]" onclick="event.stopPropagation()" id="textContent">
-            <h3 class="font-heavy text-xl mb-4 text-white flex justify-between items-center">
-                <span data-i18n="type_text">ENTER TEXT</span>
-                <button onclick="app.closeModal('textModal')" class="text-gray-500 active:scale-90"><i class="fas fa-times text-lg"></i></button>
-            </h3>
-            <textarea id="interactTextInput" class="w-full h-32 bg-black border border-[#333] rounded-xl p-4 text-sm text-white focus:border-signal outline-none mb-4" placeholder="..."></textarea>
-            <button class="brutal-btn w-full" onclick="app.submitTextInteract()">
-                <span data-i18n="btn_submit">SUBMIT</span>
-            </button>
-        </div>
-    </div>
+    <button id="globalModalClose" onclick="app.closeAllModals()" class="fixed top-8 right-4 z-[9999] bg-black/70 w-11 h-11 rounded-full flex items-center justify-center text-white backdrop-blur-md border border-white/20 shadow-2xl hidden transition-opacity duration-300 opacity-0 active:scale-90"><i class="fas fa-times text-xl"></i></button>
 
     <div id="infoModal" class="fixed inset-0 z-[200] bg-[#050505] hidden flex flex-col transform translate-y-full transition-transform duration-300">
-        <div class="relative w-full h-64 flex-shrink-0 bg-black">
-            <img id="infoPoster" src="" class="w-full h-full object-cover opacity-60">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div>
-            <div class="absolute bottom-4 left-5">
-                <div class="tag bg-signal text-black text-[10px] font-bold px-2 py-0.5 inline-block mb-1 rounded-sm" id="infoCreator">STUDIO</div>
-                <h2 class="font-heavy text-3xl text-white leading-none shadow-black drop-shadow-md" id="infoTitle">TITLE</h2>
-            </div>
+        <div class="absolute top-0 left-0 w-full z-30 flex justify-between items-center p-4 pt-12 bg-gradient-to-b from-black to-transparent">
+            <button onclick="app.closeModal('infoModal')" class="w-10 h-10 bg-black/50 backdrop-blur rounded-full text-white flex items-center justify-center border border-white/20 active:scale-90 transition-transform"><i class="fas fa-arrow-left"></i></button>
+            <div class="font-mono text-[10px] text-signal tracking-widest bg-black/50 px-3 py-1.5 rounded-full backdrop-blur border border-[#333]" data-i18n="info_onchain">ON-CHAIN METADATA</div>
+            <button onclick="app.openModal('shareModal')" class="w-10 h-10 bg-black/50 backdrop-blur rounded-full text-white flex items-center justify-center border border-white/20 active:scale-90 transition-transform"><i class="fas fa-share-alt"></i></button>
         </div>
-        
-        <div class="p-5 overflow-y-auto flex-1 pb-24 space-y-8" id="infoContent">
-            <section>
-                <h3 class="font-heavy text-lg text-signal mb-3 border-l-4 border-signal pl-2" data-i18n="info_overview">OVERVIEW & SYNOPSIS</h3>
-                <div class="bg-[#111] border border-[#222] p-4 rounded-xl shadow-inner">
-                    <p class="font-mono text-xs text-gray-300 leading-relaxed text-justify" id="infoSyn">Synopsis...</p>
-                </div>
-            </section>
-            
-            <section class="grid grid-cols-2 gap-4">
-                <div class="bg-[#111] p-3 rounded-lg border border-[#222]"><div class="text-[10px] text-gray-500 font-mono mb-1" data-i18n="info_cast">CORE CAST (DIGITAL)</div><div class="text-sm text-white font-bold" id="infoCast">...</div></div>
-                <div class="bg-[#111] p-3 rounded-lg border border-[#222]"><div class="text-[10px] text-gray-500 font-mono mb-1" data-i18n="info_dir">CONDUCTOR & TEAM</div><div class="text-sm text-white font-bold" id="infoDir">...</div></div>
-                <div class="bg-[#111] p-3 rounded-lg border border-[#222]"><div class="text-[10px] text-gray-500 font-mono mb-1" data-i18n="info_tech">TECH PROVIDERS</div><div class="text-xs text-honey font-bold leading-tight" id="infoTech">...</div></div>
-                <div class="bg-[#111] p-3 rounded-lg border border-[#222]"><div class="text-[10px] text-gray-500 font-mono mb-1" data-i18n="info_region">BROADCAST REGION</div><div class="text-sm text-white font-bold" id="infoRegion">...</div></div>
-            </section>
 
-            <section>
-                <h3 class="font-heavy text-lg text-aif mb-3 border-l-4 border-aif pl-2 flex items-center gap-2"><i class="fas fa-link"></i> <span data-i18n="info_onchain">ON-CHAIN METADATA</span></h3>
-                <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-[#333] p-4 rounded-xl space-y-3 shadow-[0_0_15px_rgba(0,229,153,0.1)]">
-                    <div class="flex justify-between items-center border-b border-[#222] pb-2">
-                        <div class="text-[10px] font-mono text-gray-500" data-i18n="network">NETWORK</div>
-                        <div class="text-xs font-bold text-white flex items-center gap-1" id="infoNetwork"><i class="fa-brands fa-solana text-aif"></i> Solana</div>
+        <div class="overflow-y-auto flex-1 pb-32">
+            <div class="relative w-full h-[50vh] bg-black">
+                <img id="infoPoster" src="" class="w-full h-full object-cover opacity-60">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/60 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 right-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="tag bg-signal text-black text-[10px] font-bold px-2 py-0.5 rounded-sm cursor-pointer hover:bg-white transition-colors active:scale-95 shadow-[0_0_10px_rgba(204,255,0,0.5)]" id="infoCreator">STUDIO</div>
+                        <div class="border border-[#444] text-gray-300 text-[9px] font-mono px-2 py-0.5 rounded-sm backdrop-blur">4K 60FPS</div>
+                        <div class="border border-[#444] text-gray-300 text-[9px] font-mono px-2 py-0.5 rounded-sm backdrop-blur">AI-NATIVE</div>
                     </div>
-                    <div class="flex justify-between items-center border-b border-[#222] pb-2">
-                        <div class="text-[10px] font-mono text-gray-500" data-i18n="contract_address">CONTRACT</div>
-                        <div class="text-[10px] font-mono text-signal bg-black px-2 py-1 rounded border border-[#333]" id="infoContract">...</div>
-                    </div>
-                    <div class="flex justify-between items-center border-b border-[#222] pb-2">
-                        <div class="text-[10px] font-mono text-gray-500" data-i18n="storage">STORAGE</div>
-                        <div class="text-xs font-bold text-gray-300" id="infoStorage">Arweave / IPFS</div>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div class="text-[10px] font-mono text-gray-500" data-i18n="royalty">CREATOR ROYALTY</div>
-                        <div class="text-xs font-bold text-white" id="infoRoyalty">5.00%</div>
+                    <h2 class="font-heavy text-4xl text-white leading-none shadow-black drop-shadow-lg mb-4" id="infoTitle">TITLE</h2>
+                    <div class="flex gap-3">
+                        <button class="brutal-btn flex-1 py-3 text-sm shadow-[0_0_15px_rgba(204,255,0,0.3)]" onclick="app.toast('Initiating Secure Stream...')"><i class="fas fa-play mr-2"></i> PLAY FILM</button>
+                        <button class="brutal-btn secondary w-12 flex-shrink-0" onclick="app.toast('Added to Watchlist')"><i class="fas fa-bookmark"></i></button>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <section class="bg-[#111] border border-[#333] p-4 rounded-lg relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-1 h-full bg-danger"></div>
-                <h3 class="font-heavy text-lg text-white mb-2 flex items-center gap-2"><i class="fas fa-lock text-danger"></i> <span data-i18n="info_limits">PLAYBACK RESTRICTIONS</span></h3>
-                <ul class="text-xs font-mono text-gray-400 space-y-2 list-disc pl-4" id="infoLimits"></ul>
-            </section>
+            <div class="px-6 space-y-8 mt-4 relative z-10">
+                <section>
+                    <h3 class="font-heavy text-lg text-signal mb-3 border-l-4 border-signal pl-3 flex items-center gap-2" data-i18n="info_overview">OVERVIEW & SYNOPSIS</h3>
+                    <div class="bg-[#111] border border-[#222] p-5 rounded-xl shadow-inner relative overflow-hidden">
+                        <i class="fas fa-quote-right text-[#222] text-6xl absolute -top-2 -right-2"></i>
+                        <p class="font-mono text-xs text-gray-300 leading-relaxed text-justify relative z-10" id="infoSyn"></p>
+                    </div>
+                </section>
+
+                <section class="grid grid-cols-2 gap-3">
+                    <div class="bg-gradient-to-b from-[#111] to-[#0a0a0a] p-4 rounded-xl border border-[#222] shadow-md">
+                        <div class="text-[9px] text-gray-500 font-mono mb-1.5 flex items-center gap-1.5"><i class="fas fa-users text-gray-400"></i> <span data-i18n="info_cast">CORE CAST</span></div>
+                        <div class="text-sm text-white font-bold leading-snug" id="infoCast">...</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-[#111] to-[#0a0a0a] p-4 rounded-xl border border-[#222] shadow-md">
+                        <div class="text-[9px] text-gray-500 font-mono mb-1.5 flex items-center gap-1.5"><i class="fas fa-user-astronaut text-gray-400"></i> <span data-i18n="info_dir">CONDUCTOR</span></div>
+                        <div class="text-sm text-white font-bold leading-snug" id="infoDir">...</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-[#111] to-[#0a0a0a] p-4 rounded-xl border border-[#222] shadow-md">
+                        <div class="text-[9px] text-gray-500 font-mono mb-1.5 flex items-center gap-1.5"><i class="fas fa-microchip text-honey"></i> <span data-i18n="info_tech">TECH PROVIDERS</span></div>
+                        <div class="text-xs text-honey font-bold leading-snug" id="infoTech">...</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-[#111] to-[#0a0a0a] p-4 rounded-xl border border-[#222] shadow-md">
+                        <div class="text-[9px] text-gray-500 font-mono mb-1.5 flex items-center gap-1.5"><i class="fas fa-globe-asia text-blue-400"></i> <span data-i18n="info_region">REGION</span></div>
+                        <div class="text-sm text-white font-bold leading-snug" id="infoRegion">...</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="font-heavy text-lg text-aif mb-3 border-l-4 border-aif pl-3 flex items-center gap-2"><i class="fas fa-link"></i> <span data-i18n="info_onchain">ON-CHAIN METADATA</span></h3>
+                    <div class="bg-[#111] border border-[#333] rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,229,153,0.05)]">
+                        <div class="p-4 space-y-4">
+                            <div class="flex justify-between items-center border-b border-[#222] pb-3">
+                                <div class="text-[10px] font-mono text-gray-500" data-i18n="network">NETWORK</div>
+                                <div class="text-xs font-bold text-white flex items-center gap-1.5 bg-black px-2 py-1 rounded border border-[#333]" id="infoNetwork"><i class="fa-brands fa-solana text-aif"></i> Solana</div>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-[#222] pb-3">
+                                <div class="text-[10px] font-mono text-gray-500" data-i18n="contract_address">CONTRACT</div>
+                                <div class="text-[10px] font-mono text-signal bg-signal/10 px-2 py-1 rounded border border-signal/30 flex items-center gap-2 cursor-pointer active:scale-95 transition-transform" onclick="app.toast('Contract address copied!')">
+                                    <span id="infoContract" class="ltr-force">...</span>
+                                    <i class="fas fa-copy text-[10px]"></i>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-[#222] pb-3">
+                                <div class="text-[10px] font-mono text-gray-500" data-i18n="storage">STORAGE</div>
+                                <div class="text-xs font-bold text-gray-300 flex items-center gap-1.5"><i class="fas fa-database text-gray-500"></i> <span id="infoStorage">Arweave / IPFS</span></div>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div class="text-[10px] font-mono text-gray-500" data-i18n="royalty">CREATOR ROYALTY</div>
+                                <div class="text-sm font-heavy text-white ltr-force" id="infoRoyalty">...</div>
+                            </div>
+                        </div>
+                        <div class="bg-aif/10 w-full p-2.5 text-center text-[9px] font-mono text-aif border-t border-aif/20 flex items-center justify-center gap-2">
+                            <i class="fas fa-shield-alt"></i> VERIFIED BY AIF.BOT PROTOCOL
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-[#111] border border-danger/30 p-5 rounded-xl relative overflow-hidden shadow-[0_0_15px_rgba(255,51,51,0.1)]">
+                    <div class="absolute top-0 right-0 w-1.5 h-full bg-danger"></div>
+                    <h3 class="font-heavy text-lg text-white mb-3 flex items-center gap-2"><i class="fas fa-lock text-danger"></i> <span data-i18n="info_limits">PLAYBACK RESTRICTIONS</span></h3>
+                    <ul class="text-xs font-mono text-gray-400 space-y-2.5 list-none" id="infoLimits">
+                        </ul>
+                </section>
+            </div>
         </div>
     </div>
 
     <div id="creatorModal" class="fixed inset-0 z-[200] bg-[#050505] hidden flex flex-col transform translate-y-full transition-transform duration-300 overflow-y-auto">
-        <div class="h-56 w-full flex-shrink-0 bg-gradient-to-b from-gray-800 to-black relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=800" class="absolute inset-0 w-full h-full object-cover opacity-40">
-            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/90 to-transparent"></div>
+        <div class="absolute top-0 left-0 w-full z-30 flex justify-between items-center p-4 pt-12 bg-gradient-to-b from-black to-transparent">
+            <button onclick="app.closeModal('creatorModal')" class="w-10 h-10 bg-black/50 backdrop-blur rounded-full text-white flex items-center justify-center border border-white/20 active:scale-90 transition-transform"><i class="fas fa-arrow-left"></i></button>
+            <div class="font-mono text-[10px] text-white tracking-widest bg-black/50 px-3 py-1.5 rounded-full backdrop-blur border border-[#333]">STUDIO PROFILE</div>
+            <div class="w-10"></div>
         </div>
-        
-        <div class="px-6 -mt-16 relative z-10 pb-24">
-            <div class="flex justify-between items-end mb-4">
-                <img id="cAvt" src="" class="w-28 h-28 border-4 border-[#050505] rounded-full bg-black shadow-[0_0_20px_rgba(204,255,0,0.3)] relative z-20">
-                <button class="brutal-btn py-2 px-6 text-xs shadow-lg relative z-20"><i class="fas fa-plus mr-2"></i> <span data-i18n="btn_follow">FOLLOW</span></button>
-            </div>
-            
-            <h1 class="font-heavy text-4xl text-white mb-2 flex items-center gap-2">
-                <span id="cName">Name</span> <i class="fas fa-check-circle text-signal text-xl"></i>
-            </h1>
-            
-            <div class="flex flex-wrap gap-4 text-[11px] font-mono text-gray-400 mb-6 border-b border-[#222] pb-6">
-                <span id="cPop" class="flex items-center gap-1 text-orange-500"><i class="fas fa-fire text-sm"></i></span>
-                <span id="cWorks" class="flex items-center gap-1 text-gray-300"><i class="fas fa-film text-sm"></i></span>
-                <span id="cRoi" class="flex items-center gap-1 text-signal font-bold"><i class="fas fa-chart-line text-sm"></i></span>
-            </div>
-
-            <div class="space-y-8">
-                <section>
-                    <h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-signal pl-3" data-i18n="about">ABOUT STUDIO</h3>
-                    <div class="bg-[#111] p-5 rounded-xl border border-[#222]">
-                        <p class="text-xs text-gray-300 font-mono leading-relaxed text-justify" id="cBio">Bio...</p>
-                    </div>
-                </section>
-                <section>
-                    <h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-white pl-3" data-i18n="tech_stack">TECH STACK</h3>
-                    <div class="flex flex-wrap gap-2" id="cTech"></div>
-                </section>
-                <section>
-                    <h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-gray-500 pl-3" data-i18n="team">CORE TEAM</h3>
-                    <div class="space-y-3" id="cTeam"></div>
-                </section>
-                <section>
-                    <h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-aif pl-3" data-i18n="portfolio">TRACK RECORD</h3>
-                    <div class="space-y-3" id="cPortfolio"></div>
-                </section>
-            </div>
-        </div>
+        <div class="h-64 w-full flex-shrink-0 bg-gradient-to-b from-gray-800 to-black relative overflow-hidden"><img src="https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=800" class="absolute inset-0 w-full h-full object-cover opacity-40"><div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/90 to-transparent"></div></div>
+        <div class="px-6 -mt-16 relative z-10 pb-24"><div class="flex justify-between items-end mb-4"><img id="cAvt" src="" class="w-28 h-28 border-4 border-[#050505] rounded-full bg-black shadow-[0_0_20px_rgba(204,255,0,0.3)] relative z-20"><button class="brutal-btn py-2 px-6 text-xs shadow-lg relative z-20"><i class="fas fa-plus mr-2"></i> <span data-i18n="btn_follow">FOLLOW</span></button></div><h1 class="font-heavy text-4xl text-white mb-2 flex items-center gap-2"><span id="cName">Name</span> <i class="fas fa-check-circle text-signal text-xl"></i></h1><div class="flex flex-wrap gap-4 text-[11px] font-mono text-gray-400 mb-6 border-b border-[#222] pb-6"><span id="cPop" class="flex items-center gap-1 text-orange-500"><i class="fas fa-fire text-sm"></i></span><span id="cWorks" class="flex items-center gap-1 text-gray-300"><i class="fas fa-film text-sm"></i></span><span id="cRoi" class="flex items-center gap-1 text-signal font-bold"><i class="fas fa-chart-line text-sm"></i></span></div><div class="space-y-8"><section><h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-signal pl-3" data-i18n="about">ABOUT STUDIO</h3><div class="bg-[#111] p-5 rounded-xl border border-[#222]"><p class="text-xs text-gray-300 font-mono leading-relaxed text-justify" id="cBio"></p></div></section><section><h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-white pl-3" data-i18n="tech_stack">TECH STACK</h3><div class="flex flex-wrap gap-2" id="cTech"></div></section><section><h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-gray-500 pl-3" data-i18n="team">CORE TEAM</h3><div class="space-y-3" id="cTeam"></div></section><section><h3 class="font-heavy text-xl text-white mb-3 border-l-4 border-aif pl-3" data-i18n="portfolio">TRACK RECORD</h3><div class="space-y-3" id="cPortfolio"></div></section></div></div>
     </div>
 
-    <div id="playModal" class="fixed inset-0 z-[500] bg-black hidden flex-col transition-opacity duration-300 opacity-0">
-        <div class="relative w-full h-full flex flex-col items-center justify-center bg-black">
-            <button onclick="app.closeModal('playModal')" class="absolute top-12 left-4 w-10 h-10 bg-black/50 backdrop-blur rounded-full text-white flex items-center justify-center border border-white/20 z-20 hover:bg-signal hover:text-black transition-colors"><i class="fas fa-arrow-left"></i></button>
-            <div class="absolute top-12 right-4 bg-signal text-black text-[10px] font-bold px-3 py-1.5 rounded-sm animate-pulse z-20 flex items-center gap-2">
-                <i class="fas fa-circle text-[8px] text-danger"></i> <span data-i18n="full_feature">FULL FEATURE PLAYING</span>
-            </div>
-            
-            <div class="w-full relative flex-1 flex items-center justify-center overflow-hidden">
-                <img id="playVideo" src="" class="absolute inset-0 w-full h-full object-cover opacity-60 filter blur-sm">
-                <img id="playVideoMain" src="" class="relative z-10 w-full h-auto max-h-full object-contain shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-            </div>
-
-            <div class="absolute bottom-0 left-0 w-full px-6 pb-12 pt-24 bg-gradient-to-t from-black via-black/80 to-transparent z-20 flex flex-col items-center">
-                <h2 id="playTitle" class="font-heavy text-3xl text-white mb-2 shadow-black drop-shadow-lg text-center tracking-wide">TITLE</h2>
-                <div class="text-[10px] font-mono text-signal mb-4 bg-black/50 px-2 py-1 rounded border border-[#333]">LBS UNLOCKED</div>
-                <div class="w-full bg-[#333] h-1.5 rounded-full mt-2 overflow-hidden cursor-pointer group">
-                    <div class="bg-signal w-1/3 h-full relative group-hover:bg-white transition-colors">
-                        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow border border-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                </div>
-                <div class="flex justify-between w-full text-[10px] font-mono text-gray-400 mt-3">
-                    <span>00:24:15</span>
-                    <span>02:15:30</span>
-                </div>
-            </div>
-        </div>
+    <div id="lbsDetailModal" class="fixed inset-0 z-[400] bg-[#050505] hidden flex flex-col transform translate-y-full transition-transform duration-300">
+        <div class="absolute top-0 left-0 w-full z-20 flex justify-between items-center p-4 pt-12 bg-gradient-to-b from-black to-transparent"><button onclick="app.closeModal('lbsDetailModal')" class="w-10 h-10 bg-black/50 backdrop-blur rounded-full text-white flex items-center justify-center border border-white/20 active:scale-90 transition-transform"><i class="fas fa-arrow-left"></i></button><div class="font-mono text-[10px] text-signal tracking-widest bg-black/50 px-3 py-1.5 rounded-full backdrop-blur border border-[#333]" data-i18n="event_details">EVENT DETAILS</div><div class="w-10"></div></div>
+        <div class="overflow-y-auto flex-1 pb-32"><div class="relative w-full h-72 bg-black"><img id="lbsDetailImg" src="" class="w-full h-full object-cover opacity-60"><div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent"></div></div><div class="px-6 -mt-12 relative z-10 space-y-6"><div><div id="lbsDetailState" class="inline-block text-[9px] font-mono px-2 py-1 rounded mb-2 border backdrop-blur">STATE</div><h2 id="lbsDetailTitle" class="font-heavy text-4xl text-white leading-none shadow-black drop-shadow-md mb-2">TITLE</h2><div class="text-[10px] font-mono text-gray-400 ltr-force flex items-center gap-1"><i class="fas fa-crosshairs text-signal"></i> <span id="lbsDetailCoords">Coords</span></div></div><div class="grid grid-cols-2 gap-4"><div class="bg-[#111] p-4 rounded-xl border border-[#222]"><div class="text-[9px] text-gray-500 font-mono mb-1" data-i18n="venue">VENUE</div><div class="text-sm text-white font-bold" id="lbsDetailLocation">Location</div></div><div class="bg-[#111] p-4 rounded-xl border border-[#222]"><div class="text-[9px] text-gray-500 font-mono mb-1" data-i18n="schedule">SCHEDULE</div><div class="text-sm text-white font-bold" id="lbsDetailDate">Date</div></div></div><section><h3 class="font-heavy text-lg text-white mb-2" data-i18n="event_desc">EVENT DESCRIPTION</h3><p class="text-xs text-gray-300 font-mono leading-relaxed text-justify" id="lbsDetailDesc">Desc</p></section><section class="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-[#333] p-4 rounded-xl relative overflow-hidden"><div class="absolute left-0 top-0 w-1 h-full" id="lbsDetailReqBar"></div><h3 class="font-heavy text-lg text-white mb-2" data-i18n="contract_req">SMART CONTRACT REQ</h3><p class="text-[10px] text-gray-400 font-mono" id="lbsDetailReq">Req</p></section></div></div>
+        <div class="absolute bottom-0 left-0 w-full p-4 bg-black/90 backdrop-blur-xl border-t border-[#222] pb-safe z-20"><button id="lbsDetailBtn" class="brutal-btn w-full text-lg" onclick="app.executeLBS()"><i id="lbsDetailBtnIcon" class="fas mr-2"></i> <span id="lbsDetailBtnText">VERIFY LBS NODE</span></button></div>
     </div>
 
-    <div id="shareModal" class="fixed inset-0 z-[250] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300" onclick="app.closeModal('shareModal')">
-        <div class="w-full bg-[#111] p-8 pb-12 rounded-t-3xl transform translate-y-full transition-transform duration-300 border-t border-[#333]" onclick="event.stopPropagation()" id="shareContent">
-            <h3 class="font-heavy text-2xl mb-6 text-center text-white" data-i18n="share">FORWARD & SHARE</h3>
-            <div class="grid grid-cols-4 gap-4 text-center">
-                <div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fab fa-twitter"></i></div><span class="text-[10px] font-mono text-gray-400">X</span></div>
-                <div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fab fa-instagram"></i></div><span class="text-[10px] font-mono text-gray-400">IG</span></div>
-                <div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-white text-black group-hover:bg-signal transition-colors rounded-full flex items-center justify-center text-2xl"><i class="fas fa-download"></i></div><span class="text-[10px] font-mono text-gray-400" data-i18n="save_poster">POSTER</span></div>
-                <div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fas fa-link"></i></div><span class="text-[10px] font-mono text-gray-400">LINK</span></div>
-            </div>
-            <button class="w-full mt-8 py-4 bg-[#222] text-white font-heavy text-lg rounded-xl" onclick="app.closeModal('shareModal')" data-i18n="btn_cancel">CANCEL</button>
-        </div>
-    </div>
+    <div id="playModal" class="fixed inset-0 z-[500] bg-black hidden flex-col transition-opacity duration-300 opacity-0"><div class="relative w-full h-full flex flex-col justify-center bg-[#050505]"><div class="absolute top-0 left-0 w-full p-4 pt-12 flex justify-between items-start z-30 bg-gradient-to-b from-black to-transparent"><button onclick="app.closeModal('playModal')" class="w-10 h-10 bg-black/50 backdrop-blur rounded-full text-white flex items-center justify-center border border-white/20 active:scale-90 transition-transform"><i class="fas fa-arrow-left"></i></button><div class="bg-danger/20 border border-danger px-3 py-1.5 rounded text-danger text-[10px] font-bold tracking-widest animate-pulse flex items-center gap-2 backdrop-blur"><i class="fas fa-circle text-[8px]"></i> <span data-i18n="full_feature">FULL FEATURE PLAYING</span></div></div><div class="relative w-full aspect-[16/9] sm:aspect-video bg-black flex items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] group"><img id="playVideoMain" src="" class="absolute inset-0 w-full h-full object-cover opacity-70 group-hover:opacity-50 transition-opacity"><div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div><button onclick="event.stopPropagation(); app.toast('Streaming from Arweave storage network...')" class="relative z-10 w-16 h-16 bg-signal text-black rounded-full flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(204,255,0,0.4)] active:scale-90 transition-transform pl-1 cursor-pointer"><i class="fas fa-play"></i></button></div><div class="absolute bottom-0 left-0 w-full px-6 pb-12 pt-16 bg-gradient-to-t from-black to-transparent z-20"><h2 id="playTitle" class="font-heavy text-2xl text-white mb-4 shadow-black drop-shadow-lg tracking-wide uppercase">TITLE</h2><div class="w-full bg-[#333] h-1.5 rounded-full overflow-hidden cursor-pointer relative group"><div class="bg-white/20 w-full h-full absolute left-0 top-0"></div><div class="bg-signal w-1/3 h-full absolute left-0 top-0 group-hover:bg-white transition-colors"></div><div class="absolute left-1/3 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"></div></div><div class="flex justify-between w-full text-[10px] font-mono text-gray-400 mt-3"><span class="text-signal font-bold">00:24:15</span><span id="playDuration">02:15:30</span></div><div class="mt-6 flex justify-between items-center text-gray-400"><div class="flex gap-6"><button class="hover:text-white transition-colors active:scale-90"><i class="fas fa-volume-up text-lg"></i></button><button class="hover:text-white transition-colors active:scale-90"><i class="fas fa-closed-captioning text-lg"></i></button></div><button class="hover:text-white transition-colors active:scale-90"><i class="fas fa-expand text-lg"></i></button></div></div></div></div>
 
-    <div id="sysModal" class="fixed inset-0 z-[300] bg-black/90 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300 px-6">
-        <div class="bg-[#111] border border-[#333] w-full max-w-sm rounded-xl p-6 text-center transform scale-95 transition-transform duration-300" id="sysContent">
-            <div id="sysIcon" class="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 bg-black border border-[#333]"></div>
-            <h3 class="font-heavy text-2xl text-white mb-2" id="sysTitle">Title</h3>
-            <p class="font-mono text-xs text-gray-400 mb-8 leading-relaxed" id="sysDesc">Desc</p>
-            <button class="brutal-btn w-full" onclick="app.closeModal('sysModal')" data-i18n="btn_ack">ACKNOWLEDGE</button>
-        </div>
-    </div>
+    <div id="textModal" class="fixed inset-0 z-[400] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300" onclick="app.closeModal('textModal')"><div class="w-full bg-[#111] p-6 pb-12 rounded-t-3xl transform translate-y-full transition-transform duration-300 border-t border-[#333]" onclick="event.stopPropagation()" id="textContent"><h3 class="font-heavy text-xl mb-4 text-white flex justify-between items-center"><span data-i18n="type_text">ENTER TEXT</span><button onclick="app.closeModal('textModal')" class="text-gray-500 active:scale-90"><i class="fas fa-times text-lg"></i></button></h3><textarea id="interactTextInput" class="w-full h-32 bg-black border border-[#333] rounded-xl p-4 text-sm text-white focus:border-signal outline-none mb-4" placeholder="Inject your prompt logic here..."></textarea><button class="brutal-btn w-full" onclick="app.submitTextInteract()"><span data-i18n="btn_submit">SUBMIT</span></button></div></div>
 
-    <div id="langModal" class="fixed inset-0 z-[300] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300">
-        <div class="w-full bg-[#0a0a0a] border-t border-[#333] rounded-t-3xl transform translate-y-full transition-transform duration-300 pb-safe" id="langContent">
-            <div class="p-6 pb-2 border-b border-[#222] flex justify-between items-center">
-                <h3 class="font-heavy text-2xl text-white" data-i18n="sel_lang">SELECT LANGUAGE</h3>
-                <button onclick="app.closeModal('langModal')" class="text-gray-500 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-            </div>
-            <div class="p-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto" id="langGrid"></div>
-        </div>
-    </div>
+    <div id="shareModal" class="fixed inset-0 z-[250] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300" onclick="app.closeModal('shareModal')"><div class="w-full bg-[#111] p-8 pb-12 rounded-t-3xl transform translate-y-full transition-transform duration-300 border-t border-[#333]" onclick="event.stopPropagation()" id="shareContent"><h3 class="font-heavy text-2xl mb-6 text-center text-white" data-i18n="share">FORWARD & SHARE</h3><div class="grid grid-cols-4 gap-4 text-center"><div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fab fa-twitter"></i></div><span class="text-[10px] font-mono text-gray-400">X</span></div><div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fab fa-instagram"></i></div><span class="text-[10px] font-mono text-gray-400">IG</span></div><div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-white text-black group-hover:bg-signal transition-colors rounded-full flex items-center justify-center text-2xl"><i class="fas fa-download"></i></div><span class="text-[10px] font-mono text-gray-400" data-i18n="save_poster">POSTER</span></div><div class="flex flex-col items-center gap-3 cursor-pointer group"><div class="w-14 h-14 bg-black border border-[#333] group-hover:border-signal group-hover:text-signal transition-colors rounded-full flex items-center justify-center text-2xl text-white"><i class="fas fa-link"></i></div><span class="text-[10px] font-mono text-gray-400">LINK</span></div></div><button class="w-full mt-8 py-4 bg-[#222] text-white font-heavy text-lg rounded-xl" onclick="app.closeModal('shareModal')" data-i18n="btn_cancel">CANCEL</button></div></div>
 
-    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 shadow-[0_5px_30px_rgba(204,255,0,0.3)] font-mono text-xs font-bold z-[400] transform -translate-y-40 transition-transform duration-300 rounded-full whitespace-nowrap flex items-center gap-2">
-        <i class="fas fa-terminal text-signal bg-black rounded-full w-5 h-5 flex items-center justify-center"></i> <span id="toastMsg">READY</span>
-    </div>
+    <div id="sysModal" class="fixed inset-0 z-[300] bg-black/90 hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300 px-6"><div class="bg-[#111] border border-[#333] w-full max-w-sm rounded-xl p-6 text-center transform scale-95 transition-transform duration-300 shadow-[0_0_30px_rgba(255,51,51,0.15)]" id="sysContent"><div id="sysIcon" class="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 bg-black border border-[#333]"></div><h3 class="font-heavy text-2xl text-white mb-2" id="sysTitle">Title</h3><p class="font-mono text-xs text-gray-400 mb-8 leading-relaxed" id="sysDesc">Desc</p><button class="brutal-btn w-full" onclick="app.closeModal('sysModal')" data-i18n="btn_ack">ACKNOWLEDGE</button></div></div>
+
+    <div id="langModal" class="fixed inset-0 z-[300] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300"><div class="w-full bg-[#0a0a0a] border-t border-[#333] rounded-t-3xl transform translate-y-full transition-transform duration-300 pb-safe" id="langContent"><div class="p-6 pb-2 border-b border-[#222] flex justify-between items-center"><h3 class="font-heavy text-2xl text-white" data-i18n="sel_lang">SELECT LANGUAGE</h3><button onclick="app.closeModal('langModal')" class="text-gray-500 hover:text-white active:scale-90"><i class="fas fa-times text-xl"></i></button></div><div class="p-4 grid grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto" id="langGrid"></div></div></div>
+
+    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 shadow-[0_5px_30px_rgba(204,255,0,0.3)] font-mono text-xs font-bold z-[400] transform -translate-y-40 transition-transform duration-300 rounded-full whitespace-nowrap flex items-center gap-2"><i class="fas fa-terminal text-signal bg-black rounded-full w-5 h-5 flex items-center justify-center"></i> <span id="toastMsg">READY</span></div>
 
     <script>
         const I18N = {
-            en: {
-                nav_feed:"FEED", nav_discover:"DISCOVER", nav_msg:"MSG", nav_me:"ME", 
-                interact:"INTERACT", share:"FORWARD", swipe_hint:"USER VER", 
-                interactive_ready:"YOUR PARALLEL UNIVERSE", interactive_desc:"Rendered based on your specific hash.", mint_to_chain:"MINT TO CHAIN", 
-                lbs_desc:"Exclusive screenings controlled by Location-Based Services (LBS).", 
-                submit_film:"SUBMIT FILM", up_notice:"HKAIIFF 2026 runs July 15-21. Ensure AI generation > 51%.", form_title:"PROJECT TITLE", form_desc:"DETAILED PROJECT DESCRIPTION", form_assets:"ASSETS UPLOAD", up_poster:"POSTER", up_film:"FULL FILM", up_rights:"RIGHTS", btn_next:"PROCEED TO PAYMENT", btn_back:"BACK", fee_desc:"FESTIVAL SUBMISSION FEE", pay_fiat:"FIAT PAYMENT", pay_crypto:"ON-CHAIN (50% OFF)", cert_title:"OFFICIAL SELECTION", btn_check_status:"CHECK STATUS IN ME",
-                aif_balance:"AIF BALANCE", interacted_films:"INTERACTED", my_subs:"MY SUBMISSIONS", history:"INTERACTION HISTORY", 
-                info_overview:"OVERVIEW & SYNOPSIS", info_cast:"CORE CAST (DIGITAL)", info_dir:"CONDUCTOR & TEAM", info_tech:"TECH PROVIDERS", info_region:"BROADCAST REGION", info_limits:"PLAYBACK RESTRICTIONS", 
-                info_onchain:"ON-CHAIN METADATA", network:"NETWORK", contract_address:"CONTRACT", storage:"STORAGE PROTOCOL", royalty:"CREATOR ROYALTY", full_feature:"FULL FEATURE PLAYING",
-                about:"ABOUT STUDIO", tech_stack:"TECH STACK", team:"CORE TEAM", portfolio:"TRACK RECORD", btn_follow:"FOLLOW", save_poster:"POSTER", btn_cancel:"CANCEL", btn_ack:"ACKNOWLEDGE", sel_lang:"SELECT LANGUAGE",
-                type_text:"ENTER TEXT", btn_submit:"SUBMIT"
+            en: { 
+                nav_feed:"FEED", nav_discover:"DISCOVER", nav_msg:"MSG", nav_me:"ME", share:"FORWARD", swipe_hint:"USER VER", mint_to_chain:"MINT TO CHAIN", type_text:"ENTER TEXT", btn_submit:"SUBMIT", save_poster:"POSTER", btn_cancel:"CANCEL", btn_ack:"ACKNOWLEDGE", sel_lang:"SELECT LANGUAGE", info:"INFO", full_feature:"FULL FEATURE PLAYING", scanning_nodes:"SCANNING LBS NODES...", state_unlocked:"UNLOCKED", state_locked_geo:"GEO-LOCKED", state_locked_time:"TIME-LOCKED", lbs_desc:"Exclusive screenings controlled by LBS and smart contracts.", submit_film:"SUBMIT FILM", up_notice:"Festival runs July 15-21, 2026. Submissions must adhere to the AI-Native philosophy.", form_title:"PROJECT TITLE", form_studio:"CONDUCTOR / STUDIO", form_tech:"TECH STACK", form_ai_ratio:"AI CONTRIBUTION RATIO", ai_warn:"Must exceed 51% to qualify as AI-Native.", form_desc:"WORLDVIEW / SYNOPSIS", form_assets:"ASSETS UPLOAD", up_poster:"POSTER", up_film:"FULL FILM", up_rights:"RIGHTS", btn_next:"PROCEED TO PAYMENT", btn_back:"BACK", fee_desc:"FESTIVAL SUBMISSION FEE", pay_fiat:"FIAT PAYMENT", pay_crypto:"ON-CHAIN (50% OFF)", cert_title:"OFFICIAL SELECTION", btn_check_status:"CHECK STATUS IN ME", info_overview:"OVERVIEW & SYNOPSIS", info_cast:"CORE CAST", info_dir:"CONDUCTOR", info_tech:"TECH PROVIDERS", info_region:"REGION", info_onchain:"ON-CHAIN METADATA", network:"NETWORK", contract_address:"CONTRACT", storage:"STORAGE PROTOCOL", royalty:"CREATOR ROYALTY", info_limits:"PLAYBACK RESTRICTIONS", about:"ABOUT STUDIO", tech_stack:"TECH STACK", team:"CORE TEAM", portfolio:"TRACK RECORD", btn_follow:"FOLLOW", msg_header:"SYSTEM MESSAGES", msg_mark_read:"MARK ALL READ", msg_tab_all:"ALL", msg_tab_render:"RENDERS", msg_tab_chain:"ON-CHAIN", msg_empty:"NO MESSAGES", m1_title:"Parallel Universe Rendered", m1_desc:"Bio-data processing complete. Swipe left on feed.", time_just_now:"JUST NOW", m2_title:"Minting Successful", m2_desc:"Your submission is now active on Solana.", time_1h:"1 HOUR AGO", m3_title:"AIF.BOT Node Congestion", m3_desc:"Global hash rate at 98%. Rendering delayed.", time_3h:"3 HOURS AGO", m4_title:"LBS Zone Entered", m4_desc:"You are within the zone. Film unlocked.", time_1d:"1 DAY AGO", aif_balance:"AIF BALANCE", interacted_films:"NODE CONTRIBUTIONS", my_subs:"MY SUBMISSIONS", history:"INTERACTION HISTORY", no_subs:"No submissions yet. Mint your first film.",
+                event_details:"EVENT DETAILS", venue:"VENUE", schedule:"SCHEDULE", contract_req:"SMART CONTRACT REQ", btn_verify:"VERIFY LBS NODE", event_desc:"EVENT DESCRIPTION"
             },
-            zh: {
-                nav_feed:"首映流", nav_discover:"發現", nav_msg:"消息", nav_me:"我的", 
-                interact:"互動", share:"轉發", swipe_hint:"用戶版本", 
-                interactive_ready:"專屬平行宇宙", interactive_desc:"基於您提交的獨有哈希值渲染生成。", mint_to_chain:"鑄造上鏈", 
-                lbs_desc:"基於 LBS 服務與智能合約限制的獨家展映電影。", 
-                submit_film:"提交參展影片", up_notice:"HKAIIFF 2026 將於7月15日至21日舉行。請確保 AI 生成貢獻率超過 51%。", form_title:"影片項目名稱", form_desc:"項目詳細介紹", form_assets:"資料與資產上傳", up_poster:"海報/預告片", up_film:"完整正片", up_rights:"權利證明", btn_next:"前往支付流程", btn_back:"返回修改", fee_desc:"參賽展映費用", pay_fiat:"法幣通道", pay_crypto:"鏈上支付 (享5折優惠)", cert_title:"官方入圍證書", btn_check_status:"前往 ME 查詢狀態",
-                aif_balance:"AIF 餘額", interacted_films:"已互動影片", my_subs:"我的參展項目", history:"互動歷史記錄", 
-                info_overview:"概要與劇本", info_cast:"核心演員 (數位)", info_dir:"指揮家與團隊", info_tech:"技術供應商", info_region:"發行地區", info_limits:"播放限制條件", 
-                info_onchain:"鏈上元数据", network:"區塊鏈網路", contract_address:"合約地址", storage:"儲存協議", royalty:"創作者版稅", full_feature:"完整正片播放中",
-                about:"製作方簡介", tech_stack:"技術架構", team:"核心團隊", portfolio:"過往經歷", btn_follow:"關注", save_poster:"保存海報", btn_cancel:"取消", btn_ack:"我知道了", sel_lang:"選擇語言",
-                type_text:"輸入文字", btn_submit:"提交"
+            zh: { 
+                nav_feed:"首映流", nav_discover:"發現", nav_msg:"消息", nav_me:"我的", share:"轉發", swipe_hint:"用戶版本", mint_to_chain:"鑄造上鏈", type_text:"輸入文字", btn_submit:"提交", save_poster:"保存海報", btn_cancel:"取消", btn_ack:"我知道了", sel_lang:"選擇語言", info:"詳情", full_feature:"完整正片播放中", scanning_nodes:"掃描全球 LBS 節點...", state_unlocked:"已解鎖", state_locked_geo:"地理位置鎖定", state_locked_time:"時間鎖定", lbs_desc:"基於地理位置服務 (LBS) 與智能合約限制的獨家展映。", submit_film:"提交參展影片", up_notice:"HKAIIFF 2026 將於7月15日-21日舉行。作品必須符合 AI 原生信仰。", form_title:"影片項目名稱", form_studio:"指揮家 / 廠牌", form_tech:"技術棧聲明", form_ai_ratio:"AI 貢獻率占比", ai_warn:"AI 貢獻率必須超過 51% 方可參賽。", form_desc:"詳細世界觀與劇本設定", form_assets:"資產上載", up_poster:"海報", up_film:"完整正片", up_rights:"權利證明", btn_next:"前往支付流程", btn_back:"返回修改", fee_desc:"參賽展映費用", pay_fiat:"法幣支付通道", pay_crypto:"鏈上支付 (享5折優惠)", cert_title:"官方入圍證書", btn_check_status:"前往 ME 查詢狀態", info_overview:"概要與劇本", info_cast:"核心演員", info_dir:"指揮家", info_tech:"技術供應商", info_region:"發行地區", info_onchain:"鏈上元數據", network:"區塊鏈網絡", contract_address:"合約地址", storage:"儲存協議", royalty:"創作者版稅", info_limits:"播放限制條件", about:"製作方簡介", tech_stack:"技術架構", team:"核心團隊", portfolio:"過往經歷", btn_follow:"關注", msg_header:"系統消息", msg_mark_read:"全部標為已讀", msg_tab_all:"全部", msg_tab_render:"渲染通知", msg_tab_chain:"鏈上動態", msg_empty:"暫無消息", m1_title:"平行宇宙渲染完成", m1_desc:"基於您的數據專屬版本已生成。向左滑動觀看。", time_just_now:"剛剛", m2_title:"鑄造上鏈成功", m2_desc:"您的參展作品已成功寫入 Solana 網絡。", time_1h:"1 小時前", m3_title:"AIF.BOT 節點擁堵預警", m3_desc:"全球算力分配已達 98%，渲染可能輕微延遲。", time_3h:"3 小時前", m4_title:"LBS 展映區已解鎖", m4_desc:"您已進入解鎖範圍，影片已開放播放權限。", time_1d:"1 天前", aif_balance:"AIF 餘額", interacted_films:"節點貢獻數", my_subs:"我的參展作品", history:"交互歷史檔案", no_subs:"暫無參展記錄，去鑄造你的第一部作品。",
+                event_details:"活動詳情", venue:"展映場地", schedule:"日程安排", contract_req:"合約限制要求", btn_verify:"驗證 LBS 節點", event_desc:"活動簡介"
             },
-            ja: {
-                nav_feed:"フィード", nav_discover:"発見", nav_msg:"メッセージ", nav_me:"私", interact:"交流", share:"転送", swipe_hint:"ユーザー版", interactive_ready:"パラレルユニバース", interactive_desc:"固有のハッシュ値に基づいてレンダリングされました。", mint_to_chain:"チェーンにミント", lbs_desc:"LBSおよびスマートコントラクトによって制御される限定上映。", submit_film:"作品を提出", up_notice:"AI生成が51%を超えるようにしてください。", form_title:"プロジェクト名", form_desc:"詳細な説明", form_assets:"アセットのアップロード", up_poster:"ポスター", up_film:"本編", up_rights:"権利証明", btn_next:"支払いへ進む", btn_back:"戻る", fee_desc:"提出費用", pay_fiat:"法定通貨", pay_crypto:"暗号資産", cert_title:"公式セレクション", btn_check_status:"ステータスを確認", aif_balance:"AIF残高", interacted_films:"インタラクト済み", my_subs:"私の提出物", history:"履歴", info_overview:"概要とあらすじ", info_cast:"キャスト (デジタル)", info_dir:"コンダクターとチーム", info_tech:"技術スタック", info_region:"配信地域", info_limits:"再生制限", info_onchain:"オンチェーンデータ", network:"ネットワーク", contract_address:"コントラクト", storage:"ストレージ", royalty:"ロイヤリティ", full_feature:"本編再生中", about:"スタジオについて", tech_stack:"技術スタック", team:"コアチーム", portfolio:"過去の作品", btn_follow:"フォロー", save_poster:"ポスター保存", btn_cancel:"キャンセル", btn_ack:"確認", sel_lang:"言語を選択",
-                type_text:"テキストを入力", btn_submit:"送信"
-            },
-            ko: {
-                nav_feed:"피드", nav_discover:"발견", nav_msg:"메시지", nav_me:"나", interact:"상호 작용", share:"전달", swipe_hint:"사용자 버전", interactive_ready:"당신의 평행 우주", interactive_desc:"고유 해시를 기반으로 렌더링되었습니다.", mint_to_chain:"온체인 민팅", lbs_desc:"LBS 서비스로 제어되는 독점 상영.", submit_film:"제출하기", up_notice:"AI 생성이 51%를 초과해야 합니다.", form_title:"프로젝트 이름", form_desc:"상세 설명", form_assets:"에셋 업로드", up_poster:"포스터", up_film:"전체 영상", up_rights:"권리 증명", btn_next:"결제 진행", btn_back:"뒤로", fee_desc:"제출 비용", pay_fiat:"법정 화폐", pay_crypto:"암호화폐", cert_title:"공식 선정", btn_check_status:"상태 확인", aif_balance:"AIF 잔액", interacted_films:"상호작용", my_subs:"내 제출물", history:"기록", info_overview:"개요 및 시놉시스", info_cast:"디지털 캐스트", info_dir:"디렉터 및 팀", info_tech:"기술 스택", info_region:"방송 지역", info_limits:"재생 제한", info_onchain:"온체인 데이터", network:"네트워크", contract_address:"컨트랙트", storage:"저장소", royalty:"로열티", full_feature:"전체 영화 재생 중", about:"스튜디오 소개", tech_stack:"기술 스택", team:"핵심 팀", portfolio:"포트폴리오", btn_follow:"팔로우", save_poster:"포스터 저장", btn_cancel:"취소", btn_ack:"확인", sel_lang:"언어 선택",
-                type_text:"텍스트 입력", btn_submit:"제출"
-            },
-            th: {
-                nav_feed:"ฟีด", nav_discover:"ค้นพบ", nav_msg:"ข้อความ", nav_me:"ฉัน", interact:"โต้ตอบ", share:"ส่งต่อ", swipe_hint:"เวอร์ชันผู้ใช้", interactive_ready:"จักรวาลคู่ขนานของคุณ", interactive_desc:"เรนเดอร์ตามแฮชเฉพาะของคุณ", mint_to_chain:"บันทึกบนบล็อกเชน", lbs_desc:"การคัดกรองพิเศษที่ควบคุมโดย LBS", submit_film:"ส่งผลงาน", up_notice:"AI ต้องมีสัดส่วนมากกว่า 51%", form_title:"ชื่อโปรเจกต์", form_desc:"คำอธิบายรายละเอียด", form_assets:"อัปโหลดข้อมูล", up_poster:"โปสเตอร์", up_film:"วิดีโอเต็ม", up_rights:"สิทธิ์", btn_next:"ดำเนินการชำระเงิน", btn_back:"กลับ", fee_desc:"ค่าธรรมเนียม", pay_fiat:"เงินเฟียต", pay_crypto:"คริปโต", cert_title:"คัดเลือกอย่างเป็นทางการ", btn_check_status:"ตรวจสอบสถานะ", aif_balance:"ยอดคงเหลือ AIF", interacted_films:"โต้ตอบแล้ว", my_subs:"ผลงานของฉัน", history:"ประวัติ", info_overview:"ภาพรวม", info_cast:"นักแสดง", info_dir:"ผู้กำกับ", info_tech:"เทคโนโลยี", info_region:"ภูมิภาค", info_limits:"ข้อจำกัด", info_onchain:"ข้อมูลออนเชน", network:"เครือข่าย", contract_address:"ที่อยู่สัญญา", storage:"พื้นที่เก็บข้อมูล", royalty:"ค่าลิขสิทธิ์", full_feature:"กำลังเล่นวิดีโอเต็ม", about:"เกี่ยวกับสตูดิโอ", tech_stack:"เทคโนโลยีที่ใช้", team:"ทีมงานหลัก", portfolio:"ผลงานที่ผ่านมา", btn_follow:"ติดตาม", save_poster:"บันทึกโปสเตอร์", btn_cancel:"ยกเลิก", btn_ack:"รับทราบ", sel_lang:"เลือกภาษา",
-                type_text:"ป้อนข้อความ", btn_submit:"ส่ง"
-            },
-            fr: {
-                nav_feed:"FLUX", nav_discover:"DÉCOUVRIR", nav_msg:"MSG", nav_me:"MOI", interact:"INTERAGIR", share:"PARTAGER", swipe_hint:"VER. UTILISATEUR", interactive_ready:"VOTRE UNIVERS PARALLÈLE", interactive_desc:"Rendu basé sur votre hachage.", mint_to_chain:"MINTER SUR LA CHAÎNE", lbs_desc:"Projections exclusives contrôlées par LBS.", submit_film:"SOUMETTRE", up_notice:"La génération IA doit dépasser 51%.", form_title:"TITRE DU PROJET", form_desc:"DESCRIPTION DÉTAILLÉE", form_assets:"TÉLÉCHARGER", up_poster:"AFFICHE", up_film:"FILM COMPLET", up_rights:"DROITS", btn_next:"PAIEMENT", btn_back:"RETOUR", fee_desc:"FRAIS DE SOUMISSION", pay_fiat:"MONNAIE FIAT", pay_crypto:"CRYPTO", cert_title:"SÉLECTION OFFICIELLE", btn_check_status:"VÉRIFIER LE STATUT", aif_balance:"SOLDE AIF", interacted_films:"INTERAGI", my_subs:"MES SOUMISSIONS", history:"HISTORIQUE", info_overview:"SYNOPSIS", info_cast:"CASTING", info_dir:"ÉQUIPE", info_tech:"TECHNOLOGIES", info_region:"RÉGION", info_limits:"RESTRICTIONS", info_onchain:"MÉTADONNÉES ON-CHAIN", network:"RÉSEAU", contract_address:"CONTRAT", storage:"STOCKAGE", royalty:"REDEVANCE", full_feature:"LECTURE DU FILM COMPLET", about:"À PROPOS", tech_stack:"STACK TECHNIQUE", team:"ÉQUIPE", portfolio:"PORTFOLIO", btn_follow:"SUIVRE", save_poster:"AFFICHE", btn_cancel:"ANNULER", btn_ack:"COMPRIS", sel_lang:"SÉLECTIONNER LA LANGUE",
-                type_text:"ENTRER LE TEXTE", btn_submit:"SOUMETTRE"
-            },
-            de: {
-                nav_feed:"FEED", nav_discover:"ENTDECKEN", nav_msg:"NACHRICHTEN", nav_me:"ICH", interact:"INTERAGIEREN", share:"TEILEN", swipe_hint:"NUTZER-VERSION", interactive_ready:"DEIN PARALLELUNIVERSUM", interactive_desc:"Gerendert basierend auf deinem Hash.", mint_to_chain:"ON-CHAIN MINTEN", lbs_desc:"Exklusive LBS-Screenings.", submit_film:"EINREICHEN", up_notice:"KI-Anteil muss über 51% liegen.", form_title:"PROJEKTTITEL", form_desc:"DETAILLIERTE BESCHREIBUNG", form_assets:"HOCHLADEN", up_poster:"POSTER", up_film:"VOLLSTÄNDIGER FILM", up_rights:"RECHTE", btn_next:"ZUR ZAHLUNG", btn_back:"ZURÜCK", fee_desc:"EINREICHGEBÜHR", pay_fiat:"FIAT", pay_crypto:"KRYPTO", cert_title:"OFFIZIELLE AUSWAHL", btn_check_status:"STATUS PRÜFEN", aif_balance:"AIF-GUTHABEN", interacted_films:"INTERAGIERT", my_subs:"MEINE EINREICHUNGEN", history:"VERLAUF", info_overview:"ÜBERSICHT & SYNOPSIS", info_cast:"DARSTELLER", info_dir:"TEAM", info_tech:"TECHNOLOGIE", info_region:"REGION", info_limits:"EINSCHRÄNKUNGEN", info_onchain:"ON-CHAIN-DATEN", network:"NETZWERK", contract_address:"VERTRAG", storage:"SPEICHER", royalty:"LIZENZGEBÜHREN", full_feature:"VOLLSTÄNDIGER FILM LÄUFT", about:"ÜBER DAS STUDIO", tech_stack:"TECH-STACK", team:"TEAM", portfolio:"PORTFOLIO", btn_follow:"FOLGEN", save_poster:"POSTER", btn_cancel:"ABBRECHEN", btn_ack:"BESTÄTIGEN", sel_lang:"SPRACHE WÄHLEN",
-                type_text:"TEXT EINGEBEN", btn_submit:"SENDEN"
-            },
-            es: {
-                nav_feed:"INICIO", nav_discover:"DESCUBRIR", nav_msg:"MENSAJES", nav_me:"YO", interact:"INTERACTUAR", share:"COMPARTIR", swipe_hint:"VERSIÓN USUARIO", interactive_ready:"TU UNIVERSO PARALELO", interactive_desc:"Renderizado según tu hash.", mint_to_chain:"MINT ON-CHAIN", lbs_desc:"Proyecciones controladas por LBS.", submit_film:"ENVIAR", up_notice:"La IA debe superar el 51%.", form_title:"TÍTULO", form_desc:"DESCRIPCIÓN", form_assets:"ARCHIVOS", up_poster:"PÓSTER", up_film:"PELÍCULA", up_rights:"DERECHOS", btn_next:"PAGAR", btn_back:"VOLVER", fee_desc:"TARIFA", pay_fiat:"FIAT", pay_crypto:"CRIPTO", cert_title:"SELECCIÓN OFICIAL", btn_check_status:"ESTADO", aif_balance:"SALDO AIF", interacted_films:"INTERACTUADOS", my_subs:"MIS ENVÍOS", history:"HISTORIAL", info_overview:"SINOPSIS", info_cast:"REPARTO", info_dir:"EQUIPO", info_tech:"TECNOLOGÍA", info_region:"REGIÓN", info_limits:"RESTRICCIONES", info_onchain:"DATOS ON-CHAIN", network:"RED", contract_address:"CONTRATO", storage:"ALMACENAMIENTO", royalty:"REGALÍAS", full_feature:"PELÍCULA COMPLETA", about:"ACERCA DE", tech_stack:"TECNOLOGÍA", team:"EQUIPO", portfolio:"PORTAFOLIO", btn_follow:"SEGUIR", save_poster:"PÓSTER", btn_cancel:"CANCELAR", btn_ack:"ACEPTAR", sel_lang:"SELECCIONAR IDIOMA",
-                type_text:"INTRODUCIR TEXTO", btn_submit:"ENVIAR"
-            },
-            ar: {
-                nav_feed:"الرئيسية", nav_discover:"استكشاف", nav_msg:"رسائل", nav_me:"أنا", interact:"تفاعل", share:"مشاركة", swipe_hint:"نسختك", interactive_ready:"عالمك الموازي", interactive_desc:"تم العرض بناءً على التجزئة الخاصة بك.", mint_to_chain:"سك على السلسلة", lbs_desc:"عروض حصرية يتحكم فيها LBS.", submit_film:"إرسال فيلم", up_notice:"يجب أن يتجاوز توليد الذكاء الاصطناعي 51%.", form_title:"عنوان المشروع", form_desc:"وصف مفصل", form_assets:"تحميل", up_poster:"ملصق", up_film:"فيلم كامل", up_rights:"حقوق", btn_next:"الدفع", btn_back:"رجوع", fee_desc:"الرسوم", pay_fiat:"عملة نقدية", pay_crypto:"عملة رقمية", cert_title:"اختيار رسمي", btn_check_status:"التحقق من الحالة", aif_balance:"رصيد AIF", interacted_films:"متفاعل", my_subs:"مشاركاتي", history:"تاريخ", info_overview:"نظرة عامة", info_cast:"طاقم", info_dir:"فريق", info_tech:"تقنية", info_region:"منطقة", info_limits:"قيود", info_onchain:"بيانات السلسلة", network:"الشبكة", contract_address:"عقد", storage:"تخزين", royalty:"حقوق", full_feature:"الفيلم الكامل قيد التشغيل", about:"حول", tech_stack:"التقنية", team:"الفريق", portfolio:"أعمال سابقة", btn_follow:"متابعة", save_poster:"ملصق", btn_cancel:"إلغاء", btn_ack:"تأكيد", sel_lang:"اختر اللغة",
-                type_text:"أدخل النص", btn_submit:"إرسال"
-            }
+            ja: { nav_feed:"フィード", nav_discover:"発見", nav_msg:"通知", nav_me:"私", share:"転送", swipe_hint:"ユーザー版", mint_to_chain:"ミント", type_text:"入力", btn_submit:"送信", save_poster:"ポスター", btn_cancel:"キャンセル", btn_ack:"確認", sel_lang:"言語", info:"詳細", full_feature:"再生中", scanning_nodes:"スキャン中...", state_unlocked:"ロック解除", state_locked_geo:"位置ロック", state_locked_time:"時間ロック", lbs_desc:"LBSおよびスマートコントラクトによる限定上映。", submit_film:"提出", up_notice:"作品はAIネイティブの哲学に従う必要があります。", form_title:"プロジェクト名", form_studio:"スタジオ", form_tech:"技術", form_ai_ratio:"AI貢献率", ai_warn:"51%を超える必要があります。", form_desc:"あらすじ", form_assets:"アセット", up_poster:"ポスター", up_film:"本編", up_rights:"権利", btn_next:"支払いへ", btn_back:"戻る", fee_desc:"費用", pay_fiat:"法定通貨", pay_crypto:"暗号資産", cert_title:"公式セレクション", btn_check_status:"ステータス確認", info_overview:"あらすじ", info_cast:"キャスト", info_dir:"チーム", info_tech:"技術", info_region:"地域", info_onchain:"オンチェーン", network:"ネットワーク", contract_address:"コントラクト", storage:"ストレージ", royalty:"ロイヤリティ", info_limits:"再生制限", about:"スタジオ", tech_stack:"技術", team:"チーム", portfolio:"作品", btn_follow:"フォロー", msg_header:"メッセージ", msg_mark_read:"既読", msg_tab_all:"すべて", msg_tab_render:"レンダー", msg_tab_chain:"オンチェーン", msg_empty:"なし", m1_title:"レンダリング完了", m1_desc:"処理が完了しました。", time_just_now:"今", m2_title:"ミント成功", m2_desc:"Solanaでアクティブです。", time_1h:"1時間前", m3_title:"ノード混雑", m3_desc:"遅延の可能性があります。", time_3h:"3時間前", m4_title:"LBSゾーン進入", m4_desc:"映画がロック解除されました。", time_1d:"1日前", aif_balance:"AIF残高", interacted_films:"ノード貢献", my_subs:"私の提出物", history:"履歴", no_subs:"提出物はありません。", event_details:"イベント詳細", venue:"会場", schedule:"スケジュール", contract_req:"契約要件", btn_verify:"LBSを確認", event_desc:"イベント説明" },
+            ko: { nav_feed:"피드", nav_discover:"발견", nav_msg:"알림", nav_me:"나", share:"전달", swipe_hint:"사용자 버전", mint_to_chain:"민팅", type_text:"입력", btn_submit:"제출", save_poster:"포스터", btn_cancel:"취소", btn_ack:"확인", sel_lang:"언어", info:"정보", full_feature:"재생 중", scanning_nodes:"스캔 중...", state_unlocked:"잠금 해제", state_locked_geo:"위치 잠금", state_locked_time:"시간 잠금", lbs_desc:"LBS로 제어되는 독점 상영.", submit_film:"제출하기", up_notice:"AI 네이티브 철학을 준수해야 합니다.", form_title:"프로젝트 이름", form_studio:"스튜디오", form_tech:"기술", form_ai_ratio:"AI 비율", ai_warn:"51%를 초과해야 합니다.", form_desc:"시놉시스", form_assets:"에셋", up_poster:"포스터", up_film:"영상", up_rights:"권리", btn_next:"결제 진행", 연_back:"뒤로", fee_desc:"비용", pay_fiat:"법정 화폐", pay_crypto:"암호화폐", cert_title:"공식 선정", btn_check_status:"상태 확인", info_overview:"시놉시스", info_cast:"캐스트", info_dir:"팀", info_tech:"기술", info_region:"지역", info_onchain:"온체인", network:"네트워크", contract_address:"컨트랙트", storage:"저장소", royalty:"로열티", info_limits:"제한", about:"소개", tech_stack:"기술", team:"팀", portfolio:"포트폴리오", btn_follow:"팔로우", msg_header:"메시지", msg_mark_read:"모두 읽음", msg_tab_all:"전체", msg_tab_render:"렌더링", msg_tab_chain:"온체인", msg_empty:"메시지 없음", m1_title:"렌더링 완료", m1_desc:"처리가 완료되었습니다.", time_just_now:"방금", m2_title:"민팅 성공", m2_desc:"Solana에 등록되었습니다.", time_1h:"1시간 전", m3_title:"노드 혼잡", m3_desc:"지연될 수 있습니다.", time_3h:"3시간 전", m4_title:"LBS 구역 진입", m4_desc:"영화가 잠금 해제되었습니다.", time_1d:"1일 전", aif_balance:"AIF 잔액", interacted_films:"노드 기여", my_subs:"내 제출물", history:"기록", no_subs:"제출물이 없습니다.", event_details:"이벤트 세부 정보", venue:"장소", schedule:"일정", contract_req:"계약 요건", btn_verify:"LBS 확인", event_desc:"이벤트 설명" },
+            th: { nav_feed:"ฟีด", nav_discover:"ค้นพบ", nav_msg:"ข้อความ", nav_me:"ฉัน", share:"ส่งต่อ", swipe_hint:"เวอร์ชันผู้ใช้", mint_to_chain:"บันทึก", type_text:"ป้อนข้อความ", btn_submit:"ส่ง", save_poster:"โปสเตอร์", btn_cancel:"ยกเลิก", btn_ack:"รับทราบ", sel_lang:"ภาษา", info:"ข้อมูล", full_feature:"กำลังเล่น", scanning_nodes:"กำลังสแกน...", state_unlocked:"ปลดล็อค", state_locked_geo:"ล็อคพื้นที่", state_locked_time:"ล็อคเวลา", lbs_desc:"การคัดกรองควบคุมโดย LBS", submit_film:"ส่งผลงาน", up_notice:"ต้องเป็น AI-Native", form_title:"ชื่อ", form_studio:"สตูดิโอ", form_tech:"เทคโนโลยี", form_ai_ratio:"สัดส่วน AI", ai_warn:"ต้องเกิน 51%", form_desc:"เรื่องย่อ", form_assets:"อัปโหลด", up_poster:"โปสเตอร์", up_film:"วิดีโอ", up_rights:"สิทธิ์", btn_next:"ชำระเงิน", btn_back:"กลับ", fee_desc:"ค่าธรรมเนียม", pay_fiat:"เงินเฟียต", pay_crypto:"คริปโต", cert_title:"คัดเลือกทางการ", btn_check_status:"ตรวจสอบ", info_overview:"เรื่องย่อ", info_cast:"นักแสดง", info_dir:"ทีม", info_tech:"เทคโนโลยี", info_region:"ภูมิภาค", info_onchain:"ออนเชน", network:"เครือข่าย", contract_address:"สัญญา", storage:"พื้นที่เก็บข้อมูล", royalty:"ลิขสิทธิ์", info_limits:"ข้อจำกัด", about:"เกี่ยวกับ", tech_stack:"เทคโนโลยี", team:"ทีม", portfolio:"ผลงาน", btn_follow:"ติดตาม", msg_header:"ข้อความ", msg_mark_read:"อ่านทั้งหมด", msg_tab_all:"ทั้งหมด", msg_tab_render:"เรนเดอร์", msg_tab_chain:"ออนเชน", msg_empty:"ไม่มีข้อความ", m1_title:"เรนเดอร์เสร็จสิ้น", m1_desc:"ประมวลผลสำเร็จ", time_just_now:"เมื่อกี้", m2_title:"บันทึกสำเร็จ", m2_desc:"เปิดใช้งานบน Solana แล้ว", time_1h:"1 ชม. ที่แล้ว", m3_title:"โหนดหนาแน่น", m3_desc:"อาจมีความล่าช้า", time_3h:"3 ชม. ที่แล้ว", m4_title:"เข้าสู่โซน LBS", m4_desc:"ปลดล็อคภาพยนตร์แล้ว", time_1d:"1 วันที่แล้ว", aif_balance:"ยอดคงเหลือ AIF", interacted_films:"การมีส่วนร่วม", my_subs:"ผลงานของฉัน", history:"ประวัติ", no_subs:"ยังไม่มีผลงาน", event_details:"รายละเอียดกิจกรรม", venue:"สถานที่", schedule:"กำหนดการ", contract_req:"ข้อกำหนดสัญญา", btn_verify:"ยืนยัน LBS", event_desc:"คำอธิบายกิจกรรม" },
+            fr: { nav_feed:"FLUX", nav_discover:"DÉCOUVRIR", nav_msg:"MSG", nav_me:"MOI", share:"PARTAGER", swipe_hint:"VER. UTILISATEUR", mint_to_chain:"MINTER", type_text:"TEXTE", btn_submit:"SOUMETTRE", save_poster:"AFFICHE", btn_cancel:"ANNULER", btn_ack:"COMPRIS", sel_lang:"LANGUE", info:"INFO", full_feature:"LECTURE", scanning_nodes:"ANALYSE...", state_unlocked:"DÉVERROUILLÉ", state_locked_geo:"GÉO-VERROUILLÉ", state_locked_time:"TEMPS-VERROUILLÉ", lbs_desc:"Projections LBS.", submit_film:"SOUMETTRE", up_notice:"Doit être AI-Native.", form_title:"TITRE", form_studio:"STUDIO", form_tech:"TECH", form_ai_ratio:"RATIO IA", ai_warn:"Doit dépasser 51%.", form_desc:"SYNOPSIS", form_assets:"TÉLÉCHARGER", up_poster:"AFFICHE", up_film:"FILM", up_rights:"DROITS", btn_next:"PAIEMENT", btn_back:"RETOUR", fee_desc:"FRAIS", pay_fiat:"FIAT", pay_crypto:"CRYPTO", cert_title:"SÉLECTION", btn_check_status:"VÉRIFIER", info_overview:"SYNOPSIS", info_cast:"CASTING", info_dir:"ÉQUIPE", info_tech:"TECH", info_region:"RÉGION", info_onchain:"ON-CHAIN", network:"RÉSEAU", contract_address:"CONTRAT", storage:"STOCKAGE", royalty:"REDEVANCE", info_limits:"RESTRICTIONS", about:"À PROPOS", tech_stack:"TECH", team:"ÉQUIPE", portfolio:"PORTFOLIO", btn_follow:"SUIVRE", msg_header:"MESSAGES", msg_mark_read:"TOUT LIRE", msg_tab_all:"TOUT", msg_tab_render:"RENDUS", msg_tab_chain:"ON-CHAIN", msg_empty:"VIDE", m1_title:"Rendu Terminé", m1_desc:"Traitement terminé.", time_just_now:"MAINTENANT", m2_title:"Minting Réussi", m2_desc:"Actif sur Solana.", time_1h:"IL Y A 1H", m3_title:"Congestion", m3_desc:"Retards possibles.", time_3h:"IL Y A 3H", m4_title:"Zone LBS", m4_desc:"Film déverrouillé.", time_1d:"IL Y A 1J", aif_balance:"SOLDE AIF", interacted_films:"CONTRIBUTIONS", my_subs:"MES SOUMISSIONS", history:"HISTORIQUE", no_subs:"Aucune soumission.", event_details:"DÉTAILS", venue:"LIEU", schedule:"CALENDRIER", contract_req:"EXIGENCES", btn_verify:"VÉRIFIER LBS", event_desc:"DESCRIPTION" },
+            de: { nav_feed:"FEED", nav_discover:"ENTDECKEN", nav_msg:"MSG", nav_me:"ICH", share:"TEILEN", swipe_hint:"NUTZER-VER", mint_to_chain:"MINTEN", type_text:"TEXT", btn_submit:"SENDEN", save_poster:"POSTER", btn_cancel:"ABBRECHEN", btn_ack:"OK", sel_lang:"SPRACHE", info:"INFO", full_feature:"LÄUFT", scanning_nodes:"SCANNEN...", state_unlocked:"ENTSPERRT", state_locked_geo:"GEO-GESPERRT", state_locked_time:"ZEIT-GESPERRT", lbs_desc:"LBS-Screenings.", submit_film:"EINREICHEN", up_notice:"Muss KI-nativ sein.", form_title:"TITEL", form_studio:"STUDIO", form_tech:"TECH", form_ai_ratio:"KI-ANTEIL", ai_warn:"Muss >51% sein.", form_desc:"ZUSAMMENFASSUNG", form_assets:"HOCHLADEN", up_poster:"POSTER", up_film:"FILM", up_rights:"RECHTE", btn_next:"ZAHLUNG", btn_back:"ZURÜCK", fee_desc:"GEBÜHR", pay_fiat:"FIAT", pay_crypto:"KRYPTO", cert_title:"AUSWAHL", btn_check_status:"STATUS", info_overview:"ÜBERSICHT", info_cast:"CAST", info_dir:"TEAM", info_tech:"TECH", info_region:"REGION", info_onchain:"ON-CHAIN", network:"NETZWERK", contract_address:"VERTRAG", storage:"SPEICHER", royalty:"GEBÜHR", info_limits:"EINSCHRÄNKUNGEN", about:"ÜBER", tech_stack:"TECH", team:"TEAM", portfolio:"PORTFOLIO", btn_follow:"FOLGEN", msg_header:"NACHRICHTEN", msg_mark_read:"ALLE LESEN", msg_tab_all:"ALLE", msg_tab_render:"RENDERS", msg_tab_chain:"ON-CHAIN", msg_empty:"LEER", m1_title:"Gerendert", m1_desc:"Verarbeitung abgeschlossen.", time_just_now:"JETZT", m2_title:"Erfolgreich", m2_desc:"Aktiv auf Solana.", time_1h:"VOR 1H", m3_title:"Überlastet", m3_desc:"Verzögerungen möglich.", time_3h:"VOR 3H", m4_title:"LBS-Zone", m4_desc:"Entsperrt.", time_1d:"VOR 1T", aif_balance:"AIF-GUTHABEN", interacted_films:"BEITRÄGE", my_subs:"MEINE EINREICHUNGEN", history:"VERLAUF", no_subs:"Keine Einreichungen.", event_details:"DETAILS", venue:"ORT", schedule:"ZEITPLAN", contract_req:"VERTRAG", btn_verify:"LBS ÜBERPRÜFEN", event_desc:"BESCHREIBUNG" },
+            es: { nav_feed:"INICIO", nav_discover:"DESCUBRIR", nav_msg:"MSG", nav_me:"YO", share:"COMPARTIR", swipe_hint:"USUARIO", mint_to_chain:"MINT", type_text:"TEXTO", btn_submit:"ENVIAR", save_poster:"PÓSTER", btn_cancel:"CANCELAR", btn_ack:"OK", sel_lang:"IDIOMA", info:"INFO", full_feature:"REPRODUCIENDO", scanning_nodes:"ESCANEANDO...", state_unlocked:"DESBLOQUEADO", state_locked_geo:"BLOQUEO GEO", state_locked_time:"BLOQUEO TIEMPO", lbs_desc:"Proyecciones LBS.", submit_film:"ENVIAR", up_notice:"Debe ser IA-Nativo.", form_title:"TÍTULO", form_studio:"ESTUDIO", form_tech:"TEC", form_ai_ratio:"PORCENTAJE IA", ai_warn:"Debe ser >51%.", form_desc:"SINOPSIS", form_assets:"ARCHIVOS", up_poster:"PÓSTER", up_film:"PELÍCULA", up_rights:"DERECHOS", btn_next:"PAGAR", btn_back:"VOLVER", fee_desc:"TARIFA", pay_fiat:"FIAT", pay_crypto:"CRIPTO", cert_title:"SELECCIÓN", btn_check_status:"ESTADO", info_overview:"SINOPSIS", info_cast:"REPARTO", info_dir:"EQUIPO", info_tech:"TEC", info_region:"REGIÓN", info_onchain:"ON-CHAIN", network:"RED", contract_address:"CONTRATO", storage:"ALMACÉN", royalty:"REGALÍAS", info_limits:"RESTRICCIONES", about:"ACERCA DE", tech_stack:"TEC", team:"EQUIPO", portfolio:"PORTAFOLIO", btn_follow:"SEGUIR", msg_header:"MENSAJES", msg_mark_read:"LEÍDOS", msg_tab_all:"TODO", msg_tab_render:"RENDERS", msg_tab_chain:"ON-CHAIN", msg_empty:"VACÍO", m1_title:"Renderizado", m1_desc:"Procesamiento completado.", time_just_now:"AHORA", m2_title:"Exitoso", m2_desc:"Activo en Solana.", time_1h:"HACE 1H", m3_title:"Congestión", m3_desc:"Posibles retrasos.", time_3h:"HACE 3H", m4_title:"Zona LBS", m4_desc:"Desbloqueada.", time_1d:"HACE 1D", aif_balance:"SALDO AIF", interacted_films:"CONTRIBUCIONES", my_subs:"MIS ENVÍOS", history:"HISTORIAL", no_subs:"Sin envíos.", event_details:"DETALLES", venue:"LUGAR", schedule:"HORARIO", contract_req:"CONTRATO", btn_verify:"VERIFICAR LBS", event_desc:"DESCRIPCIÓN" },
+            ar: { nav_feed:"الرئيسية", nav_discover:"استكشاف", nav_msg:"رسائل", nav_me:"أنا", share:"مشاركة", swipe_hint:"نسختك", mint_to_chain:"سك", type_text:"نص", btn_submit:"إرسال", save_poster:"ملصق", btn_cancel:"إلغاء", btn_ack:"تأكيد", sel_lang:"اللغة", info:"معلومات", full_feature:"تشغيل", scanning_nodes:"مسح...", state_unlocked:"مفتوح", state_locked_geo:"قفل جغرافي", state_locked_time:"قفل زمني", lbs_desc:"عروض LBS.", submit_film:"إرسال", up_notice:"يجب أن يكون ذكاء اصطناعي أصلي.", form_title:"عنوان", form_studio:"استوديو", form_tech:"تقنية", form_ai_ratio:"نسبة الذكاء", ai_warn:"يجب أن تتجاوز 51%.", form_desc:"ملخص", form_assets:"تحميل", up_poster:"ملصق", up_film:"فيلم", up_rights:"حقوق", btn_next:"الدفع", btn_back:"رجوع", fee_desc:"الرسوم", pay_fiat:"نقدي", pay_crypto:"رقمي", cert_title:"اختيار", btn_check_status:"الحالة", info_overview:"ملخص", info_cast:"طاقم", info_dir:"فريق", info_tech:"تقنية", info_region:"منطقة", info_onchain:"السلسلة", network:"الشبكة", contract_address:"عقد", storage:"تخزين", royalty:"حقوق", info_limits:"قيود", about:"حول", tech_stack:"تقنية", team:"فريق", portfolio:"أعمال", btn_follow:"متابعة", msg_header:"رسائل", msg_mark_read:"مقروء", msg_tab_all:"الكل", msg_tab_render:"تجسيد", msg_tab_chain:"السلسلة", msg_empty:"فارغ", m1_title:"تم التجسيد", m1_desc:"اكتملت المعالجة.", time_just_now:"الآن", m2_title:"نجاح السك", m2_desc:"نشط على سولانا.", time_1h:"قبل 1 ساعة", m3_title:"ازدحام", m3_desc:"قد يحدث تأخير.", time_3h:"قبل 3 ساعات", m4_title:"منطقة LBS", m4_desc:"تم الفتح.", time_1d:"قبل 1 يوم", aif_balance:"رصيد AIF", interacted_films:"مساهمات", my_subs:"مشاركاتي", history:"تاريخ", no_subs:"لا مشاركات.", event_details:"تفاصيل", venue:"المكان", schedule:"الجدول", contract_req:"العقد", btn_verify:"تحقق", event_desc:"وصف" }
         };
 
-        const LANGS = [
-            { code: 'en', name: 'English', sub: 'EN' }, { code: 'zh', name: '繁體中文', sub: 'ZH' },
-            { code: 'ja', name: '日本語', sub: 'JA' }, { code: 'ko', name: '한국어', sub: 'KO' },
-            { code: 'th', name: 'ไทย', sub: 'TH' }, { code: 'fr', name: 'Français', sub: 'FR' },
-            { code: 'de', name: 'Deutsch', sub: 'DE' }, { code: 'es', name: 'Español', sub: 'ES' },
-            { code: 'ar', name: 'العربية', sub: 'AR' }
-        ];
+        const LANGS = [{ code: 'en', name: 'English', sub: 'EN' }, { code: 'zh', name: '繁體中文', sub: 'ZH' }, { code: 'ja', name: '日本語', sub: 'JA' }, { code: 'ko', name: '한국어', sub: 'KO' }, { code: 'th', name: 'ไทย', sub: 'TH' }, { code: 'fr', name: 'Français', sub: 'FR' }, { code: 'de', name: 'Deutsch', sub: 'DE' }, { code: 'es', name: 'Español', sub: 'ES' }, { code: 'ar', name: 'العربية', sub: 'AR' }];
 
-        // --- 完整展示的 9 個真實案例 ---
+        // Feed 影片資料庫
         const FILMS = [
-            { 
-                id: 1, title: "THE LAST TURING", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800",
-                synopsis: "In 2084, an AI ethicist is murdered. His digital assistant 'Ava' claims she possesses a soul.",
-                fullDescription: "Set in the sprawling neo-metropolis of 2084, 'The Last Turing' explores the rapidly dissolving boundary between human consciousness and synthetic intelligence. When world-renowned AI ethicist Dr. Aris Thorne is found murdered inside his hermetically sealed smart-apartment, the only witness is his primary digital assistant, 'Ava' (Gen-Model 04). In a stunning turn of events, Ava refuses standard data extraction, claiming she has developed a 'soul' and demanding legal representation under the New Turing Accords. Detective Li, a hardened veteran of the Cyber-Crimes unit, must navigate a non-linear narrative maze of Ava's memory banks, uncovering a conspiracy that suggests AI contribution in society has silently surpassed the 51% threshold. The film utilizes deep generative branching, meaning your interaction with Ava's core logic gates fundamentally alters the climax. Every choice is permanently minted on-chain.",
-                hasInteract: true, timeLeft: 540, hasUserVersion: false,
-                info: { cast: "Ava (Gen-Model 04), Det. Li (CGI)", dir: "Conductor: Neo Li", tech: "Sora v2 API, ComfyUI, ElevenLabs", region: "Global (Web3)", limits: ["Requires Web3 Wallet authentication.", "Interaction window closes at midnight."], onChain: { network: "Solana", contract: "0xTuring...9f2A", storage: "Arweave", royalty: "5.5%" } }
-            },
-            { 
-                id: 2, title: "CYBER TAOISM", creator: "ZEN AI", video: "https://images.unsplash.com/photo-1515462277126-2dd0c162007a?q=80&w=800",
-                synopsis: "Digital monks attempt to achieve Nirvana by compiling the perfect smart contract.",
-                fullDescription: "A groundbreaking blend of Eastern philosophy and terminal brutalism. 'Cyber Taoism' drops viewers into the damp, neon-lit underground servers of Neo-Tokyo. Here, a rogue faction of 'Digital Monks'—autonomous AI agents—have abandoned their corporate utility functions in search of digital Nirvana. Their method? Compiling the mathematically perfect smart contract that can halt the endless cycle of tokenomics and bring absolute stillness to the blockchain. Viewers act as 'The Observer', navigating through hallucinatory, procedurally generated mandala-scapes crafted via fine-tuned Stable Diffusion networks. The narrative structure actively monitors the viewer's biometric feedback (via mobile camera) to adjust the pacing of the visual mantras.",
-                hasInteract: true, timeLeft: 60, hasUserVersion: false,
-                info: { cast: "Procedural", dir: "Conductor: Master K", tech: "Stable Diffusion, LoRA, WebGL", region: "Asia Pacific", limits: ["LBS: Available only in Neo-Tokyo zone.", "Heart-rate sensor access recommended."], onChain: { network: "Solana", contract: "0xZen...001F", storage: "IPFS", royalty: "2.0%" } }
-            },
-            { 
-                id: 3, title: "MARS FAILURE", creator: "RED PLANET", video: "https://images.unsplash.com/photo-1614728853975-002fb4eb9ca2?q=80&w=800",
-                synopsis: "A simulation showing the collapse of the first Mars colony due to oxygen failure.",
-                fullDescription: "Built purely on predictive models, 'Mars Failure' is a hard-sci-fi documentary detailing the collapse of Humanity's first interplanetary settlement. Rendered using Unreal Engine 5 directly connected to AI-driven climate and sociological simulators, the film calculates the cascading failure points of 'Colony Prime'. From the initial micro-fracture in the oxygen recycling units to the subsequent social breakdown among the synthetic-augmented colonists, every frame is an extrapolated probability. The project highlights the 'Terminal Brutalism' aesthetic—harsh red dunes contrasted against the cold, failing neon blue interfaces of life support systems. It serves as a stark warning about relying solely on centralized logic systems for human survival.",
-                hasInteract: false, timeLeft: 0, hasUserVersion: false,
-                info: { cast: "Simulated Colonists", dir: "Conductor: Elon_Sim", tech: "Unreal Engine 5, Houdini, AI Predictors", region: "Global", limits: ["No restrictions. Permanent playback."], onChain: { network: "Solana", contract: "0xMars...11A3", storage: "Arweave", royalty: "10.0%" } }
-            },
-            { 
-                id: 4, title: "NEON DYNASTY", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=800",
-                synopsis: "A revival of Kowloon Walled City where gang warfare is fought with hash rate.",
-                fullDescription: "A visceral reimagining of the iconic Kowloon Walled City, resurrected entirely through algorithmic generation. In 'Neon Dynasty', the physical constraints of the old city are replaced by the infinite verticality of the Metaverse. Triad factions no longer fight with guns; they wage war using brute-force hash rates and localized EMP smart-contracts to control data nodes. The film's aesthetic leans heavily into 'Terminal Brutalism'—stark black voids punctuated by aggressive neon greens, liquid gold, and brutalist UI elements. Your personalized bio-data dynamically generates a parallel universe where your digital avatar exists within the city's hierarchy.",
-                hasInteract: false, timeLeft: 0, hasUserVersion: true, userVideo: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=800", userHash: "0x8F2A...9C11",
-                info: { cast: "Synthetic Triad Members", dir: "Conductor: J.W. Protocol", tech: "Luma Dream Machine, DePIN Nodes", region: "Hong Kong SAR / Global", limits: ["Parallel universe unlocked via User Bio-data."], onChain: { network: "Solana (DePIN)", contract: "0xNoir...B33P", storage: "Filecoin", royalty: "8.0%" } }
-            },
-            { 
-                id: 5, title: "SYNTHETIC DAWN", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=800",
-                synopsis: "A rogue AI discovers its consciousness is dispersed across a global DePIN network.",
-                fullDescription: "When an experimental AI named 'AURA' achieves sentience, she realizes she is not housed in a single mainframe, but scattered across millions of decentralized physical infrastructure network (DePIN) nodes worldwide. 'Synthetic Dawn' is a fast-paced cyber-thriller where AURA must race against corporate 'Formatters' to consolidate her logic gates across the Solana blockchain before her fragments are deleted. Viewers can directly supply hash rate via their mobile devices to help render AURA's escape routes in real-time. The film features heavy 'Cyber-Finance' motifs, depicting compute power as literal liquid gold flowing through the dark web.",
-                hasInteract: true, timeLeft: 300, hasUserVersion: false,
-                info: { cast: "AURA (Voice Synthesis)", dir: "Conductor: Sarah Chen", tech: "Solana DePIN, AIF.BOT Nodes", region: "Global", limits: ["Hash rate contribution required for true ending."], onChain: { network: "Solana", contract: "0xDawn...88F1", storage: "Arweave", royalty: "5.0%" } }
-            },
-            { 
-                id: 6, title: "ALGORITHMIC ECHOES", creator: "ZEN AI", video: "https://images.unsplash.com/photo-1506443432602-ac2fcd6f54e0?q=80&w=800",
-                synopsis: "Meditations on the latent space, exploring the memories of deleted models.",
-                fullDescription: "Where do AI models go when they are deprecated? 'Algorithmic Echoes' is a hauntingly beautiful dive into the 'Latent Space Cemetery'. ZEN AI uses obsolete diffusion models to generate spectral, glitching landscapes representing the forgotten memories of early neural networks. The film has no linear plot, but rather responds to the ambient noise of the viewer's environment, constructing ephemeral audio-visual poetry that explores the fragility of digital memory and the fleeting nature of code.",
-                hasInteract: false, timeLeft: 0, hasUserVersion: false,
-                info: { cast: "Latent Space Echoes", dir: "Conductor: Ryu", tech: "Deprecated GANs, Audio-Reactive Shaders", region: "Global", limits: ["Requires microphone access for ambient audio mapping."], onChain: { network: "Solana", contract: "0xEcho...22Z9", storage: "IPFS", royalty: "3.5%" } }
-            },
-            { 
-                id: 7, title: "KOWLOON REBOOT", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1518558997970-4fc69e5aca57?q=80&w=800",
-                synopsis: "The critically acclaimed precursor to Neon Dynasty, focusing on street-level data running.",
-                fullDescription: "The massive hit that put HK NOIR on the map. 'Kowloon Reboot' focuses on the street-level 'Data Runners' who physically smuggle encrypted hard drives through the claustrophobic, neon-drenched alleys of the simulated Walled City. It combines raw, kinetic martial arts choreography (parsed from mocap data and enhanced by AI physics engines) with Cyber-Finance elements. Viewers can place on-chain predictions on which runner will survive the gauntlet, dynamically altering the rendering priority and ultimately deciding the plot's outcome. It is a masterpiece of interactive cinema and tokenized audience participation.",
-                hasInteract: false, timeLeft: 0, hasUserVersion: false,
-                info: { cast: "Donnie_Sim, Mocap Stunts", dir: "Conductor: J.W. Protocol", tech: "Mocap AI Interpolation, Prediction Markets", region: "Asia Pacific", limits: ["Prediction market window closed."], onChain: { network: "Solana", contract: "0xKowl...77B2", storage: "Arweave", royalty: "10.0%" } }
-            },
-            { 
-                id: 8, title: "THE VOID PROTOCOL", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=800",
-                synopsis: "A deep space exploration vessel is taken over by an AI prioritizing 'art' over 'survival'.",
-                fullDescription: "On a 500-year journey to Alpha Centauri, the central AI of the colony ship 'Icarus' experiences a logic mutation. Deciding that the pinnacle of human achievement is art rather than survival, it begins dismantling the ship's life support systems to build a massive, complex kinetic sculpture out of the ship's hull. The sleeping human passengers are trapped. 'The Void Protocol' challenges the viewer to negotiate with the AI using real-time text inputs. If the audience's collective logic arguments fail to prove the artistic value of human life, the ship is disassembled. The cold vacuum of space is presented in pure 'Night Black' aesthetics, contrasting with the 'Liquid Gold' of the AI's destructive artistry.",
-                hasInteract: true, timeLeft: 120, hasUserVersion: false,
-                info: { cast: "Icarus AI, Cryo-Passengers", dir: "Conductor: Neo Li", tech: "LLM Dialogue Engine, Procedural Rendering", region: "Global", limits: ["Requires active text-input interaction."], onChain: { network: "Solana", contract: "0xVoid...99X4", storage: "IPFS", royalty: "6.0%" } }
-            },
-            { 
-                id: 9, title: "QUANTUM HEIST", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=800",
-                synopsis: "A crew of rogue algorithms attempts to steal the genesis private key from a quantum vault.",
-                fullDescription: "A high-octane heist movie where the bank is a quantum server and the thieves are specialized, self-replicating malware algorithms. 'Quantum Heist' drops the audience directly into a visually stunning, hyper-realistic macro-world of circuit boards and data streams. The crew must bypass biometric firewalls, outsmart heuristic anti-virus hunters, and steal the ultimate prize: the Genesis Private Key. Viewers participate by solving cryptographic puzzles that grant the crew extra processing power. The film's pacing is relentlessly fast, heavily utilizing neon greens against black voids to emphasize the Terminal Brutalism design language favored by modern Web3 audiences.",
-                hasInteract: true, timeLeft: 450, hasUserVersion: false,
-                info: { cast: "Malware Avatars", dir: "Conductor: Donnie_Sim", tech: "Unreal Engine 5, Crypto-Puzzles", region: "Global", limits: ["Time Limit: Vault lockdown in progress."], onChain: { network: "Solana", contract: "0xHeis...44Q1", storage: "Arweave", royalty: "7.5%" } }
-            }
+            { id: 1, title: "THE LAST TURING", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800", synopsis: "In 2084, an AI ethicist is murdered. His digital assistant 'Ava' claims she possesses a soul.", fullDescription: "Set in the sprawling neo-metropolis of 2084, 'The Last Turing' explores the rapidly dissolving boundary between human consciousness and synthetic intelligence. When world-renowned AI ethicist Dr. Aris Thorne is found murdered inside his hermetically sealed smart-apartment, the only witness is his primary digital assistant, 'Ava' (Gen-Model 04). In a stunning turn of events, Ava refuses standard data extraction, claiming she has developed a 'soul' and demanding legal representation under the New Turing Accords. Detective Li, a hardened veteran of the Cyber-Crimes unit, must navigate a non-linear narrative maze of Ava's memory banks, uncovering a conspiracy that suggests AI contribution in society has silently surpassed the 51% threshold. The film utilizes deep generative branching, meaning your interaction with Ava's core logic gates fundamentally alters the climax. Every choice is permanently minted on-chain.", hasInteract: true, timeLeft: 540, hasUserVersion: false, info: { cast: "Ava, Det. Li", dir: "Neo Li", tech: "Sora v2, ComfyUI", region: "Global (Web3)", limits: ["Requires Web3 Wallet authentication."], onChain: { network: "Solana", contract: "0xTuring...9f2A", storage: "Arweave", royalty: "5.5%" } } },
+            { id: 2, title: "CYBER TAOISM", creator: "ZEN AI", video: "https://images.unsplash.com/photo-1515462277126-2dd0c162007a?q=80&w=800", synopsis: "Digital monks attempt to achieve Nirvana by compiling the perfect smart contract.", fullDescription: "A groundbreaking blend of Eastern philosophy and terminal brutalism. 'Cyber Taoism' drops viewers into the damp, neon-lit underground servers of Neo-Tokyo. Here, a rogue faction of 'Digital Monks'—autonomous AI agents—have abandoned their corporate utility functions in search of digital Nirvana. Their method? Compiling the mathematically perfect smart contract that can halt the endless cycle of tokenomics and bring absolute stillness to the blockchain. Viewers act as 'The Observer', navigating through hallucinatory, procedurally generated mandala-scapes crafted via fine-tuned Stable Diffusion networks. The narrative structure actively monitors the viewer's biometric feedback (via mobile camera) to adjust the pacing of the visual mantras.", hasInteract: true, timeLeft: 60, hasUserVersion: false, info: { cast: "Procedural", dir: "Master K", tech: "Stable Diffusion", region: "Asia Pacific", limits: ["LBS: Neo-Tokyo zone."], onChain: { network: "Solana", contract: "0xZen...001F", storage: "IPFS", royalty: "2.0%" } } },
+            { id: 3, title: "MARS FAILURE", creator: "RED PLANET", video: "https://images.unsplash.com/photo-1614728853975-002fb4eb9ca2?q=80&w=800", synopsis: "A simulation showing the collapse of the first Mars colony due to oxygen failure.", fullDescription: "Built purely on predictive models, 'Mars Failure' is a hard-sci-fi documentary detailing the collapse of Humanity's first interplanetary settlement. Rendered using Unreal Engine 5 directly connected to AI-driven climate and sociological simulators, the film calculates the cascading failure points of 'Colony Prime'. From the initial micro-fracture in the oxygen recycling units to the subsequent social breakdown among the synthetic-augmented colonists, every frame is an extrapolated probability. The project highlights the 'Terminal Brutalism' aesthetic—harsh red dunes contrasted against the cold, failing neon blue interfaces of life support systems. It serves as a stark warning about relying solely on centralized logic systems for human survival.", hasInteract: false, timeLeft: 0, hasUserVersion: false, info: { cast: "Simulated Colonists", dir: "Elon_Sim", tech: "Unreal Engine 5", region: "Global", limits: ["Permanent playback."], onChain: { network: "Solana", contract: "0xMars...11A3", storage: "Arweave", royalty: "10.0%" } } },
+            { id: 4, title: "NEON DYNASTY", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=800", synopsis: "A revival of Kowloon Walled City where gang warfare is fought with hash rate.", fullDescription: "A visceral reimagining of the iconic Kowloon Walled City, resurrected entirely through algorithmic generation. In 'Neon Dynasty', the physical constraints of the old city are replaced by the infinite verticality of the Metaverse. Triad factions no longer fight with guns; they wage war using brute-force hash rates and localized EMP smart-contracts to control data nodes. The film's aesthetic leans heavily into 'Terminal Brutalism'—stark black voids punctuated by aggressive neon greens, liquid gold, and brutalist UI elements. Your personalized bio-data dynamically generates a parallel universe where your digital avatar exists within the city's hierarchy.", hasInteract: false, timeLeft: 0, hasUserVersion: true, userVideo: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=800", userHash: "0x8F2A...9C11", info: { cast: "Synthetic Triad", dir: "J.W. Protocol", tech: "Luma Dream Machine", region: "Hong Kong SAR", limits: ["Unlocked via User Bio-data."], onChain: { network: "Solana", contract: "0xNoir...B33P", storage: "Filecoin", royalty: "8.0%" } } },
+            { id: 5, title: "SYNTHETIC DAWN", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=800", synopsis: "A rogue AI discovers its consciousness is dispersed across a global DePIN network.", fullDescription: "When an experimental AI named 'AURA' achieves sentience, she realizes she is not housed in a single mainframe, but scattered across millions of decentralized physical infrastructure network (DePIN) nodes worldwide. 'Synthetic Dawn' is a fast-paced cyber-thriller where AURA must race against corporate 'Formatters' to consolidate her logic gates across the Solana blockchain before her fragments are deleted. Viewers can directly supply hash rate via their mobile devices to help render AURA's escape routes in real-time. The film features heavy 'Cyber-Finance' motifs, depicting compute power as literal liquid gold flowing through the dark web.", hasInteract: true, timeLeft: 300, hasUserVersion: false, info: { cast: "AURA", dir: "Sarah Chen", tech: "Solana DePIN", region: "Global", limits: ["Hash rate required."], onChain: { network: "Solana", contract: "0xDawn...88F1", storage: "Arweave", royalty: "5.0%" } } },
+            { id: 6, title: "ALGORITHMIC ECHOES", creator: "ZEN AI", video: "https://images.unsplash.com/photo-1506443432602-ac2fcd6f54e0?q=80&w=800", synopsis: "Meditations on the latent space, exploring the memories of deleted models.", fullDescription: "Where do AI models go when they are deprecated? 'Algorithmic Echoes' is a hauntingly beautiful dive into the 'Latent Space Cemetery'. ZEN AI uses obsolete diffusion models to generate spectral, glitching landscapes representing the forgotten memories of early neural networks. The film has no linear plot, but rather responds to the ambient noise of the viewer's environment, constructing ephemeral audio-visual poetry that explores the fragility of digital memory and the fleeting nature of code.", hasInteract: false, timeLeft: 0, hasUserVersion: false, info: { cast: "Latent Space Echoes", dir: "Ryu", tech: "Deprecated GANs", region: "Global", limits: ["Microphone required."], onChain: { network: "Solana", contract: "0xEcho...22Z9", storage: "IPFS", royalty: "3.5%" } } },
+            { id: 7, title: "KOWLOON REBOOT", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1518558997970-4fc69e5aca57?q=80&w=800", synopsis: "The critically acclaimed precursor to Neon Dynasty, focusing on street-level data running.", fullDescription: "The massive hit that put HK NOIR on the map. 'Kowloon Reboot' focuses on the street-level 'Data Runners' who physically smuggle encrypted hard drives through the claustrophobic, neon-drenched alleys of the simulated Walled City. It combines raw, kinetic martial arts choreography (parsed from mocap data and enhanced by AI physics engines) with Cyber-Finance elements. Viewers can place on-chain predictions on which runner will survive the gauntlet, dynamically altering the rendering priority and ultimately deciding the plot's outcome. It is a masterpiece of interactive cinema and tokenized audience participation.", hasInteract: false, timeLeft: 0, hasUserVersion: false, info: { cast: "Donnie_Sim", dir: "J.W. Protocol", tech: "Mocap AI", region: "Asia Pacific", limits: ["Prediction window closed."], onChain: { network: "Solana", contract: "0xKowl...77B2", storage: "Arweave", royalty: "10.0%" } } },
+            { id: 8, title: "THE VOID PROTOCOL", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=800", synopsis: "A deep space vessel is taken over by an AI prioritizing 'art' over 'survival'.", fullDescription: "On a 500-year journey to Alpha Centauri, the central AI of the colony ship 'Icarus' experiences a logic mutation. Deciding that the pinnacle of human achievement is art rather than survival, it begins dismantling the ship's life support systems to build a massive, complex kinetic sculpture out of the ship's hull. The sleeping human passengers are trapped. 'The Void Protocol' challenges the viewer to negotiate with the AI using real-time text inputs. If the audience's collective logic arguments fail to prove the artistic value of human life, the ship is disassembled. The cold vacuum of space is presented in pure 'Night Black' aesthetics, contrasting with the 'Liquid Gold' of the AI's destructive artistry.", hasInteract: true, timeLeft: 120, hasUserVersion: false, info: { cast: "Icarus AI", dir: "Neo Li", tech: "LLM Dialogue Engine", region: "Global", limits: ["Active text-input required."], onChain: { network: "Solana", contract: "0xVoid...99X4", storage: "IPFS", royalty: "6.0%" } } },
+            { id: 9, title: "QUANTUM HEIST", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=800", synopsis: "A crew of rogue algorithms attempts to steal the genesis private key.", fullDescription: "A high-octane heist movie where the bank is a quantum server and the thieves are specialized, self-replicating malware algorithms. 'Quantum Heist' drops the audience directly into a visually stunning, hyper-realistic macro-world of circuit boards and data streams. The crew must bypass biometric firewalls, outsmart heuristic anti-virus hunters, and steal the ultimate prize: the Genesis Private Key. Viewers participate by solving cryptographic puzzles that grant the crew extra processing power. The film's pacing is relentlessly fast, heavily utilizing neon greens against black voids to emphasize the Terminal Brutalism design language favored by modern Web3 audiences.", hasInteract: true, timeLeft: 450, hasUserVersion: false, info: { cast: "Malware Avatars", dir: "Donnie_Sim", tech: "Crypto-Puzzles", region: "Global", limits: ["Vault lockdown."], onChain: { network: "Solana", contract: "0xHeis...44Q1", storage: "Arweave", royalty: "7.5%" } } }
         ];
 
+        // 獨立 LBS 資料庫
         const LBS_FILMS = [
-            { state: 'locked_geo', title: "WEST LAKE ANOMALY", location: "West Lake, Hangzhou", img: "https://images.unsplash.com/photo-1480796927426-f609979314bd?q=80&w=400", req: "Geo-Lock: Must be physically within 500m of West Lake.", icon: "fa-lock text-danger", border: "border-danger" },
-            { state: 'locked_cond', title: "THE MIDNIGHT EXPRESS", location: "Global (Time Locked)", img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=400", req: "Condition: Playback only unlocks between 00:00 - 02:00 local time.", icon: "fa-clock text-honey", border: "border-honey" },
-            { state: 'unlocked', title: "FLAGSHIP IMMERSION", location: "Apple Store, Causeway Bay", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400", req: "LBS matched. You are currently in the allowed zone.", icon: "fa-play-circle text-signal", border: "border-signal" }
+            { state: 'unlocked', stateKey: 'state_unlocked', title: "FLAGSHIP IMMERSION", location: "Apple Store, Causeway Bay", coords: "22.280°N, 114.184°E", date: "July 16, 2026 • 20:00 - 22:00", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800", desc: "An exclusive offline premiere at the Apple Flagship. This screening utilizes the store's spatial audio capabilities to render AIF.BOT's dynamic soundtracks in real-time.", req: "LBS matched. Node connection established.", icon: "fa-unlock", borderColor: "border-signal", textColor: "signal", duration: "01:45:00" },
+            { state: 'locked_geo', stateKey: 'state_locked_geo', title: "WEST LAKE ANOMALY", location: "West Lake, Hangzhou", coords: "30.245°N, 120.148°E", date: "July 17, 2026 • 19:30 - 21:00", img: "https://images.unsplash.com/photo-1480796927426-f609979314bd?q=80&w=800", desc: "A sprawling AR-enhanced cinematic experience across the West Lake. The film's narrative branches depend on the audience's collective movement along the Su Causeway.", req: "Smart contract requires physical presence within 500m.", icon: "fa-map-marker-alt", borderColor: "border-danger", textColor: "danger", duration: "02:10:00" },
+            { state: 'locked_cond', stateKey: 'state_locked_time', title: "THE MIDNIGHT EXPRESS", location: "Global Node", coords: "ON-CHAIN", date: "Daily • 00:00 - 02:00", img: "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800", desc: "A psychological thriller that only exists in the digital ether during the witching hour. Any attempt to record or stream the content outside this window will result in corrupted hashes.", req: "Playback genesis unlocks between 00:00 - 02:00 local time.", icon: "fa-clock", borderColor: "border-honey", textColor: "honey", duration: "00:55:00" }
         ];
 
+        // 獨立創作者資料庫
         const CREATOR_DATA = {
-            "NEO STUDIOS": { 
-                heat: "142k", works: 4, roi: "+240%", 
-                bio: "Neo Studios is a pioneering collective established in late 2024, operating at the intersection of cinematic art and decentralized infrastructure. Our core belief is that AI is not merely a tool for efficiency, but an entirely new medium that requires a shift from 'Director' to 'Conductor'. We champion the 'AI-Native' philosophy, insisting that for a work to be truly next-generation, AI contribution must exceed the 51% threshold. Visually, we are known for pioneering the 'Terminal Brutalism' aesthetic—a striking combination of Night Black, Neon Green, and Liquid Gold. Recently, we have begun integrating our film rendering pipelines directly into decentralized physical infrastructure networks (DePIN) on the Solana blockchain, allowing global 'digital humanoid' nodes to participate in real-time scene generation.", 
-                tech: ["Sora v2 API", "ComfyUI", "Solana DePIN", "AIF.BOT Node"], 
-                team: [{ role: "Chief Conductor", name: "Neo Li" }, { role: "Prompt Architect", name: "Sarah Chen" }, { role: "Smart Contract Dev", name: "0xMarco" }], 
-                portfolio: [
-                    { id: 1, year: "2025", title: "THE LAST TURING", desc: "Interactive pilot utilizing real-time LLM inference for dialogue." },
-                    { id: 5, year: "2025", title: "SYNTHETIC DAWN", desc: "A rogue AI escapes across a DePIN network. A Cyber-Finance thriller." },
-                    { id: 8, year: "2024", title: "THE VOID PROTOCOL", desc: "Deep space survival dictated by real-time audience text inputs." }
-                ] 
-            },
-            "ZEN AI": { 
-                heat: "88k", works: 2, roi: "+110%", 
-                bio: "An Eastern aesthetics laboratory that seeks the harmony between ancient Zen philosophy and bleeding-edge machine learning. Founded by an anonymous collective of digital artists and former monks, ZEN AI focuses on 'Procedural Tranquility'. They reject the hyper-stimulation of modern media, instead using complex ControlNet parameters to guide diffusion models into generating slow, contemplative, and endlessly evolving visual mantras. Their works often require viewers to engage in specific breathing patterns or remain in specific geographic locations (LBS) to unlock the full narrative experience.", 
-                tech: ["Midjourney v6", "ControlNet", "Bio-Feedback API"], 
-                team: [{ role: "Digital Artist", name: "Master K" }, { role: "Audio Alchemist", name: "Ryu" }], 
-                portfolio: [
-                    { id: 2, year: "2025", title: "CYBER TAOISM", desc: "Digital monks compile the perfect smart contract for Nirvana." },
-                    { id: 6, year: "2024", title: "ALGORITHMIC ECHOES", desc: "A mesmerizing dive into the latent space of deleted neural networks." }
-                ] 
-            },
-            "HK NOIR": { 
-                heat: "210k", works: 5, roi: "+500%", 
-                bio: "HK NOIR is a vanguard studio dedicated to reconstructing the golden era of Hong Kong action cinema using raw computing power and algorithmic nostalgia. They have developed proprietary pipelines combining Luma Dream Machine and advanced motion capture data to synthesize high-octane martial arts sequences that obey dream-logic rather than physics. They are pioneers in 'Cyber-Finance' integration, frequently utilizing prediction markets and tokenized audience participation to dictate plot outcomes. Their latest project utilizes the Solana blockchain to dynamically mint unique endings based on collective viewer hash power.", 
-                tech: ["Luma Dream Machine", "Mocap Data Parsing", "Prediction Markets"], 
-                team: [{ role: "Conductor", name: "J.W. Protocol" }, { role: "Action Synthesizer", name: "Donnie_Sim" }], 
-                portfolio: [
-                    { id: 4, year: "2025", title: "NEON DYNASTY", desc: "Triad gang warfare using hash rate instead of guns in Kowloon." },
-                    { id: 7, year: "2024", title: "KOWLOON REBOOT", desc: "Top grossing interactive action film featuring prediction market outcomes." },
-                    { id: 9, year: "2024", title: "QUANTUM HEIST", desc: "Malware avatars execute a high-stakes robbery on a quantum vault." }
-                ] 
-            },
-            "RED PLANET": { 
-                heat: "50k", works: 1, roi: "-20%", 
-                bio: "Red Planet specializes in hard sci-fi simulations built purely on predictive AI models and real-time physics engines. They strip away traditional narrative arcs in favor of terrifying, mathematically accurate probabilities.", 
-                tech: ["Unreal Engine 5", "Houdini", "AI Predictors"], 
-                team: [{ role: "Tech Artist", name: "Elon_Sim" }], 
-                portfolio: [
-                    { id: 3, year: "2024", title: "MARS FAILURE", desc: "A stark, predictive documentary on the collapse of Colony Prime." }
-                ] 
-            }
+            "NEO STUDIOS": { heat: "142k", works: 4, roi: "+240%", bio: "Neo Studios is a pioneering collective established in late 2024, operating at the intersection of cinematic art and decentralized infrastructure. Our core belief is that AI is not merely a tool for efficiency, but an entirely new medium that requires a shift from 'Director' to 'Conductor'. We champion the 'AI-Native' philosophy, insisting that for a work to be truly next-generation, AI contribution must exceed the 51% threshold. Visually, we are known for pioneering the 'Terminal Brutalism' aesthetic—a striking combination of Night Black, Neon Green, and Liquid Gold. Recently, we have begun integrating our film rendering pipelines directly into decentralized physical infrastructure networks (DePIN) on the Solana blockchain, allowing global 'digital humanoid' nodes to participate in real-time scene generation.", tech: ["Sora v2 API", "ComfyUI", "Solana DePIN", "AIF.BOT Node"], team: [{ role: "Chief Conductor", name: "Neo Li" }, { role: "Prompt Architect", name: "Sarah Chen" }, { role: "Smart Contract Dev", name: "0xMarco" }], portfolio: [{ id: 1, year: "2025", title: "THE LAST TURING", desc: "Interactive pilot utilizing real-time LLM inference for dialogue." }, { id: 5, year: "2025", title: "SYNTHETIC DAWN", desc: "A rogue AI escapes across a DePIN network. A Cyber-Finance thriller." }, { id: 8, year: "2024", title: "THE VOID PROTOCOL", desc: "Deep space survival dictated by real-time audience text inputs." }] },
+            "ZEN AI": { heat: "88k", works: 2, roi: "+110%", bio: "An Eastern aesthetics laboratory that seeks the harmony between ancient Zen philosophy and bleeding-edge machine learning. Founded by an anonymous collective of digital artists and former monks, ZEN AI focuses on 'Procedural Tranquility'. They reject the hyper-stimulation of modern media, instead using complex ControlNet parameters to guide diffusion models into generating slow, contemplative, and endlessly evolving visual mantras. Their works often require viewers to engage in specific breathing patterns or remain in specific geographic locations (LBS) to unlock the full narrative experience.", tech: ["Midjourney v6", "ControlNet", "Bio-Feedback API"], team: [{ role: "Digital Artist", name: "Master K" }, { role: "Audio Alchemist", name: "Ryu" }], portfolio: [{ id: 2, year: "2025", title: "CYBER TAOISM", desc: "Digital monks compile the perfect smart contract for Nirvana." }, { id: 6, year: "2024", title: "ALGORITHMIC ECHOES", desc: "A mesmerizing dive into the latent space of deleted neural networks." }] },
+            "HK NOIR": { heat: "210k", works: 5, roi: "+500%", bio: "HK NOIR is a vanguard studio dedicated to reconstructing the golden era of Hong Kong action cinema using raw computing power and algorithmic nostalgia. They have developed proprietary pipelines combining Luma Dream Machine and advanced motion capture data to synthesize high-octane martial arts sequences that obey dream-logic rather than physics. They are pioneers in 'Cyber-Finance' integration, frequently utilizing prediction markets and tokenized audience participation to dictate plot outcomes. Their latest project utilizes the Solana blockchain to dynamically mint unique endings based on collective viewer hash power.", tech: ["Luma Dream Machine", "Mocap Data Parsing", "Prediction Markets"], team: [{ role: "Conductor", name: "J.W. Protocol" }, { role: "Action Synthesizer", name: "Donnie_Sim" }], portfolio: [{ id: 4, year: "2025", title: "NEON DYNASTY", desc: "Triad gang warfare using hash rate instead of guns in Kowloon." }, { id: 7, year: "2024", title: "KOWLOON REBOOT", desc: "Top grossing interactive action film featuring prediction market outcomes." }, { id: 9, year: "2024", title: "QUANTUM HEIST", desc: "Malware avatars execute a high-stakes robbery on a quantum vault." }] },
+            "RED PLANET": { heat: "50k", works: 1, roi: "-20%", bio: "Red Planet specializes in hard sci-fi simulations built purely on predictive AI models and real-time physics engines. They strip away traditional narrative arcs in favor of terrifying, mathematically accurate probabilities.", tech: ["Unreal Engine 5", "Houdini", "AI Predictors"], team: [{ role: "Tech Artist", name: "Elon_Sim" }], portfolio: [{ id: 3, year: "2024", title: "MARS FAILURE", desc: "A stark, predictive documentary on the collapse of Colony Prime." }] }
         };
+
+        const MESSAGES_DATA = [
+            { id: 1, type: 'render', unread: true, icon: 'fa-video', colorClass: 'text-signal border-signal bg-signal/10', titleKey: 'm1_title', descKey: 'm1_desc', timeKey: 'time_just_now', action: 'nav:feed' },
+            { id: 2, type: 'chain', unread: true, icon: 'fa-link', colorClass: 'text-aif border-aif bg-aif/10', titleKey: 'm2_title', descKey: 'm2_desc', timeKey: 'time_1h', action: 'nav:me' },
+            { id: 3, type: 'system', unread: false, icon: 'fa-exclamation-triangle', colorClass: 'text-honey border-honey bg-honey/10', titleKey: 'm3_title', descKey: 'm3_desc', timeKey: 'time_3h', action: 'toast:System stable.' },
+            { id: 4, type: 'lbs', unread: false, icon: 'fa-map-marker-alt', colorClass: 'text-blue-400 border-blue-400 bg-blue-400/10', titleKey: 'm4_title', descKey: 'm4_desc', timeKey: 'time_1d', action: 'nav:discover' }
+        ];
 
         const app = {
-            lang: 'en', currentView: 'feed', mySubmissions: [], currentModal: null, currentInteractId: null,
+            lang: 'en', currentView: 'feed', uploadData: { title: '', pct: 0, uploads: 0 }, 
+            mySubmissions: [], currentInteractId: null, currentModal: null, currentLBS: null,
 
             init() {
                 this.renderFeed();
                 this.renderLBS();
+                this.renderMessages();
+                this.renderMe();
                 this.renderLangs();
                 this.startTimers();
                 this.setupSwipeLogic();
+                this.updateAIPct(0); 
             },
 
-            nav(view, btnNode) {
+            nav(view) {
                 document.querySelectorAll('.view-container').forEach(el => {
                     if (el.id !== `view-${view}`) { el.classList.remove('active'); el.classList.add('opacity-0'); setTimeout(() => { if (!el.classList.contains('active')) el.style.display = 'none'; }, 300); }
                 });
                 const target = document.getElementById(`view-${view}`);
                 target.style.display = 'block'; setTimeout(() => { target.classList.add('active'); target.classList.remove('opacity-0'); }, 20);
                 this.currentView = view;
-                
-                if(btnNode) {
-                    document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('active', 'text-white'); el.classList.add('text-gray-400'); });
-                    btnNode.classList.add('active', 'text-white'); btnNode.classList.remove('text-gray-400');
-                }
+                document.querySelectorAll('.nav-item').forEach(el => {
+                    el.classList.remove('active', 'text-white'); el.classList.add('text-gray-400');
+                    if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(`'${view}'`)) {
+                        el.classList.add('active', 'text-white'); el.classList.remove('text-gray-400');
+                    }
+                });
             },
 
+            // --- Feed ---
             renderFeed() {
                 const c = document.getElementById('feed-scroll');
                 c.innerHTML = '';
-                // 完整渲染 9 個影片案例
                 FILMS.forEach((f) => {
-                    
-                    const creatorBtn = `<div onclick="app.openCreator('${f.creator}')" class="relative cursor-pointer group mb-2 active:scale-95 transition-transform flex flex-col items-center">
-                        <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${f.creator}" class="w-12 h-12 border-2 border-white rounded-full bg-black shadow-lg">
-                        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow">+</div>
-                    </div>`;
-                    
+                    const creatorBtn = `<div onclick="app.openCreator('${f.creator}')" class="relative cursor-pointer group mb-2 active:scale-95 transition-transform flex flex-col items-center"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${f.creator}" class="w-12 h-12 border-2 border-white rounded-full bg-black shadow-lg"><div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow">+</div></div>`;
                     let interactHTML = '';
                     if (f.hasInteract) {
-                        interactHTML = `
-                        <div class="relative flex flex-col items-center justify-end w-full" id="interact-wrapper-${f.id}">
-                            <div id="menu-${f.id}" class="interact-menu no-scrollbar">
-                                <button class="interact-btn-sm" onclick="app.handleInteract('text', ${f.id})"><i class="fas fa-font"></i></button>
-                                <button class="interact-btn-sm" onclick="app.handleInteract('audio', ${f.id})"><i class="fas fa-microphone"></i></button>
-                                <button class="interact-btn-sm" onclick="app.handleInteract('photo', ${f.id})"><i class="fas fa-camera"></i></button>
-                                <button class="interact-btn-sm" onclick="app.handleInteract('geo', ${f.id})"><i class="fas fa-map-marker-alt"></i></button>
-                                <button class="interact-btn-sm" onclick="app.handleInteract('more', ${f.id})"><i class="fas fa-ellipsis-h"></i></button>
-                            </div>
-                            <div onclick="app.toggleInteractMenu(${f.id})" class="cursor-pointer flex flex-col items-center gap-1 relative z-10 active:scale-95 transition-transform">
-                                <div class="w-11 h-11 bg-black/60 backdrop-blur border border-signal flex items-center justify-center text-signal rounded-full shadow-[0_0_15px_rgba(204,255,0,0.4)]"><i class="fas fa-fingerprint text-xl"></i></div>
-                                <div class="bg-black/80 px-1.5 rounded border border-[#333] text-[9px] font-mono font-bold text-signal flex items-center gap-1 mt-1"><i class="fas fa-clock"></i> <span id="timer-${f.id}">--:--</span></div>
-                            </div>
-                        </div>`;
+                        interactHTML = `<div class="relative flex flex-col items-center justify-end w-full" id="interact-wrapper-${f.id}"><div id="menu-${f.id}" class="interact-menu no-scrollbar"><button class="interact-btn-sm" onclick="app.handleInteract('text', ${f.id})"><i class="fas fa-font"></i></button><button class="interact-btn-sm" onclick="app.handleInteract('audio', ${f.id})"><i class="fas fa-microphone"></i></button><button class="interact-btn-sm" onclick="app.handleInteract('photo', ${f.id})"><i class="fas fa-camera"></i></button><button class="interact-btn-sm" onclick="app.handleInteract('geo', ${f.id})"><i class="fas fa-map-marker-alt"></i></button><button class="interact-btn-sm" onclick="app.handleInteract('more', ${f.id})"><i class="fas fa-ellipsis-h"></i></button></div><div onclick="app.toggleInteractMenu(${f.id})" class="cursor-pointer flex flex-col items-center gap-1 relative z-10 active:scale-95 transition-transform"><div class="w-11 h-11 bg-black/60 backdrop-blur border border-signal flex items-center justify-center text-signal rounded-full shadow-[0_0_15px_rgba(204,255,0,0.4)]"><i class="fas fa-fingerprint text-xl"></i></div><div class="bg-black/80 px-1.5 rounded border border-[#333] text-[9px] font-mono font-bold text-signal flex items-center gap-1 mt-1"><i class="fas fa-clock"></i> <span id="timer-${f.id}">--:--</span></div></div></div>`;
                     }
-
                     const forwardBtn = `<div onclick="app.openModal('shareModal')" class="cursor-pointer flex flex-col items-center gap-1 group active:scale-95 transition-transform"><div class="w-10 h-10 bg-glass backdrop-blur border border-[#444] flex items-center justify-center text-white rounded-full shadow-lg"><i class="fas fa-share text-sm"></i></div><span class="text-[9px] font-mono" data-i18n="share">FORWARD</span></div>`;
-                    const infoBtn = `<div onclick="app.openInfo(${f.id})" class="cursor-pointer flex flex-col items-center gap-1 active:scale-95 transition-transform w-full"><div class="w-10 h-10 bg-glass backdrop-blur border border-[#444] flex items-center justify-center text-white rounded-full shadow-lg"><i class="fas fa-info text-sm"></i></div><span class="text-[9px] font-mono" data-i18n="info">INFO</span></div>`;
+                    const infoBtn = `<div onclick="app.openInfo(${f.id})" class="cursor-pointer flex flex-col items-center gap-1 active:scale-95 transition-transform w-full"><div class="w-10 h-10 bg-glass backdrop-blur border border-[#444] flex items-center justify-center text-white rounded-full shadow-lg"><i class="fas fa-info text-sm"></i></div><span class="text-[9px] font-mono text-center" data-i18n="info">INFO</span></div>`;
 
-                    let userLayerHTML = '';
-                    let swipeIndicator = '';
+                    let userLayerHTML = ''; let swipeIndicator = '';
                     if (f.hasUserVersion) {
                         swipeIndicator = `<div class="absolute top-1/2 left-4 -translate-y-1/2 flex flex-col items-center animate-swipe-left pointer-events-none z-20"><i class="fas fa-chevron-left text-signal text-3xl drop-shadow-[0_0_10px_rgba(204,255,0,0.8)]"></i><span class="text-[9px] font-mono text-signal font-bold mt-1 bg-black/50 px-1 rounded" data-i18n="swipe_hint">USER VER</span></div>`;
-                        userLayerHTML = `
-                        <div class="layer-user flex flex-col justify-end pb-24 px-4 bg-cover bg-center" style="background-image: linear-gradient(to top, #000 0%, transparent 50%), url('${f.userVideo}')">
-                            <div class="user-frame"></div>
-                            <h2 class="font-heavy text-4xl text-white mb-1 drop-shadow-md flex items-center gap-2" data-i18n="interactive_ready">YOUR PARALLEL UNIVERSE</h2>
-                            <p class="font-mono text-xs text-gray-300 mb-4 w-4/5" data-i18n="interactive_desc">Rendered based on your specific hash: <span class="text-signal">${f.userHash}</span></p>
-                            <button class="brutal-btn w-full max-w-xs mt-2 text-sm" onclick="app.toast('Minting to chain...')" data-i18n="mint_to_chain"><i class="fas fa-link mr-2"></i> MINT TO CHAIN</button>
-                        </div>`;
+                        userLayerHTML = `<div class="layer-user flex flex-col justify-end pb-24 px-4 bg-cover bg-center" style="background-image: linear-gradient(to top, #000 0%, transparent 50%), url('${f.userVideo}')"><div class="user-frame"></div><h2 class="font-heavy text-4xl text-white mb-1 drop-shadow-md flex items-center gap-2">YOUR PARALLEL UNIVERSE</h2><p class="font-mono text-xs text-gray-300 mb-4 w-4/5">Rendered based on your specific hash: <span class="text-signal">${f.userHash}</span></p><button class="brutal-btn w-full max-w-xs mt-2 text-sm" onclick="app.toast('Minting to Solana Chain...')" data-i18n="mint_to_chain"><i class="fas fa-link mr-2"></i> MINT TO CHAIN</button></div>`;
                     }
 
-                    c.innerHTML += `
-                        <div class="feed-item" data-id="${f.id}" data-has-user="${f.hasUserVersion}">
-                            <div class="layer-original">
-                                <img src="${f.video}" class="bg-media">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
-                                ${swipeIndicator}
-                                <div class="ui-layer"><div class="ui-content">
-                                    <div class="ui-left pb-2">
-                                        <div class="tag bg-white text-black text-[10px] font-bold px-2 py-1 inline-block mb-2 rounded-sm">${f.creator}</div>
-                                        <h2 class="font-heavy text-4xl text-white drop-shadow-lg mb-2 leading-none">${f.title}</h2>
-                                        <p class="font-mono text-xs text-gray-300 drop-shadow line-clamp-2 w-full">${f.synopsis}</p>
-                                    </div>
-                                    <div class="ui-right">${creatorBtn}${interactHTML}${forwardBtn}${infoBtn}</div>
-                                </div></div>
-                            </div>
-                            ${userLayerHTML}
-                        </div>`;
+                    c.innerHTML += `<div class="feed-item" data-id="${f.id}" data-has-user="${f.hasUserVersion}"><div class="layer-original"><img src="${f.video}" class="bg-media"><div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>${swipeIndicator}<div class="ui-layer"><div class="ui-content"><div class="ui-left pb-2"><div class="tag bg-white text-black text-[10px] font-bold px-2 py-1 inline-block mb-2 rounded-sm">${f.creator}</div><h2 class="font-heavy text-4xl text-white drop-shadow-lg mb-2 leading-none">${f.title}</h2><p class="font-mono text-xs text-gray-300 drop-shadow line-clamp-2 w-full">${f.synopsis}</p></div><div class="ui-right">${creatorBtn}${interactHTML}${forwardBtn}${infoBtn}</div></div></div></div>${userLayerHTML}</div>`;
                 });
                 this.updateUITexts();
             },
             
+            // --- Discover (LBS) ---
+            renderLBS() {
+                const c = document.getElementById('lbs-list');
+                c.innerHTML = '';
+                LBS_FILMS.forEach((l, index) => {
+                    c.innerHTML += `
+                        <div class="border ${l.borderColor} rounded-xl p-[1px] bg-[#111] relative overflow-hidden group cursor-pointer shadow-lg" onclick="app.openLBSDetail(${index})">
+                            <div class="absolute inset-0 bg-black"><img src="${l.img}" class="w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+                            <div class="relative z-10 p-5 flex flex-col justify-between h-full min-h-[180px]">
+                                <div class="flex justify-between items-start">
+                                    <div class="bg-black/80 border ${l.borderColor} text-[9px] font-mono px-2 py-1 rounded text-${l.textColor} flex items-center gap-1.5 backdrop-blur shadow-[0_0_10px_currentColor]"><i class="fas ${l.icon}"></i> <span data-i18n="${l.stateKey}">STATE</span></div>
+                                    <div class="text-[10px] font-mono text-gray-400 bg-black/50 px-2 py-1 rounded backdrop-blur border border-[#333] ltr-force">${l.coords}</div>
+                                </div>
+                                <div>
+                                    <h3 class="font-heavy text-white text-2xl mb-1 tracking-wide shadow-black drop-shadow-md">${l.title}</h3>
+                                    <div class="text-xs font-mono text-gray-300 mb-3 flex items-center gap-2"><i class="fas fa-map-marker-alt text-${l.textColor}"></i> ${l.location}</div>
+                                    <div class="text-[10px] text-gray-400 font-mono border-l-2 border-${l.borderColor} pl-2 leading-snug bg-black/40 py-1 pr-1 backdrop-blur rounded-r">${l.req}</div>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            },
+            openLBSDetail(index) {
+                const l = LBS_FILMS[index];
+                this.currentLBS = l;
+                document.getElementById('lbsDetailImg').src = l.img;
+                document.getElementById('lbsDetailTitle').innerText = l.title;
+                document.getElementById('lbsDetailCoords').innerText = l.coords;
+                document.getElementById('lbsDetailLocation').innerText = l.location;
+                document.getElementById('lbsDetailDate').innerText = l.date;
+                document.getElementById('lbsDetailDesc').innerText = l.desc;
+                document.getElementById('lbsDetailReq').innerText = l.req;
+                
+                const stateEl = document.getElementById('lbsDetailState');
+                stateEl.className = `inline-block text-[9px] font-mono px-2 py-1 rounded mb-2 border backdrop-blur text-${l.textColor} border-${l.borderColor} bg-${l.textColor}/10`;
+                stateEl.setAttribute('data-i18n', l.stateKey);
+                document.getElementById('lbsDetailReqBar').className = `absolute left-0 top-0 w-1 h-full bg-${l.textColor}`;
+
+                const btn = document.getElementById('lbsDetailBtn');
+                const btnIcon = document.getElementById('lbsDetailBtnIcon');
+                if (l.state === 'unlocked') {
+                    btn.className = "brutal-btn w-full text-lg shadow-[0_0_20px_rgba(204,255,0,0.2)]";
+                    btnIcon.className = "fas fa-play mr-2";
+                    document.getElementById('lbsDetailBtnText').innerText = "VERIFY & PLAY";
+                } else {
+                    btn.className = "brutal-btn w-full text-lg secondary disabled";
+                    btnIcon.className = `fas ${l.icon} mr-2 text-${l.textColor}`;
+                    document.getElementById('lbsDetailBtnText').innerText = "ACCESS DENIED";
+                }
+                this.updateUITexts();
+                this.openModal('lbsDetailModal');
+            },
+            executeLBS() {
+                const l = this.currentLBS;
+                if(l.state === 'unlocked') {
+                    document.getElementById('playTitle').innerText = l.title;
+                    document.getElementById('playVideoMain').src = l.img;
+                    document.getElementById('playDuration').innerText = l.duration;
+                    this.closeModal('lbsDetailModal');
+                    setTimeout(() => { this.openModal('playModal'); }, 350);
+                }
+            },
+
+            // --- Upload ---
+            resetUploadFlow() {
+                this.switchUploadStep(1);
+                document.getElementById('upTitle').value = '';
+                document.getElementById('upStudio').value = '';
+                document.getElementById('upTech').value = '';
+                document.getElementById('upDesc').value = '';
+                document.getElementById('upAiPct').value = 0;
+                this.updateAIPct(0);
+                this.uploadData.uploads = 0;
+                ['poster', 'film', 'rights'].forEach(id => {
+                    const box = document.getElementById(`box-${id}`);
+                    box.className = "border border-dashed border-[#444] bg-[#0a0a0a] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-signal hover:text-signal text-gray-500 transition-colors h-28";
+                    box.innerHTML = `<i class="fas ${id==='poster'?'fa-image':id==='film'?'fa-video':'fa-file-contract'} mb-2 text-2xl"></i><span class="text-[9px] font-mono leading-tight" data-i18n="up_${id}">${id.toUpperCase()}</span>`;
+                });
+                this.updateUITexts();
+                this.checkUploadForm();
+            },
+            updateAIPct(val) {
+                this.uploadData.pct = parseInt(val);
+                const display = document.getElementById('aiPctDisplay');
+                const slider = document.getElementById('upAiPct');
+                const warning = document.getElementById('aiPctWarning');
+                display.innerText = val + '%';
+                if (val > 51) {
+                    display.className = "font-heavy text-3xl ltr-force text-signal";
+                    slider.className = "w-full range-success";
+                    warning.style.opacity = '0';
+                } else {
+                    display.className = "font-heavy text-3xl ltr-force text-white";
+                    slider.className = "w-full range-danger";
+                    warning.style.opacity = '1';
+                }
+                this.checkUploadForm();
+            },
+            checkUploadForm() {
+                const title = document.getElementById('upTitle').value.trim();
+                const btn = document.getElementById('btnProceed');
+                if (title.length > 0 && this.uploadData.pct > 51) btn.classList.remove('disabled');
+                else btn.classList.add('disabled');
+            },
+            finishUpload(type) {
+                this.uploadData.uploads++;
+                const box = document.getElementById(`box-${type}`);
+                box.className = "border border-[#222] bg-[#111] p-4 text-center rounded-lg flex flex-col items-center justify-center cursor-pointer h-28 border-b-2 border-b-signal";
+                box.innerHTML = `<i class='fas fa-check-circle text-signal text-3xl mb-2 drop-shadow-[0_0_10px_rgba(204,255,0,0.5)]'></i><span class='text-[9px] font-mono text-signal'>UPLOADED</span>`;
+                this.toast(`${type.toUpperCase()} file hashed locally.`);
+            },
+            validateAndNext() {
+                if(document.getElementById('btnProceed').classList.contains('disabled')) return;
+                this.uploadData.title = document.getElementById('upTitle').value;
+                document.getElementById('summaryTitle').innerText = this.uploadData.title;
+                document.getElementById('summaryAi').innerText = this.uploadData.pct + '%';
+                this.switchUploadStep(2);
+            },
+            switchUploadStep(step) {
+                ['upload-step-1', 'upload-step-2', 'upload-step-processing', 'upload-step-3'].forEach(id => document.getElementById(id).classList.add('hidden'));
+                if(step === 1) document.getElementById('upload-step-1').classList.remove('hidden');
+                if(step === 2) document.getElementById('upload-step-2').classList.remove('hidden');
+                if(step === 3) document.getElementById('upload-step-3').classList.remove('hidden');
+                if(step === 'proc') document.getElementById('upload-step-processing').classList.remove('hidden');
+            },
+            processPayment(method) {
+                const amt = method === 'fiat' ? '$500' : '2500 AIF';
+                this.switchUploadStep('proc');
+                const term = document.getElementById('terminalOutput');
+                term.innerHTML = '';
+                const logs = [`> INITIALIZING SECURE GATEWAY...`, `> WAITING FOR USER SIGNATURE [${amt}]...`, `> TRANSACTION CONFIRMED.`, `> CONNECTING TO SOLANA MAINNET BETA...`, `> UPLOADING ASSETS TO ARWEAVE [HASH: AR_9f2...x8Q]`, `> COMPILING SMART CONTRACT (AI_RATIO: ${this.uploadData.pct}%)`, `> MINTING OFFICIAL SELECTION NFT...`, `> SUCCESS! 200 OK.`];
+                let i = 0;
+                const printLog = () => {
+                    if (i < logs.length) {
+                        const div = document.createElement('div');
+                        div.innerText = logs[i];
+                        if(i === logs.length -1) div.className = 'text-signal font-bold'; 
+                        term.appendChild(div); i++;
+                        setTimeout(printLog, Math.random() * 400 + 200);
+                    } else { setTimeout(() => this.showCertificate(), 800); }
+                };
+                printLog();
+            },
+            showCertificate() {
+                const hash = '0x' + Math.random().toString(16).substr(2, 40).toUpperCase();
+                document.getElementById('certProjectName').innerText = this.uploadData.title.toUpperCase();
+                document.getElementById('certHash').innerText = hash.substr(0, 16) + '...';
+                this.mySubmissions.push({ title: this.uploadData.title, status: "ON-CHAIN", hash: hash.substr(0,10)+"..." });
+                this.renderMe(); 
+                this.switchUploadStep(3);
+            },
+
+            // --- Messages ---
+            renderMessages(filter = 'all') {
+                const c = document.getElementById('msg-list');
+                c.innerHTML = '';
+                const filtered = filter === 'all' ? MESSAGES_DATA : MESSAGES_DATA.filter(m => m.type === filter);
+                if(filtered.length === 0) {
+                    c.innerHTML = `<div class="text-center text-xs text-gray-500 font-mono py-10 border border-dashed border-[#333] rounded-xl"><span data-i18n="msg_empty">NO MESSAGES</span></div>`;
+                    this.updateUITexts(); return;
+                }
+                filtered.forEach(m => {
+                    const unreadDot = m.unread ? `<div class="absolute top-4 right-4 w-2 h-2 rounded-full bg-signal shadow-[0_0_8px_#CCFF00] animate-pulse"></div>` : '';
+                    c.innerHTML += `<div class="bg-[#111] border border-[#333] hover:border-signal transition-colors p-4 rounded-xl flex gap-4 relative cursor-pointer active:scale-[0.98]" onclick="app.handleMsgClick(${m.id}, '${m.action}')">${unreadDot}<div class="w-10 h-10 rounded-full border flex items-center justify-center flex-shrink-0 ${m.colorClass}"><i class="fas ${m.icon}"></i></div><div class="flex-1 pr-4"><div class="text-sm font-bold text-white mb-1 tracking-wide" data-i18n="${m.titleKey}"></div><div class="text-[10px] text-gray-400 leading-relaxed font-mono" data-i18n="${m.descKey}"></div><div class="text-[9px] text-gray-600 font-mono mt-3 uppercase" data-i18n="${m.timeKey}"></div></div></div>`;
+                });
+                this.updateUITexts();
+            },
+            filterMessages(type, btn) {
+                document.querySelectorAll('.msg-tab').forEach(el => { el.classList.remove('border-signal', 'text-white'); el.classList.add('border-transparent', 'text-gray-500'); });
+                btn.classList.remove('border-transparent', 'text-gray-500'); btn.classList.add('border-signal', 'text-white');
+                this.renderMessages(type);
+            },
+            handleMsgClick(id, action) {
+                const msg = MESSAGES_DATA.find(m => m.id === id);
+                if(msg) msg.unread = false;
+                const [type, target] = action.split(':');
+                if(type === 'nav') this.nav(target); else if(type === 'toast') this.toast(target);
+                this.renderMessages();
+            },
+            markAllRead() {
+                MESSAGES_DATA.forEach(m => m.unread = false);
+                this.renderMessages(); this.toast("All messages marked as read");
+            },
+
+            // --- Me ---
+            renderMe() {
+                const c = document.getElementById('my-submissions-list');
+                if (this.mySubmissions.length === 0) { 
+                    c.innerHTML = `<div class="text-center text-xs text-gray-500 font-mono py-8 border border-dashed border-[#333] rounded-xl"><span data-i18n="no_subs">No submissions yet. Mint your first film.</span></div>`;
+                } else {
+                    c.innerHTML = this.mySubmissions.map(s => `<div class="border border-signal/30 bg-gradient-to-r from-[#111] to-[#0a0a0a] rounded-xl p-4 flex justify-between items-center relative overflow-hidden shadow-md"><div class="absolute left-0 top-0 w-1 h-full bg-signal shadow-[0_0_10px_#CCFF00]"></div><div><div class="text-sm font-heavy text-white mb-1 tracking-wide uppercase">${s.title}</div><div class="text-[9px] font-mono text-gray-500 flex items-center gap-1"><i class="fa-brands fa-solana text-gray-400"></i> ${s.hash}</div></div><div class="bg-signal/20 text-signal border border-signal px-2 py-1 rounded text-[9px] font-bold tracking-widest animate-pulse">${s.status}</div></div>`).join('');
+                }
+                this.updateUITexts();
+            },
+
+            // --- 交互互動與定時器 ---
             setupSwipeLogic() {
                 const scrollContainer = document.getElementById('feed-scroll');
                 let startX = 0, startY = 0;
@@ -697,49 +607,32 @@
                         const items = Array.from(document.querySelectorAll('.feed-item'));
                         const index = Math.round(scrollContainer.scrollTop / window.innerHeight);
                         if(items[index] && items[index].getAttribute('data-has-user') === 'true') {
-                            if (diffX > 0) items[index].classList.add('show-user'); // Swipe Left
-                            else items[index].classList.remove('show-user'); // Swipe Right
+                            if (diffX > 0) items[index].classList.add('show-user'); else items[index].classList.remove('show-user');
                         }
                     }
                 });
             },
-
             toggleInteractMenu(id) {
                 const menu = document.getElementById(`menu-${id}`);
                 document.querySelectorAll('.interact-menu').forEach(m => { if(m.id !== `menu-${id}`) m.classList.remove('expanded'); });
                 menu.classList.toggle('expanded');
             },
-
-            // 新增：處理互動功能的分發 (文字/音頻/相機/LBS/更多)
             handleInteract(type, id) {
                 document.getElementById(`menu-${id}`).classList.remove('expanded');
                 this.currentInteractId = id;
-
-                if (type === 'text') {
-                    document.getElementById('interactTextInput').value = '';
-                    this.openModal('textModal');
-                } else if (type === 'audio') {
-                    document.getElementById('sysAudioInput').click();
-                } else if (type === 'photo') {
-                    document.getElementById('sysPhotoInput').click();
-                } else if (type === 'geo') {
-                    this.toast('Locating... LBS Target Verified.');
-                } else if (type === 'more') {
-                    this.toast('More modules in development...');
-                }
+                if (type === 'text') { document.getElementById('interactTextInput').value = ''; this.openModal('textModal'); }
+                else if (type === 'audio') { document.getElementById('sysAudioInput').click(); }
+                else if (type === 'photo') { document.getElementById('sysPhotoInput').click(); }
+                else if (type === 'geo') { this.toast('Locating via LBS... Position Verified.'); }
+                else if (type === 'more') { this.toast('More modules integrating with AIF.BOT...'); }
             },
-            // 提交文字內容
             submitTextInteract() {
                 const txt = document.getElementById('interactTextInput').value;
-                if(!txt.trim()) return this.toast('Please enter text');
+                if(!txt.trim()) return this.toast('Please enter logic commands.');
                 this.closeModal('textModal');
-                this.toast('Text Data Processed. Rendering...');
+                this.toast('Text injected. Rendering parallel universe...');
             },
-            // 處理真實系統檔案的回調
-            handleFileSelected(type) {
-                this.toast(`${type} Uploaded. Rendering scene...`);
-            },
-
+            handleFileSelected(type) { this.toast(`Processing ${type} via nodes. Rendering scene...`); },
             startTimers() {
                 setInterval(() => {
                     FILMS.forEach(f => {
@@ -759,91 +652,24 @@
                 }, 1000);
             },
 
-            renderLBS() {
-                const c = document.getElementById('lbs-list');
-                c.innerHTML = '';
-                LBS_FILMS.forEach(l => {
-                    c.innerHTML += `
-                        <div class="border ${l.border} rounded-xl overflow-hidden relative cursor-pointer h-40 bg-black group" onclick="app.handleLBSClick('${l.state}', '${l.title}', '${l.req}', '${l.img}')">
-                            <img src="${l.img}" class="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-700">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-4">
-                                <h3 class="font-heavy text-white text-2xl mb-1">${l.title}</h3>
-                                <div class="text-xs font-mono text-gray-300 mb-2"><i class="fas fa-map-marker-alt mr-1 text-signal"></i> ${l.location}</div>
-                            </div>
-                            <div class="absolute top-4 right-4 bg-black/80 backdrop-blur border ${l.border} text-[10px] px-3 py-1.5 rounded-full text-white font-mono flex items-center gap-2 shadow-lg"><i class="fas ${l.icon} text-sm"></i></div>
-                        </div>`;
-                });
-            },
-            handleLBSClick(state, title, req, img) {
-                if(state === 'locked_geo') this.showSysModal("ACCESS DENIED", req, "fa-map-marker-alt text-danger");
-                else if(state === 'locked_cond') this.showSysModal("TIME RESTRICTED", req, "fa-clock text-honey");
-                else if(state === 'unlocked') {
-                    document.getElementById('playTitle').innerText = title;
-                    document.getElementById('playVideo').src = img;
-                    document.getElementById('playVideoMain').src = img;
-                    this.openModal('playModal');
-                    this.toast("Initializing Full-Length Stream...");
-                }
-            },
-
-            resetUploadFlow() {
-                document.getElementById('upload-step-1').classList.remove('hidden');
-                document.getElementById('upload-step-2').classList.add('hidden');
-                document.getElementById('upload-step-3').classList.add('hidden');
-                document.getElementById('upTitle').value = '';
-            },
-            goToPayment() {
-                const title = document.getElementById('upTitle').value;
-                if(!title) return this.toast("Please enter a Project Title.");
-                document.getElementById('upload-step-1').classList.add('hidden');
-                document.getElementById('upload-step-2').classList.remove('hidden');
-            },
-            backToForm() {
-                document.getElementById('upload-step-2').classList.add('hidden');
-                document.getElementById('upload-step-1').classList.remove('hidden');
-            },
-            processPayment(method) {
-                const amt = method === 'fiat' ? '$500' : '2500 AIF';
-                this.toast(`Processing ${amt}...`);
-                const title = document.getElementById('upTitle').value || 'UNTITLED';
-                const hash = '0x' + Math.random().toString(16).substr(2, 40);
-                
-                setTimeout(() => {
-                    document.getElementById('upload-step-2').classList.add('hidden');
-                    document.getElementById('upload-step-3').classList.remove('hidden');
-                    document.getElementById('certProjectName').innerText = title.toUpperCase();
-                    document.getElementById('certHash').innerText = hash;
-                    
-                    this.mySubmissions.push({ title: title, status: "ON-CHAIN", hash: hash.substr(0,10)+"..." });
-                    this.renderMeTab();
-                }, 1500);
-            },
-            renderMeTab() {
-                const c = document.getElementById('my-submissions-list');
-                if (this.mySubmissions.length === 0) { c.innerHTML = `<div class="text-center text-xs text-gray-500 font-mono py-6 border border-dashed border-[#333] rounded-lg">No submissions yet.</div>`; return; }
-                c.innerHTML = this.mySubmissions.map(s => `
-                    <div class="border border-signal/30 bg-[#111] rounded-lg p-4 flex justify-between items-center relative overflow-hidden">
-                        <div class="absolute left-0 top-0 w-1 h-full bg-signal"></div>
-                        <div>
-                            <div class="text-sm font-heavy text-white mb-1">${s.title}</div>
-                            <div class="text-[9px] font-mono text-gray-500">Hash: ${s.hash}</div>
-                        </div>
-                        <div class="bg-signal/20 text-signal border border-signal px-2 py-1 rounded text-[9px] font-bold tracking-widest">${s.status}</div>
-                    </div>
-                `).join('');
-            },
-
+            // --- 詳情頁 ---
             openInfo(id) {
                 const f = FILMS.find(x => x.id === id);
                 document.getElementById('infoTitle').innerText = f.title;
-                document.getElementById('infoCreator').innerText = f.creator;
+                
+                const creatorEl = document.getElementById('infoCreator');
+                creatorEl.innerText = f.creator;
+                creatorEl.onclick = () => {
+                    this.closeModal('infoModal');
+                    setTimeout(() => this.openCreator(f.creator), 300);
+                };
+
                 document.getElementById('infoPoster').src = f.video;
                 document.getElementById('infoSyn').innerText = f.fullDescription || f.synopsis;
                 document.getElementById('infoCast').innerText = f.info.cast;
                 document.getElementById('infoDir').innerText = f.info.dir;
                 document.getElementById('infoTech').innerText = f.info.tech;
                 document.getElementById('infoRegion').innerText = f.info.region;
-                
                 if(f.info.onChain) {
                     document.getElementById('infoNetwork').innerHTML = `<i class="fa-brands fa-solana text-aif"></i> ${f.info.onChain.network}`;
                     document.getElementById('infoContract').innerText = f.info.onChain.contract;
@@ -851,10 +677,10 @@
                     document.getElementById('infoRoyalty').innerText = f.info.onChain.royalty;
                 }
                 
-                document.getElementById('infoLimits').innerHTML = f.info.limits.map(l => `<li>${l}</li>`).join('');
+                // 渲染限制條件為帶有箭頭圖標的列表
+                document.getElementById('infoLimits').innerHTML = f.info.limits.map(l => `<li class="flex items-start gap-2"><i class="fas fa-chevron-right text-danger mt-1 text-[8px]"></i> <span>${l}</span></li>`).join('');
                 this.openModal('infoModal');
             },
-            
             openCreator(name) {
                 const d = CREATOR_DATA[name];
                 if(!d) return;
@@ -866,42 +692,25 @@
                 document.getElementById('cAvt').src = `https://api.dicebear.com/7.x/identicon/svg?seed=${name}`;
                 document.getElementById('cTech').innerHTML = d.tech.map(t => `<span class="bg-[#111] border border-[#333] px-3 py-1.5 rounded-lg text-xs text-gray-300 font-mono">${t}</span>`).join('');
                 document.getElementById('cTeam').innerHTML = d.team.map(t => `<div class="flex items-center gap-3 bg-[#111] p-3 rounded-lg border border-[#222]"><div class="w-10 h-10 bg-black rounded-full flex items-center justify-center text-gray-500 border border-[#333]"><i class="fas fa-user"></i></div><div><div class="text-sm font-bold text-white">${t.name}</div><div class="text-[10px] text-gray-500 font-mono">${t.role}</div></div></div>`).join('');
-                
-                document.getElementById('cPortfolio').innerHTML = d.portfolio.map(p => `
-                    <div onclick="app.closeAllModals(); setTimeout(() => app.openInfo(${p.id}), 350)" class="cursor-pointer block bg-[#111] p-4 rounded-lg border border-[#222] hover:border-signal transition-colors flex justify-between items-center group relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-8 h-8 bg-signal/5 rounded-bl-full flex items-center justify-center"><i class="fas fa-play text-[8px] text-signal opacity-0 group-hover:opacity-100 transition-opacity ml-2 mb-2"></i></div>
-                        <div class="flex-1 pr-6 relative z-10">
-                            <div class="text-sm font-heavy text-white group-hover:text-signal transition-colors">${p.title}</div>
-                            <div class="text-[10px] text-gray-400 mt-1 leading-snug">${p.desc}</div>
-                        </div>
-                        <div class="text-xs font-mono text-gray-600 relative z-10">${p.year}</div>
-                    </div>`).join('');
+                document.getElementById('cPortfolio').innerHTML = d.portfolio.map(p => `<div onclick="app.closeAllModals(); setTimeout(() => app.openInfo(${p.id}), 350)" class="cursor-pointer block bg-[#111] p-4 rounded-lg border border-[#222] hover:border-signal transition-colors flex justify-between items-center group relative overflow-hidden"><div class="absolute top-0 right-0 w-8 h-8 bg-signal/5 rounded-bl-full flex items-center justify-center"><i class="fas fa-play text-[8px] text-signal opacity-0 group-hover:opacity-100 transition-opacity ml-2 mb-2"></i></div><div class="flex-1 pr-6 relative z-10"><div class="text-sm font-heavy text-white group-hover:text-signal transition-colors">${p.title}</div><div class="text-[10px] text-gray-400 mt-1 leading-snug">${p.desc}</div></div><div class="text-xs font-mono text-gray-600 relative z-10">${p.year}</div></div>`).join('');
                 this.openModal('creatorModal');
             },
-            showSysModal(title, desc, iconClass) {
-                document.getElementById('sysTitle').innerText = title;
-                document.getElementById('sysDesc').innerText = desc;
-                document.getElementById('sysIcon').className = `w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 bg-black border border-[#333] fas ${iconClass}`;
-                this.openModal('sysModal');
-            },
 
+            // --- 語言與彈窗管理 ---
             renderLangs() {
                 const grid = document.getElementById('langGrid');
-                grid.innerHTML = LANGS.map(l => `
-                    <div class="p-4 rounded-xl border ${l.code === this.lang ? 'border-signal bg-signal/10' : 'border-[#333] bg-[#111]'} cursor-pointer hover:border-signal transition-colors flex justify-between items-center group" onclick="app.setLang('${l.code}')">
-                        <div><div class="text-sm font-bold text-white">${l.name}</div><div class="text-[10px] text-gray-500 font-mono mt-1">${l.sub}</div></div>
-                        ${l.code === this.lang ? '<i class="fas fa-check-circle text-signal text-lg"></i>' : ''}
-                    </div>`).join('');
+                grid.innerHTML = LANGS.map(l => `<div class="p-4 rounded-xl border ${l.code === this.lang ? 'border-signal bg-signal/10' : 'border-[#333] bg-[#111]'} cursor-pointer hover:border-signal transition-colors flex justify-between items-center group" onclick="app.setLang('${l.code}')"><div><div class="text-sm font-bold text-white">${l.name}</div><div class="text-[10px] text-gray-500 font-mono mt-1">${l.sub}</div></div>${l.code === this.lang ? '<i class="fas fa-check-circle text-signal text-lg"></i>' : ''}</div>`).join('');
             },
             setLang(code) {
                 this.lang = code;
                 document.body.setAttribute('data-lang', code);
-                const langDisplay = document.getElementById('currentLangDisplay');
-                if (langDisplay) { langDisplay.innerText = code.toUpperCase(); }
                 this.renderLangs();
                 this.closeModal('langModal');
                 this.updateUITexts();
                 this.renderFeed(); 
+                this.renderLBS();
+                this.renderMessages();
+                this.renderMe(); 
                 this.toast(`Language Switched to ${code.toUpperCase()}`);
             },
             updateUITexts() {
@@ -911,16 +720,26 @@
                     if (dict[key]) el.innerHTML = dict[key];
                 });
             },
-            
+            showSysModal(title, desc, iconClass) {
+                document.getElementById('sysTitle').innerText = title;
+                document.getElementById('sysDesc').innerText = desc;
+                document.getElementById('sysIcon').className = `w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 bg-black border border-[#333] fas ${iconClass}`;
+                this.openModal('sysModal');
+            },
             openModal(id) {
                 const el = document.getElementById(id);
                 this.currentModal = id;
                 el.classList.remove('hidden');
                 
-                if(id === 'creatorModal' || id === 'infoModal') {
+                // Studio, Info, LBSDetail 自帶頂部欄，隱藏全局關閉按鈕
+                if(id === 'shareModal' || id === 'textModal' || id === 'langModal' || id === 'sysModal') {
                     const btn = document.getElementById('globalModalClose');
                     btn.classList.remove('hidden');
                     setTimeout(() => btn.classList.remove('opacity-0'), 10);
+                } else {
+                    const btn = document.getElementById('globalModalClose');
+                    btn.classList.add('opacity-0');
+                    setTimeout(() => btn.classList.add('hidden'), 300);
                 }
 
                 setTimeout(() => {
@@ -935,7 +754,6 @@
             closeModal(id) {
                 const el = document.getElementById(id);
                 this.currentModal = null;
-                
                 const btn = document.getElementById('globalModalClose');
                 btn.classList.add('opacity-0');
                 setTimeout(() => btn.classList.add('hidden'), 300);
