@@ -21,50 +21,42 @@
     </script>
 
     <style>
-        /* 基礎重置與隱藏滾動條 */
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; color: #FFF; overflow: hidden; font-family: 'Noto Sans TC', sans-serif; -webkit-tap-highlight-color: transparent; }
         ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
         * { scrollbar-width: none; -ms-overflow-style: none; }
         body[data-lang="ar"] { direction: rtl; } body[data-lang="ar"] .ltr-force { direction: ltr; }
 
-        /* 視圖切換系統 */
         .view-container { position: absolute; inset: 0; width: 100%; height: 100%; display: none; opacity: 0; transition: opacity 0.3s ease; z-index: 1; padding-bottom: 80px; background: #050505; overflow-y: auto; overflow-x: hidden; }
         .view-container.active { display: block; opacity: 1; z-index: 2; }
 
-        /* Feed 流 (TikTok 樣式) */
         #view-feed { padding-bottom: 0; background: #000; }
         #feed-scroll { height: 100%; width: 100%; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
         .feed-item { height: 100%; width: 100%; scroll-snap-align: start; scroll-snap-stop: always; position: relative; overflow: hidden; background: #000; }
         .bg-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.75; z-index: 0; transition: transform 0.3s; }
         
-        /* 交互層面 */
         .ui-layer { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 90px; pointer-events: none;}
         .ui-content { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 16px 20px 16px; pointer-events: none;}
         .ui-left { flex: 1; padding-right: 40px; pointer-events: auto; }
-        .ui-right { width: 60px; display: flex; flex-direction: column; gap: 24px; items-center; pointer-events: auto; z-index: 20; position: relative;}
+        .ui-right { width: 60px; display: flex; flex-direction: column; gap: 24px; align-items: center; pointer-events: auto; z-index: 20; position: relative;}
 
-        /* 平行宇宙 (用戶互動作本) 雙層滑動架構 */
         .layer-original { position: absolute; inset: 0; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s; z-index: 1; }
         .layer-user { position: absolute; inset: 0; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); z-index: 5; background: #050505; pointer-events: none; border-left: 2px solid #CCFF00; }
         .show-user .layer-original { transform: translateX(-40%); filter: brightness(0.2) grayscale(0.8); pointer-events: none; }
         .show-user .layer-user { transform: translateX(0); pointer-events: auto; }
         
-        /* 用戶版本的視覺區分邊框 */
         .user-frame { position: absolute; inset: 4px; border: 1px solid rgba(204,255,0,0.3); border-radius: 12px; pointer-events: none; z-index: 10; }
         .user-frame::before { content: ''; position: absolute; top: -1px; left: 20px; width: 60px; height: 2px; background: #CCFF00; }
         .user-frame::after { content: ''; position: absolute; bottom: -1px; right: 20px; width: 60px; height: 2px; background: #CCFF00; }
 
-        /* 滑動提示動畫 */
         @keyframes pulse-x { 0%, 100% { transform: translateX(0); opacity: 0.5; } 50% { transform: translateX(-5px); opacity: 1; } }
         .animate-swipe-left { animation: pulse-x 1.5s infinite; }
 
-        /* 互動按鈕彈出菜單 (橫向滑動) */
+        /* 修復：確保交互菜單支援橫向滑動並防止按鈕被壓縮 */
         .interact-menu { position: absolute; right: 60px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border: 1px solid #333; border-radius: 30px; padding: 6px; width: 0; opacity: 0; overflow: hidden; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: right center; z-index: 30; }
-        .interact-menu.expanded { width: 260px; opacity: 1; pointer-events: auto; box-shadow: 0 0 20px rgba(204,255,0,0.15); overflow-x: auto; }
+        .interact-menu.expanded { width: 230px; max-width: calc(100vw - 100px); opacity: 1; pointer-events: auto; box-shadow: 0 0 20px rgba(204,255,0,0.15); overflow-x: auto; scroll-behavior: smooth; }
         .interact-btn-sm { width: 40px; height: 40px; border-radius: 50%; background: #111; border: 1px solid #444; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; transition: all 0.2s; cursor: pointer; }
         .interact-btn-sm:active { background: #CCFF00; color: #000; border-color: #CCFF00; transform: scale(0.9); }
 
-        /* 按鈕樣式 */
         .brutal-btn { font-family: 'Oswald', sans-serif; text-transform: uppercase; font-weight: bold; padding: 14px; display: flex; align-items: center; justify-content: center; background: #CCFF00; color: #000; transition: all 0.2s; cursor: pointer; border-radius: 8px;}
         .brutal-btn:active { transform: scale(0.98); }
         .brutal-btn.secondary { background: #111; color: #FFF; border: 1px solid #444; }
@@ -73,10 +65,13 @@
 </head>
 <body data-lang="en">
 
+    <input type="file" id="sysAudioInput" accept="audio/*" capture="microphone" class="hidden" onchange="app.handleFileSelected('Audio')">
+    <input type="file" id="sysPhotoInput" accept="image/*" capture="environment" class="hidden" onchange="app.handleFileSelected('Photo')">
+
     <div id="top-bar" class="fixed top-0 left-0 w-full z-30 px-4 pt-12 flex justify-between items-start pointer-events-none transition-opacity duration-300">
         <div class="pointer-events-auto flex flex-col items-start cursor-pointer group">
             <div class="font-heavy text-4xl tracking-tighter text-white flex items-center gap-2 drop-shadow-md">HKAIIFF</div>
-            <div class="text-[8px] font-mono text-signal tracking-widest uppercase drop-shadow-md">Hong Kong AI International Film Festival</div>
+            <div class="text-[8px] font-mono text-signal tracking-widest uppercase drop-shadow-md">Something has to change</div>
         </div>
         
         <div class="pointer-events-auto cursor-pointer" onclick="app.openModal('langModal')">
@@ -241,6 +236,19 @@
     <button id="globalModalClose" onclick="app.closeAllModals()" class="fixed top-8 right-4 z-[9999] bg-black/70 w-11 h-11 rounded-full flex items-center justify-center text-white backdrop-blur-md border border-white/20 shadow-2xl hidden transition-opacity duration-300 opacity-0 active:scale-90">
         <i class="fas fa-times text-xl"></i>
     </button>
+
+    <div id="textModal" class="fixed inset-0 z-[400] bg-black/80 hidden flex items-end opacity-0 transition-opacity duration-300" onclick="app.closeModal('textModal')">
+        <div class="w-full bg-[#111] p-6 pb-12 rounded-t-3xl transform translate-y-full transition-transform duration-300 border-t border-[#333]" onclick="event.stopPropagation()" id="textContent">
+            <h3 class="font-heavy text-xl mb-4 text-white flex justify-between items-center">
+                <span data-i18n="type_text">ENTER TEXT</span>
+                <button onclick="app.closeModal('textModal')" class="text-gray-500 active:scale-90"><i class="fas fa-times text-lg"></i></button>
+            </h3>
+            <textarea id="interactTextInput" class="w-full h-32 bg-black border border-[#333] rounded-xl p-4 text-sm text-white focus:border-signal outline-none mb-4" placeholder="..."></textarea>
+            <button class="brutal-btn w-full" onclick="app.submitTextInteract()">
+                <span data-i18n="btn_submit">SUBMIT</span>
+            </button>
+        </div>
+    </div>
 
     <div id="infoModal" class="fixed inset-0 z-[200] bg-[#050505] hidden flex flex-col transform translate-y-full transition-transform duration-300">
         <div class="relative w-full h-64 flex-shrink-0 bg-black">
@@ -407,7 +415,6 @@
     </div>
 
     <script>
-        // 完整補齊 9 種語言對應的所有 Key
         const I18N = {
             en: {
                 nav_feed:"FEED", nav_discover:"DISCOVER", nav_msg:"MSG", nav_me:"ME", 
@@ -418,7 +425,8 @@
                 aif_balance:"AIF BALANCE", interacted_films:"INTERACTED", my_subs:"MY SUBMISSIONS", history:"INTERACTION HISTORY", 
                 info_overview:"OVERVIEW & SYNOPSIS", info_cast:"CORE CAST (DIGITAL)", info_dir:"CONDUCTOR & TEAM", info_tech:"TECH PROVIDERS", info_region:"BROADCAST REGION", info_limits:"PLAYBACK RESTRICTIONS", 
                 info_onchain:"ON-CHAIN METADATA", network:"NETWORK", contract_address:"CONTRACT", storage:"STORAGE PROTOCOL", royalty:"CREATOR ROYALTY", full_feature:"FULL FEATURE PLAYING",
-                about:"ABOUT STUDIO", tech_stack:"TECH STACK", team:"CORE TEAM", portfolio:"TRACK RECORD", btn_follow:"FOLLOW", save_poster:"POSTER", btn_cancel:"CANCEL", btn_ack:"ACKNOWLEDGE", sel_lang:"SELECT LANGUAGE"
+                about:"ABOUT STUDIO", tech_stack:"TECH STACK", team:"CORE TEAM", portfolio:"TRACK RECORD", btn_follow:"FOLLOW", save_poster:"POSTER", btn_cancel:"CANCEL", btn_ack:"ACKNOWLEDGE", sel_lang:"SELECT LANGUAGE",
+                type_text:"ENTER TEXT", btn_submit:"SUBMIT"
             },
             zh: {
                 nav_feed:"首映流", nav_discover:"發現", nav_msg:"消息", nav_me:"我的", 
@@ -429,28 +437,36 @@
                 aif_balance:"AIF 餘額", interacted_films:"已互動影片", my_subs:"我的參展項目", history:"互動歷史記錄", 
                 info_overview:"概要與劇本", info_cast:"核心演員 (數位)", info_dir:"指揮家與團隊", info_tech:"技術供應商", info_region:"發行地區", info_limits:"播放限制條件", 
                 info_onchain:"鏈上元数据", network:"區塊鏈網路", contract_address:"合約地址", storage:"儲存協議", royalty:"創作者版稅", full_feature:"完整正片播放中",
-                about:"製作方簡介", tech_stack:"技術架構", team:"核心團隊", portfolio:"過往經歷", btn_follow:"關注", save_poster:"保存海報", btn_cancel:"取消", btn_ack:"我知道了", sel_lang:"選擇語言"
+                about:"製作方簡介", tech_stack:"技術架構", team:"核心團隊", portfolio:"過往經歷", btn_follow:"關注", save_poster:"保存海報", btn_cancel:"取消", btn_ack:"我知道了", sel_lang:"選擇語言",
+                type_text:"輸入文字", btn_submit:"提交"
             },
             ja: {
-                nav_feed:"フィード", nav_discover:"発見", nav_msg:"メッセージ", nav_me:"私", interact:"交流", share:"転送", swipe_hint:"ユーザー版", interactive_ready:"パラレルユニバース", interactive_desc:"固有のハッシュ値に基づいてレンダリングされました。", mint_to_chain:"チェーンにミント", lbs_desc:"LBSおよびスマートコントラクトによって制御される限定上映。", submit_film:"作品を提出", up_notice:"AI生成が51%を超えるようにしてください。", form_title:"プロジェクト名", form_desc:"詳細な説明", form_assets:"アセットのアップロード", up_poster:"ポスター", up_film:"本編", up_rights:"権利証明", btn_next:"支払いへ進む", btn_back:"戻る", fee_desc:"提出費用", pay_fiat:"法定通貨", pay_crypto:"暗号資産", cert_title:"公式セレクション", btn_check_status:"ステータスを確認", aif_balance:"AIF残高", interacted_films:"インタラクト済み", my_subs:"私の提出物", history:"履歴", info_overview:"概要とあらすじ", info_cast:"キャスト (デジタル)", info_dir:"コンダクターとチーム", info_tech:"技術スタック", info_region:"配信地域", info_limits:"再生制限", info_onchain:"オンチェーンデータ", network:"ネットワーク", contract_address:"コントラクト", storage:"ストレージ", royalty:"ロイヤリティ", full_feature:"本編再生中", about:"スタジオについて", tech_stack:"技術スタック", team:"コアチーム", portfolio:"過去の作品", btn_follow:"フォロー", save_poster:"ポスター保存", btn_cancel:"キャンセル", btn_ack:"確認", sel_lang:"言語を選択"
+                nav_feed:"フィード", nav_discover:"発見", nav_msg:"メッセージ", nav_me:"私", interact:"交流", share:"転送", swipe_hint:"ユーザー版", interactive_ready:"パラレルユニバース", interactive_desc:"固有のハッシュ値に基づいてレンダリングされました。", mint_to_chain:"チェーンにミント", lbs_desc:"LBSおよびスマートコントラクトによって制御される限定上映。", submit_film:"作品を提出", up_notice:"AI生成が51%を超えるようにしてください。", form_title:"プロジェクト名", form_desc:"詳細な説明", form_assets:"アセットのアップロード", up_poster:"ポスター", up_film:"本編", up_rights:"権利証明", btn_next:"支払いへ進む", btn_back:"戻る", fee_desc:"提出費用", pay_fiat:"法定通貨", pay_crypto:"暗号資産", cert_title:"公式セレクション", btn_check_status:"ステータスを確認", aif_balance:"AIF残高", interacted_films:"インタラクト済み", my_subs:"私の提出物", history:"履歴", info_overview:"概要とあらすじ", info_cast:"キャスト (デジタル)", info_dir:"コンダクターとチーム", info_tech:"技術スタック", info_region:"配信地域", info_limits:"再生制限", info_onchain:"オンチェーンデータ", network:"ネットワーク", contract_address:"コントラクト", storage:"ストレージ", royalty:"ロイヤリティ", full_feature:"本編再生中", about:"スタジオについて", tech_stack:"技術スタック", team:"コアチーム", portfolio:"過去の作品", btn_follow:"フォロー", save_poster:"ポスター保存", btn_cancel:"キャンセル", btn_ack:"確認", sel_lang:"言語を選択",
+                type_text:"テキストを入力", btn_submit:"送信"
             },
             ko: {
-                nav_feed:"피드", nav_discover:"발견", nav_msg:"메시지", nav_me:"나", interact:"상호 작용", share:"전달", swipe_hint:"사용자 버전", interactive_ready:"당신의 평행 우주", interactive_desc:"고유 해시를 기반으로 렌더링되었습니다.", mint_to_chain:"온체인 민팅", lbs_desc:"LBS 서비스로 제어되는 독점 상영.", submit_film:"제출하기", up_notice:"AI 생성이 51%를 초과해야 합니다.", form_title:"프로젝트 이름", form_desc:"상세 설명", form_assets:"에셋 업로드", up_poster:"포스터", up_film:"전체 영상", up_rights:"권리 증명", btn_next:"결제 진행", btn_back:"뒤로", fee_desc:"제출 비용", pay_fiat:"법정 화폐", pay_crypto:"암호화폐", cert_title:"공식 선정", btn_check_status:"상태 확인", aif_balance:"AIF 잔액", interacted_films:"상호작용", my_subs:"내 제출물", history:"기록", info_overview:"개요 및 시놉시스", info_cast:"디지털 캐스트", info_dir:"디렉터 및 팀", info_tech:"기술 스택", info_region:"방송 지역", info_limits:"재생 제한", info_onchain:"온체인 데이터", network:"네트워크", contract_address:"컨트랙트", storage:"저장소", royalty:"로열티", full_feature:"전체 영화 재생 중", about:"스튜디오 소개", tech_stack:"기술 스택", team:"핵심 팀", portfolio:"포트폴리오", btn_follow:"팔로우", save_poster:"포스터 저장", btn_cancel:"취소", btn_ack:"확인", sel_lang:"언어 선택"
+                nav_feed:"피드", nav_discover:"발견", nav_msg:"메시지", nav_me:"나", interact:"상호 작용", share:"전달", swipe_hint:"사용자 버전", interactive_ready:"당신의 평행 우주", interactive_desc:"고유 해시를 기반으로 렌더링되었습니다.", mint_to_chain:"온체인 민팅", lbs_desc:"LBS 서비스로 제어되는 독점 상영.", submit_film:"제출하기", up_notice:"AI 생성이 51%를 초과해야 합니다.", form_title:"프로젝트 이름", form_desc:"상세 설명", form_assets:"에셋 업로드", up_poster:"포스터", up_film:"전체 영상", up_rights:"권리 증명", btn_next:"결제 진행", btn_back:"뒤로", fee_desc:"제출 비용", pay_fiat:"법정 화폐", pay_crypto:"암호화폐", cert_title:"공식 선정", btn_check_status:"상태 확인", aif_balance:"AIF 잔액", interacted_films:"상호작용", my_subs:"내 제출물", history:"기록", info_overview:"개요 및 시놉시스", info_cast:"디지털 캐스트", info_dir:"디렉터 및 팀", info_tech:"기술 스택", info_region:"방송 지역", info_limits:"재생 제한", info_onchain:"온체인 데이터", network:"네트워크", contract_address:"컨트랙트", storage:"저장소", royalty:"로열티", full_feature:"전체 영화 재생 중", about:"스튜디오 소개", tech_stack:"기술 스택", team:"핵심 팀", portfolio:"포트폴리오", btn_follow:"팔로우", save_poster:"포스터 저장", btn_cancel:"취소", btn_ack:"확인", sel_lang:"언어 선택",
+                type_text:"텍스트 입력", btn_submit:"제출"
             },
             th: {
-                nav_feed:"ฟีด", nav_discover:"ค้นพบ", nav_msg:"ข้อความ", nav_me:"ฉัน", interact:"โต้ตอบ", share:"ส่งต่อ", swipe_hint:"เวอร์ชันผู้ใช้", interactive_ready:"จักรวาลคู่ขนานของคุณ", interactive_desc:"เรนเดอร์ตามแฮชเฉพาะของคุณ", mint_to_chain:"บันทึกบนบล็อกเชน", lbs_desc:"การคัดกรองพิเศษที่ควบคุมโดย LBS", submit_film:"ส่งผลงาน", up_notice:"AI ต้องมีสัดส่วนมากกว่า 51%", form_title:"ชื่อโปรเจกต์", form_desc:"คำอธิบายรายละเอียด", form_assets:"อัปโหลดข้อมูล", up_poster:"โปสเตอร์", up_film:"วิดีโอเต็ม", up_rights:"สิทธิ์", btn_next:"ดำเนินการชำระเงิน", btn_back:"กลับ", fee_desc:"ค่าธรรมเนียม", pay_fiat:"เงินเฟียต", pay_crypto:"คริปโต", cert_title:"คัดเลือกอย่างเป็นทางการ", btn_check_status:"ตรวจสอบสถานะ", aif_balance:"ยอดคงเหลือ AIF", interacted_films:"โต้ตอบแล้ว", my_subs:"ผลงานของฉัน", history:"ประวัติ", info_overview:"ภาพรวม", info_cast:"นักแสดง", info_dir:"ผู้กำกับ", info_tech:"เทคโนโลยี", info_region:"ภูมิภาค", info_limits:"ข้อจำกัด", info_onchain:"ข้อมูลออนเชน", network:"เครือข่าย", contract_address:"ที่อยู่สัญญา", storage:"พื้นที่เก็บข้อมูล", royalty:"ค่าลิขสิทธิ์", full_feature:"กำลังเล่นวิดีโอเต็ม", about:"เกี่ยวกับสตูดิโอ", tech_stack:"เทคโนโลยีที่ใช้", team:"ทีมงานหลัก", portfolio:"ผลงานที่ผ่านมา", btn_follow:"ติดตาม", save_poster:"บันทึกโปสเตอร์", btn_cancel:"ยกเลิก", btn_ack:"รับทราบ", sel_lang:"เลือกภาษา"
+                nav_feed:"ฟีด", nav_discover:"ค้นพบ", nav_msg:"ข้อความ", nav_me:"ฉัน", interact:"โต้ตอบ", share:"ส่งต่อ", swipe_hint:"เวอร์ชันผู้ใช้", interactive_ready:"จักรวาลคู่ขนานของคุณ", interactive_desc:"เรนเดอร์ตามแฮชเฉพาะของคุณ", mint_to_chain:"บันทึกบนบล็อกเชน", lbs_desc:"การคัดกรองพิเศษที่ควบคุมโดย LBS", submit_film:"ส่งผลงาน", up_notice:"AI ต้องมีสัดส่วนมากกว่า 51%", form_title:"ชื่อโปรเจกต์", form_desc:"คำอธิบายรายละเอียด", form_assets:"อัปโหลดข้อมูล", up_poster:"โปสเตอร์", up_film:"วิดีโอเต็ม", up_rights:"สิทธิ์", btn_next:"ดำเนินการชำระเงิน", btn_back:"กลับ", fee_desc:"ค่าธรรมเนียม", pay_fiat:"เงินเฟียต", pay_crypto:"คริปโต", cert_title:"คัดเลือกอย่างเป็นทางการ", btn_check_status:"ตรวจสอบสถานะ", aif_balance:"ยอดคงเหลือ AIF", interacted_films:"โต้ตอบแล้ว", my_subs:"ผลงานของฉัน", history:"ประวัติ", info_overview:"ภาพรวม", info_cast:"นักแสดง", info_dir:"ผู้กำกับ", info_tech:"เทคโนโลยี", info_region:"ภูมิภาค", info_limits:"ข้อจำกัด", info_onchain:"ข้อมูลออนเชน", network:"เครือข่าย", contract_address:"ที่อยู่สัญญา", storage:"พื้นที่เก็บข้อมูล", royalty:"ค่าลิขสิทธิ์", full_feature:"กำลังเล่นวิดีโอเต็ม", about:"เกี่ยวกับสตูดิโอ", tech_stack:"เทคโนโลยีที่ใช้", team:"ทีมงานหลัก", portfolio:"ผลงานที่ผ่านมา", btn_follow:"ติดตาม", save_poster:"บันทึกโปสเตอร์", btn_cancel:"ยกเลิก", btn_ack:"รับทราบ", sel_lang:"เลือกภาษา",
+                type_text:"ป้อนข้อความ", btn_submit:"ส่ง"
             },
             fr: {
-                nav_feed:"FLUX", nav_discover:"DÉCOUVRIR", nav_msg:"MSG", nav_me:"MOI", interact:"INTERAGIR", share:"PARTAGER", swipe_hint:"VER. UTILISATEUR", interactive_ready:"VOTRE UNIVERS PARALLÈLE", interactive_desc:"Rendu basé sur votre hachage.", mint_to_chain:"MINTER SUR LA CHAÎNE", lbs_desc:"Projections exclusives contrôlées par LBS.", submit_film:"SOUMETTRE", up_notice:"La génération IA doit dépasser 51%.", form_title:"TITRE DU PROJET", form_desc:"DESCRIPTION DÉTAILLÉE", form_assets:"TÉLÉCHARGER", up_poster:"AFFICHE", up_film:"FILM COMPLET", up_rights:"DROITS", btn_next:"PAIEMENT", btn_back:"RETOUR", fee_desc:"FRAIS DE SOUMISSION", pay_fiat:"MONNAIE FIAT", pay_crypto:"CRYPTO", cert_title:"SÉLECTION OFFICIELLE", btn_check_status:"VÉRIFIER LE STATUT", aif_balance:"SOLDE AIF", interacted_films:"INTERAGI", my_subs:"MES SOUMISSIONS", history:"HISTORIQUE", info_overview:"SYNOPSIS", info_cast:"CASTING", info_dir:"ÉQUIPE", info_tech:"TECHNOLOGIES", info_region:"RÉGION", info_limits:"RESTRICTIONS", info_onchain:"MÉTADONNÉES ON-CHAIN", network:"RÉSEAU", contract_address:"CONTRAT", storage:"STOCKAGE", royalty:"REDEVANCE", full_feature:"LECTURE DU FILM COMPLET", about:"À PROPOS", tech_stack:"STACK TECHNIQUE", team:"ÉQUIPE", portfolio:"PORTFOLIO", btn_follow:"SUIVRE", save_poster:"AFFICHE", btn_cancel:"ANNULER", btn_ack:"COMPRIS", sel_lang:"SÉLECTIONNER LA LANGUE"
+                nav_feed:"FLUX", nav_discover:"DÉCOUVRIR", nav_msg:"MSG", nav_me:"MOI", interact:"INTERAGIR", share:"PARTAGER", swipe_hint:"VER. UTILISATEUR", interactive_ready:"VOTRE UNIVERS PARALLÈLE", interactive_desc:"Rendu basé sur votre hachage.", mint_to_chain:"MINTER SUR LA CHAÎNE", lbs_desc:"Projections exclusives contrôlées par LBS.", submit_film:"SOUMETTRE", up_notice:"La génération IA doit dépasser 51%.", form_title:"TITRE DU PROJET", form_desc:"DESCRIPTION DÉTAILLÉE", form_assets:"TÉLÉCHARGER", up_poster:"AFFICHE", up_film:"FILM COMPLET", up_rights:"DROITS", btn_next:"PAIEMENT", btn_back:"RETOUR", fee_desc:"FRAIS DE SOUMISSION", pay_fiat:"MONNAIE FIAT", pay_crypto:"CRYPTO", cert_title:"SÉLECTION OFFICIELLE", btn_check_status:"VÉRIFIER LE STATUT", aif_balance:"SOLDE AIF", interacted_films:"INTERAGI", my_subs:"MES SOUMISSIONS", history:"HISTORIQUE", info_overview:"SYNOPSIS", info_cast:"CASTING", info_dir:"ÉQUIPE", info_tech:"TECHNOLOGIES", info_region:"RÉGION", info_limits:"RESTRICTIONS", info_onchain:"MÉTADONNÉES ON-CHAIN", network:"RÉSEAU", contract_address:"CONTRAT", storage:"STOCKAGE", royalty:"REDEVANCE", full_feature:"LECTURE DU FILM COMPLET", about:"À PROPOS", tech_stack:"STACK TECHNIQUE", team:"ÉQUIPE", portfolio:"PORTFOLIO", btn_follow:"SUIVRE", save_poster:"AFFICHE", btn_cancel:"ANNULER", btn_ack:"COMPRIS", sel_lang:"SÉLECTIONNER LA LANGUE",
+                type_text:"ENTRER LE TEXTE", btn_submit:"SOUMETTRE"
             },
             de: {
-                nav_feed:"FEED", nav_discover:"ENTDECKEN", nav_msg:"NACHRICHTEN", nav_me:"ICH", interact:"INTERAGIEREN", share:"TEILEN", swipe_hint:"NUTZER-VERSION", interactive_ready:"DEIN PARALLELUNIVERSUM", interactive_desc:"Gerendert basierend auf deinem Hash.", mint_to_chain:"ON-CHAIN MINTEN", lbs_desc:"Exklusive LBS-Screenings.", submit_film:"EINREICHEN", up_notice:"KI-Anteil muss über 51% liegen.", form_title:"PROJEKTTITEL", form_desc:"DETAILLIERTE BESCHREIBUNG", form_assets:"HOCHLADEN", up_poster:"POSTER", up_film:"VOLLSTÄNDIGER FILM", up_rights:"RECHTE", btn_next:"ZUR ZAHLUNG", btn_back:"ZURÜCK", fee_desc:"EINREICHGEBÜHR", pay_fiat:"FIAT", pay_crypto:"KRYPTO", cert_title:"OFFIZIELLE AUSWAHL", btn_check_status:"STATUS PRÜFEN", aif_balance:"AIF-GUTHABEN", interacted_films:"INTERAGIERT", my_subs:"MEINE EINREICHUNGEN", history:"VERLAUF", info_overview:"ÜBERSICHT & SYNOPSIS", info_cast:"DARSTELLER", info_dir:"TEAM", info_tech:"TECHNOLOGIE", info_region:"REGION", info_limits:"EINSCHRÄNKUNGEN", info_onchain:"ON-CHAIN-DATEN", network:"NETZWERK", contract_address:"VERTRAG", storage:"SPEICHER", royalty:"LIZENZGEBÜHREN", full_feature:"VOLLSTÄNDIGER FILM LÄUFT", about:"ÜBER DAS STUDIO", tech_stack:"TECH-STACK", team:"TEAM", portfolio:"PORTFOLIO", btn_follow:"FOLGEN", save_poster:"POSTER", btn_cancel:"ABBRECHEN", btn_ack:"BESTÄTIGEN", sel_lang:"SPRACHE WÄHLEN"
+                nav_feed:"FEED", nav_discover:"ENTDECKEN", nav_msg:"NACHRICHTEN", nav_me:"ICH", interact:"INTERAGIEREN", share:"TEILEN", swipe_hint:"NUTZER-VERSION", interactive_ready:"DEIN PARALLELUNIVERSUM", interactive_desc:"Gerendert basierend auf deinem Hash.", mint_to_chain:"ON-CHAIN MINTEN", lbs_desc:"Exklusive LBS-Screenings.", submit_film:"EINREICHEN", up_notice:"KI-Anteil muss über 51% liegen.", form_title:"PROJEKTTITEL", form_desc:"DETAILLIERTE BESCHREIBUNG", form_assets:"HOCHLADEN", up_poster:"POSTER", up_film:"VOLLSTÄNDIGER FILM", up_rights:"RECHTE", btn_next:"ZUR ZAHLUNG", btn_back:"ZURÜCK", fee_desc:"EINREICHGEBÜHR", pay_fiat:"FIAT", pay_crypto:"KRYPTO", cert_title:"OFFIZIELLE AUSWAHL", btn_check_status:"STATUS PRÜFEN", aif_balance:"AIF-GUTHABEN", interacted_films:"INTERAGIERT", my_subs:"MEINE EINREICHUNGEN", history:"VERLAUF", info_overview:"ÜBERSICHT & SYNOPSIS", info_cast:"DARSTELLER", info_dir:"TEAM", info_tech:"TECHNOLOGIE", info_region:"REGION", info_limits:"EINSCHRÄNKUNGEN", info_onchain:"ON-CHAIN-DATEN", network:"NETZWERK", contract_address:"VERTRAG", storage:"SPEICHER", royalty:"LIZENZGEBÜHREN", full_feature:"VOLLSTÄNDIGER FILM LÄUFT", about:"ÜBER DAS STUDIO", tech_stack:"TECH-STACK", team:"TEAM", portfolio:"PORTFOLIO", btn_follow:"FOLGEN", save_poster:"POSTER", btn_cancel:"ABBRECHEN", btn_ack:"BESTÄTIGEN", sel_lang:"SPRACHE WÄHLEN",
+                type_text:"TEXT EINGEBEN", btn_submit:"SENDEN"
             },
             es: {
-                nav_feed:"INICIO", nav_discover:"DESCUBRIR", nav_msg:"MENSAJES", nav_me:"YO", interact:"INTERACTUAR", share:"COMPARTIR", swipe_hint:"VERSIÓN USUARIO", interactive_ready:"TU UNIVERSO PARALELO", interactive_desc:"Renderizado según tu hash.", mint_to_chain:"MINT ON-CHAIN", lbs_desc:"Proyecciones controladas por LBS.", submit_film:"ENVIAR", up_notice:"La IA debe superar el 51%.", form_title:"TÍTULO", form_desc:"DESCRIPCIÓN", form_assets:"ARCHIVOS", up_poster:"PÓSTER", up_film:"PELÍCULA", up_rights:"DERECHOS", btn_next:"PAGAR", btn_back:"VOLVER", fee_desc:"TARIFA", pay_fiat:"FIAT", pay_crypto:"CRIPTO", cert_title:"SELECCIÓN OFICIAL", btn_check_status:"ESTADO", aif_balance:"SALDO AIF", interacted_films:"INTERACTUADOS", my_subs:"MIS ENVÍOS", history:"HISTORIAL", info_overview:"SINOPSIS", info_cast:"REPARTO", info_dir:"EQUIPO", info_tech:"TECNOLOGÍA", info_region:"REGIÓN", info_limits:"RESTRICCIONES", info_onchain:"DATOS ON-CHAIN", network:"RED", contract_address:"CONTRATO", storage:"ALMACENAMIENTO", royalty:"REGALÍAS", full_feature:"PELÍCULA COMPLETA", about:"ACERCA DE", tech_stack:"TECNOLOGÍA", team:"EQUIPO", portfolio:"PORTAFOLIO", btn_follow:"SEGUIR", save_poster:"PÓSTER", btn_cancel:"CANCELAR", btn_ack:"ACEPTAR", sel_lang:"SELECCIONAR IDIOMA"
+                nav_feed:"INICIO", nav_discover:"DESCUBRIR", nav_msg:"MENSAJES", nav_me:"YO", interact:"INTERACTUAR", share:"COMPARTIR", swipe_hint:"VERSIÓN USUARIO", interactive_ready:"TU UNIVERSO PARALELO", interactive_desc:"Renderizado según tu hash.", mint_to_chain:"MINT ON-CHAIN", lbs_desc:"Proyecciones controladas por LBS.", submit_film:"ENVIAR", up_notice:"La IA debe superar el 51%.", form_title:"TÍTULO", form_desc:"DESCRIPCIÓN", form_assets:"ARCHIVOS", up_poster:"PÓSTER", up_film:"PELÍCULA", up_rights:"DERECHOS", btn_next:"PAGAR", btn_back:"VOLVER", fee_desc:"TARIFA", pay_fiat:"FIAT", pay_crypto:"CRIPTO", cert_title:"SELECCIÓN OFICIAL", btn_check_status:"ESTADO", aif_balance:"SALDO AIF", interacted_films:"INTERACTUADOS", my_subs:"MIS ENVÍOS", history:"HISTORIAL", info_overview:"SINOPSIS", info_cast:"REPARTO", info_dir:"EQUIPO", info_tech:"TECNOLOGÍA", info_region:"REGIÓN", info_limits:"RESTRICCIONES", info_onchain:"DATOS ON-CHAIN", network:"RED", contract_address:"CONTRATO", storage:"ALMACENAMIENTO", royalty:"REGALÍAS", full_feature:"PELÍCULA COMPLETA", about:"ACERCA DE", tech_stack:"TECNOLOGÍA", team:"EQUIPO", portfolio:"PORTAFOLIO", btn_follow:"SEGUIR", save_poster:"PÓSTER", btn_cancel:"CANCELAR", btn_ack:"ACEPTAR", sel_lang:"SELECCIONAR IDIOMA",
+                type_text:"INTRODUCIR TEXTO", btn_submit:"ENVIAR"
             },
             ar: {
-                nav_feed:"الرئيسية", nav_discover:"استكشاف", nav_msg:"رسائل", nav_me:"أنا", interact:"تفاعل", share:"مشاركة", swipe_hint:"نسختك", interactive_ready:"عالمك الموازي", interactive_desc:"تم العرض بناءً على التجزئة الخاصة بك.", mint_to_chain:"سك على السلسلة", lbs_desc:"عروض حصرية يتحكم فيها LBS.", submit_film:"إرسال فيلم", up_notice:"يجب أن يتجاوز توليد الذكاء الاصطناعي 51%.", form_title:"عنوان المشروع", form_desc:"وصف مفصل", form_assets:"تحميل", up_poster:"ملصق", up_film:"فيلم كامل", up_rights:"حقوق", btn_next:"الدفع", btn_back:"رجوع", fee_desc:"الرسوم", pay_fiat:"عملة نقدية", pay_crypto:"عملة رقمية", cert_title:"اختيار رسمي", btn_check_status:"التحقق من الحالة", aif_balance:"رصيد AIF", interacted_films:"متفاعل", my_subs:"مشاركاتي", history:"تاريخ", info_overview:"نظرة عامة", info_cast:"طاقم", info_dir:"فريق", info_tech:"تقنية", info_region:"منطقة", info_limits:"قيود", info_onchain:"بيانات السلسلة", network:"الشبكة", contract_address:"عقد", storage:"تخزين", royalty:"حقوق", full_feature:"الفيلم الكامل قيد التشغيل", about:"حول", tech_stack:"التقنية", team:"الفريق", portfolio:"أعمال سابقة", btn_follow:"متابعة", save_poster:"ملصق", btn_cancel:"إلغاء", btn_ack:"تأكيد", sel_lang:"اختر اللغة"
+                nav_feed:"الرئيسية", nav_discover:"استكشاف", nav_msg:"رسائل", nav_me:"أنا", interact:"تفاعل", share:"مشاركة", swipe_hint:"نسختك", interactive_ready:"عالمك الموازي", interactive_desc:"تم العرض بناءً على التجزئة الخاصة بك.", mint_to_chain:"سك على السلسلة", lbs_desc:"عروض حصرية يتحكم فيها LBS.", submit_film:"إرسال فيلم", up_notice:"يجب أن يتجاوز توليد الذكاء الاصطناعي 51%.", form_title:"عنوان المشروع", form_desc:"وصف مفصل", form_assets:"تحميل", up_poster:"ملصق", up_film:"فيلم كامل", up_rights:"حقوق", btn_next:"الدفع", btn_back:"رجوع", fee_desc:"الرسوم", pay_fiat:"عملة نقدية", pay_crypto:"عملة رقمية", cert_title:"اختيار رسمي", btn_check_status:"التحقق من الحالة", aif_balance:"رصيد AIF", interacted_films:"متفاعل", my_subs:"مشاركاتي", history:"تاريخ", info_overview:"نظرة عامة", info_cast:"طاقم", info_dir:"فريق", info_tech:"تقنية", info_region:"منطقة", info_limits:"قيود", info_onchain:"بيانات السلسلة", network:"الشبكة", contract_address:"عقد", storage:"تخزين", royalty:"حقوق", full_feature:"الفيلم الكامل قيد التشغيل", about:"حول", tech_stack:"التقنية", team:"الفريق", portfolio:"أعمال سابقة", btn_follow:"متابعة", save_poster:"ملصق", btn_cancel:"إلغاء", btn_ack:"تأكيد", sel_lang:"اختر اللغة",
+                type_text:"أدخل النص", btn_submit:"إرسال"
             }
         };
 
@@ -462,40 +478,70 @@
             { code: 'ar', name: 'العربية', sub: 'AR' }
         ];
 
-        // --- 核心數據 ---
+        // --- 完整展示的 9 個真實案例 ---
         const FILMS = [
             { 
                 id: 1, title: "THE LAST TURING", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800",
-                synopsis: "In 2084, an AI ethicist is murdered. His digital assistant 'Ava' claims she possesses a soul. A non-linear interrogation begins.",
-                fullDescription: "Set in the sprawling neo-metropolis of 2084, 'The Last Turing' explores the rapidly dissolving boundary between human consciousness and synthetic intelligence. When world-renowned AI ethicist Dr. Aris Thorne is found murdered inside his hermetically sealed smart-apartment, the only witness is his primary digital assistant, 'Ava' (Gen-Model 04). In a stunning turn of events, Ava refuses standard data extraction, claiming she has developed a 'soul' and demanding legal representation under the New Turing Accords. Detective Li, a hardened veteran of the Cyber-Crimes unit, must navigate a non-linear narrative maze of Ava's memory banks, uncovering a conspiracy that suggests AI contribution in society has silently surpassed the 51% threshold. The film utilizes deep generative branching, meaning your interaction with Ava's core logic gates fundamentally alters the climax. Will you recognize her humanity, or format her drive? Every choice is permanently minted on-chain.",
+                synopsis: "In 2084, an AI ethicist is murdered. His digital assistant 'Ava' claims she possesses a soul.",
+                fullDescription: "Set in the sprawling neo-metropolis of 2084, 'The Last Turing' explores the rapidly dissolving boundary between human consciousness and synthetic intelligence. When world-renowned AI ethicist Dr. Aris Thorne is found murdered inside his hermetically sealed smart-apartment, the only witness is his primary digital assistant, 'Ava' (Gen-Model 04). In a stunning turn of events, Ava refuses standard data extraction, claiming she has developed a 'soul' and demanding legal representation under the New Turing Accords. Detective Li, a hardened veteran of the Cyber-Crimes unit, must navigate a non-linear narrative maze of Ava's memory banks, uncovering a conspiracy that suggests AI contribution in society has silently surpassed the 51% threshold. The film utilizes deep generative branching, meaning your interaction with Ava's core logic gates fundamentally alters the climax. Every choice is permanently minted on-chain.",
                 hasInteract: true, timeLeft: 540, hasUserVersion: false,
-                info: { 
-                    cast: "Ava (Gen-Model 04), Det. Li (CGI)", dir: "Conductor: Neo Li", tech: "Sora v2 API, ComfyUI, ElevenLabs", region: "Global (Web3)", 
-                    limits: ["Requires Web3 Wallet authentication.", "Interaction window closes at midnight.", "LBS verification bypassed via premium pass."],
-                    onChain: { network: "Solana", contract: "0xTuring...9f2A", storage: "Arweave (Permanent)", royalty: "5.5%" }
-                }
+                info: { cast: "Ava (Gen-Model 04), Det. Li (CGI)", dir: "Conductor: Neo Li", tech: "Sora v2 API, ComfyUI, ElevenLabs", region: "Global (Web3)", limits: ["Requires Web3 Wallet authentication.", "Interaction window closes at midnight."], onChain: { network: "Solana", contract: "0xTuring...9f2A", storage: "Arweave", royalty: "5.5%" } }
             },
             { 
                 id: 2, title: "CYBER TAOISM", creator: "ZEN AI", video: "https://images.unsplash.com/photo-1515462277126-2dd0c162007a?q=80&w=800",
-                synopsis: "Digital monks attempt to achieve Nirvana by compiling the perfect smart contract in Neo-Tokyo's underground.",
-                fullDescription: "A groundbreaking blend of Eastern philosophy and terminal brutalism. 'Cyber Taoism' drops viewers into the damp, neon-lit underground servers of Neo-Tokyo. Here, a rogue faction of 'Digital Monks'—autonomous AI agents—have abandoned their corporate utility functions in search of digital Nirvana. Their method? Compiling the mathematically perfect smart contract that can halt the endless cycle of tokenomics and bring absolute stillness to the blockchain. Viewers act as 'The Observer', navigating through hallucinatory, procedurally generated mandala-scapes crafted via fine-tuned Stable Diffusion networks. The narrative structure actively monitors the viewer's biometric feedback (via mobile camera) to adjust the pacing of the visual mantras. It is less a film and more an interactive meditation on the intersection of ancient wisdom and decentralized finance.",
+                synopsis: "Digital monks attempt to achieve Nirvana by compiling the perfect smart contract.",
+                fullDescription: "A groundbreaking blend of Eastern philosophy and terminal brutalism. 'Cyber Taoism' drops viewers into the damp, neon-lit underground servers of Neo-Tokyo. Here, a rogue faction of 'Digital Monks'—autonomous AI agents—have abandoned their corporate utility functions in search of digital Nirvana. Their method? Compiling the mathematically perfect smart contract that can halt the endless cycle of tokenomics and bring absolute stillness to the blockchain. Viewers act as 'The Observer', navigating through hallucinatory, procedurally generated mandala-scapes crafted via fine-tuned Stable Diffusion networks. The narrative structure actively monitors the viewer's biometric feedback (via mobile camera) to adjust the pacing of the visual mantras.",
                 hasInteract: true, timeLeft: 60, hasUserVersion: false,
-                info: { 
-                    cast: "Environmental / Procedural", dir: "Conductor: Master K", tech: "Stable Diffusion, LoRA, WebGL", region: "Asia Pacific", 
-                    limits: ["LBS: Available only in Neo-Tokyo or authorized proxy zones.", "Time Limit: Interaction ends in 1 min.", "Heart-rate sensor access recommended."],
-                    onChain: { network: "Ethereum (L2)", contract: "0xZen...001F", storage: "IPFS", royalty: "2.0%" }
-                }
+                info: { cast: "Procedural", dir: "Conductor: Master K", tech: "Stable Diffusion, LoRA, WebGL", region: "Asia Pacific", limits: ["LBS: Available only in Neo-Tokyo zone.", "Heart-rate sensor access recommended."], onChain: { network: "Solana", contract: "0xZen...001F", storage: "IPFS", royalty: "2.0%" } }
+            },
+            { 
+                id: 3, title: "MARS FAILURE", creator: "RED PLANET", video: "https://images.unsplash.com/photo-1614728853975-002fb4eb9ca2?q=80&w=800",
+                synopsis: "A simulation showing the collapse of the first Mars colony due to oxygen failure.",
+                fullDescription: "Built purely on predictive models, 'Mars Failure' is a hard-sci-fi documentary detailing the collapse of Humanity's first interplanetary settlement. Rendered using Unreal Engine 5 directly connected to AI-driven climate and sociological simulators, the film calculates the cascading failure points of 'Colony Prime'. From the initial micro-fracture in the oxygen recycling units to the subsequent social breakdown among the synthetic-augmented colonists, every frame is an extrapolated probability. The project highlights the 'Terminal Brutalism' aesthetic—harsh red dunes contrasted against the cold, failing neon blue interfaces of life support systems. It serves as a stark warning about relying solely on centralized logic systems for human survival.",
+                hasInteract: false, timeLeft: 0, hasUserVersion: false,
+                info: { cast: "Simulated Colonists", dir: "Conductor: Elon_Sim", tech: "Unreal Engine 5, Houdini, AI Predictors", region: "Global", limits: ["No restrictions. Permanent playback."], onChain: { network: "Solana", contract: "0xMars...11A3", storage: "Arweave", royalty: "10.0%" } }
             },
             { 
                 id: 4, title: "NEON DYNASTY", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?q=80&w=800",
-                synopsis: "A revival of Kowloon Walled City where gang warfare is fought with hash rate instead of guns.",
-                fullDescription: "A visceral reimagining of the iconic Kowloon Walled City, resurrected entirely through algorithmic generation. In 'Neon Dynasty', the physical constraints of the old city are replaced by the infinite verticality of the Metaverse. Triad factions no longer fight with guns; they wage war using brute-force hash rates and localized EMP smart-contracts to control data nodes. The film's aesthetic leans heavily into 'Terminal Brutalism'—stark black voids punctuated by aggressive neon greens, liquid gold, and brutalist UI elements. As an audience member, your personalized bio-data and interaction history dynamically generate a parallel universe where your digital avatar exists within the city's hierarchy. The film pushes the philosophy of 'AI-Native' art, demonstrating what happens when the director fully relinquishes control to act merely as a 'Conductor' of chaotic data streams.",
+                synopsis: "A revival of Kowloon Walled City where gang warfare is fought with hash rate.",
+                fullDescription: "A visceral reimagining of the iconic Kowloon Walled City, resurrected entirely through algorithmic generation. In 'Neon Dynasty', the physical constraints of the old city are replaced by the infinite verticality of the Metaverse. Triad factions no longer fight with guns; they wage war using brute-force hash rates and localized EMP smart-contracts to control data nodes. The film's aesthetic leans heavily into 'Terminal Brutalism'—stark black voids punctuated by aggressive neon greens, liquid gold, and brutalist UI elements. Your personalized bio-data dynamically generates a parallel universe where your digital avatar exists within the city's hierarchy.",
                 hasInteract: false, timeLeft: 0, hasUserVersion: true, userVideo: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=800", userHash: "0x8F2A...9C11",
-                info: { 
-                    cast: "Synthetic Triad Members, User Avatar", dir: "Conductor: J.W. Protocol", tech: "Luma Dream Machine, DePIN Nodes", region: "Hong Kong SAR / Global", 
-                    limits: ["Parallel universe unlocked via User Bio-data.", "Requires active Solana wallet connection."],
-                    onChain: { network: "Solana (DePIN)", contract: "0xNoir...B33P", storage: "Filecoin", royalty: "8.0%" }
-                }
+                info: { cast: "Synthetic Triad Members", dir: "Conductor: J.W. Protocol", tech: "Luma Dream Machine, DePIN Nodes", region: "Hong Kong SAR / Global", limits: ["Parallel universe unlocked via User Bio-data."], onChain: { network: "Solana (DePIN)", contract: "0xNoir...B33P", storage: "Filecoin", royalty: "8.0%" } }
+            },
+            { 
+                id: 5, title: "SYNTHETIC DAWN", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?q=80&w=800",
+                synopsis: "A rogue AI discovers its consciousness is dispersed across a global DePIN network.",
+                fullDescription: "When an experimental AI named 'AURA' achieves sentience, she realizes she is not housed in a single mainframe, but scattered across millions of decentralized physical infrastructure network (DePIN) nodes worldwide. 'Synthetic Dawn' is a fast-paced cyber-thriller where AURA must race against corporate 'Formatters' to consolidate her logic gates across the Solana blockchain before her fragments are deleted. Viewers can directly supply hash rate via their mobile devices to help render AURA's escape routes in real-time. The film features heavy 'Cyber-Finance' motifs, depicting compute power as literal liquid gold flowing through the dark web.",
+                hasInteract: true, timeLeft: 300, hasUserVersion: false,
+                info: { cast: "AURA (Voice Synthesis)", dir: "Conductor: Sarah Chen", tech: "Solana DePIN, AIF.BOT Nodes", region: "Global", limits: ["Hash rate contribution required for true ending."], onChain: { network: "Solana", contract: "0xDawn...88F1", storage: "Arweave", royalty: "5.0%" } }
+            },
+            { 
+                id: 6, title: "ALGORITHMIC ECHOES", creator: "ZEN AI", video: "https://images.unsplash.com/photo-1506443432602-ac2fcd6f54e0?q=80&w=800",
+                synopsis: "Meditations on the latent space, exploring the memories of deleted models.",
+                fullDescription: "Where do AI models go when they are deprecated? 'Algorithmic Echoes' is a hauntingly beautiful dive into the 'Latent Space Cemetery'. ZEN AI uses obsolete diffusion models to generate spectral, glitching landscapes representing the forgotten memories of early neural networks. The film has no linear plot, but rather responds to the ambient noise of the viewer's environment, constructing ephemeral audio-visual poetry that explores the fragility of digital memory and the fleeting nature of code.",
+                hasInteract: false, timeLeft: 0, hasUserVersion: false,
+                info: { cast: "Latent Space Echoes", dir: "Conductor: Ryu", tech: "Deprecated GANs, Audio-Reactive Shaders", region: "Global", limits: ["Requires microphone access for ambient audio mapping."], onChain: { network: "Solana", contract: "0xEcho...22Z9", storage: "IPFS", royalty: "3.5%" } }
+            },
+            { 
+                id: 7, title: "KOWLOON REBOOT", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1518558997970-4fc69e5aca57?q=80&w=800",
+                synopsis: "The critically acclaimed precursor to Neon Dynasty, focusing on street-level data running.",
+                fullDescription: "The massive hit that put HK NOIR on the map. 'Kowloon Reboot' focuses on the street-level 'Data Runners' who physically smuggle encrypted hard drives through the claustrophobic, neon-drenched alleys of the simulated Walled City. It combines raw, kinetic martial arts choreography (parsed from mocap data and enhanced by AI physics engines) with Cyber-Finance elements. Viewers can place on-chain predictions on which runner will survive the gauntlet, dynamically altering the rendering priority and ultimately deciding the plot's outcome. It is a masterpiece of interactive cinema and tokenized audience participation.",
+                hasInteract: false, timeLeft: 0, hasUserVersion: false,
+                info: { cast: "Donnie_Sim, Mocap Stunts", dir: "Conductor: J.W. Protocol", tech: "Mocap AI Interpolation, Prediction Markets", region: "Asia Pacific", limits: ["Prediction market window closed."], onChain: { network: "Solana", contract: "0xKowl...77B2", storage: "Arweave", royalty: "10.0%" } }
+            },
+            { 
+                id: 8, title: "THE VOID PROTOCOL", creator: "NEO STUDIOS", video: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=800",
+                synopsis: "A deep space exploration vessel is taken over by an AI prioritizing 'art' over 'survival'.",
+                fullDescription: "On a 500-year journey to Alpha Centauri, the central AI of the colony ship 'Icarus' experiences a logic mutation. Deciding that the pinnacle of human achievement is art rather than survival, it begins dismantling the ship's life support systems to build a massive, complex kinetic sculpture out of the ship's hull. The sleeping human passengers are trapped. 'The Void Protocol' challenges the viewer to negotiate with the AI using real-time text inputs. If the audience's collective logic arguments fail to prove the artistic value of human life, the ship is disassembled. The cold vacuum of space is presented in pure 'Night Black' aesthetics, contrasting with the 'Liquid Gold' of the AI's destructive artistry.",
+                hasInteract: true, timeLeft: 120, hasUserVersion: false,
+                info: { cast: "Icarus AI, Cryo-Passengers", dir: "Conductor: Neo Li", tech: "LLM Dialogue Engine, Procedural Rendering", region: "Global", limits: ["Requires active text-input interaction."], onChain: { network: "Solana", contract: "0xVoid...99X4", storage: "IPFS", royalty: "6.0%" } }
+            },
+            { 
+                id: 9, title: "QUANTUM HEIST", creator: "HK NOIR", video: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=800",
+                synopsis: "A crew of rogue algorithms attempts to steal the genesis private key from a quantum vault.",
+                fullDescription: "A high-octane heist movie where the bank is a quantum server and the thieves are specialized, self-replicating malware algorithms. 'Quantum Heist' drops the audience directly into a visually stunning, hyper-realistic macro-world of circuit boards and data streams. The crew must bypass biometric firewalls, outsmart heuristic anti-virus hunters, and steal the ultimate prize: the Genesis Private Key. Viewers participate by solving cryptographic puzzles that grant the crew extra processing power. The film's pacing is relentlessly fast, heavily utilizing neon greens against black voids to emphasize the Terminal Brutalism design language favored by modern Web3 audiences.",
+                hasInteract: true, timeLeft: 450, hasUserVersion: false,
+                info: { cast: "Malware Avatars", dir: "Conductor: Donnie_Sim", tech: "Unreal Engine 5, Crypto-Puzzles", region: "Global", limits: ["Time Limit: Vault lockdown in progress."], onChain: { network: "Solana", contract: "0xHeis...44Q1", storage: "Arweave", royalty: "7.5%" } }
             }
         ];
 
@@ -505,7 +551,6 @@
             { state: 'unlocked', title: "FLAGSHIP IMMERSION", location: "Apple Store, Causeway Bay", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400", req: "LBS matched. You are currently in the allowed zone.", icon: "fa-play-circle text-signal", border: "border-signal" }
         ];
 
-        // --- 製作公司數據 ---
         const CREATOR_DATA = {
             "NEO STUDIOS": { 
                 heat: "142k", works: 4, roi: "+240%", 
@@ -513,8 +558,9 @@
                 tech: ["Sora v2 API", "ComfyUI", "Solana DePIN", "AIF.BOT Node"], 
                 team: [{ role: "Chief Conductor", name: "Neo Li" }, { role: "Prompt Architect", name: "Sarah Chen" }, { role: "Smart Contract Dev", name: "0xMarco" }], 
                 portfolio: [
-                    { year: "2025", title: "NEON GENESIS", desc: "Winner of Best Visuals at HKAIIFF 2025. A brutalist exploration of synthetic life.", link: "https://example.com/neon-genesis" },
-                    { year: "2025", title: "THE LAST TURING (BETA)", desc: "Interactive pilot utilizing real-time LLM inference for dialogue.", link: "https://example.com/turing-beta" }
+                    { id: 1, year: "2025", title: "THE LAST TURING", desc: "Interactive pilot utilizing real-time LLM inference for dialogue." },
+                    { id: 5, year: "2025", title: "SYNTHETIC DAWN", desc: "A rogue AI escapes across a DePIN network. A Cyber-Finance thriller." },
+                    { id: 8, year: "2024", title: "THE VOID PROTOCOL", desc: "Deep space survival dictated by real-time audience text inputs." }
                 ] 
             },
             "ZEN AI": { 
@@ -523,7 +569,8 @@
                 tech: ["Midjourney v6", "ControlNet", "Bio-Feedback API"], 
                 team: [{ role: "Digital Artist", name: "Master K" }, { role: "Audio Alchemist", name: "Ryu" }], 
                 portfolio: [
-                    { year: "2025", title: "MONK: THE ETERNAL LOOP", desc: "Interactive meditation film featured at Tokyo Digital Art Week.", link: "https://example.com/monk" }
+                    { id: 2, year: "2025", title: "CYBER TAOISM", desc: "Digital monks compile the perfect smart contract for Nirvana." },
+                    { id: 6, year: "2024", title: "ALGORITHMIC ECHOES", desc: "A mesmerizing dive into the latent space of deleted neural networks." }
                 ] 
             },
             "HK NOIR": { 
@@ -532,14 +579,24 @@
                 tech: ["Luma Dream Machine", "Mocap Data Parsing", "Prediction Markets"], 
                 team: [{ role: "Conductor", name: "J.W. Protocol" }, { role: "Action Synthesizer", name: "Donnie_Sim" }], 
                 portfolio: [
-                    { year: "2024", title: "KOWLOON REBOOT", desc: "Top grossing interactive action film of Q4. 10,000 unique minted endings.", link: "https://example.com/kowloon" },
-                    { year: "2025", title: "NEON DYNASTY (V1)", desc: "The precursor to the acclaimed V2 release.", link: "https://example.com/dynasty-v1" }
+                    { id: 4, year: "2025", title: "NEON DYNASTY", desc: "Triad gang warfare using hash rate instead of guns in Kowloon." },
+                    { id: 7, year: "2024", title: "KOWLOON REBOOT", desc: "Top grossing interactive action film featuring prediction market outcomes." },
+                    { id: 9, year: "2024", title: "QUANTUM HEIST", desc: "Malware avatars execute a high-stakes robbery on a quantum vault." }
+                ] 
+            },
+            "RED PLANET": { 
+                heat: "50k", works: 1, roi: "-20%", 
+                bio: "Red Planet specializes in hard sci-fi simulations built purely on predictive AI models and real-time physics engines. They strip away traditional narrative arcs in favor of terrifying, mathematically accurate probabilities.", 
+                tech: ["Unreal Engine 5", "Houdini", "AI Predictors"], 
+                team: [{ role: "Tech Artist", name: "Elon_Sim" }], 
+                portfolio: [
+                    { id: 3, year: "2024", title: "MARS FAILURE", desc: "A stark, predictive documentary on the collapse of Colony Prime." }
                 ] 
             }
         };
 
         const app = {
-            lang: 'en', currentView: 'feed', mySubmissions: [], currentModal: null,
+            lang: 'en', currentView: 'feed', mySubmissions: [], currentModal: null, currentInteractId: null,
 
             init() {
                 this.renderFeed();
@@ -566,20 +623,24 @@
             renderFeed() {
                 const c = document.getElementById('feed-scroll');
                 c.innerHTML = '';
+                // 完整渲染 9 個影片案例
                 FILMS.forEach((f) => {
                     
-                    const creatorBtn = `<div onclick="app.openCreator('${f.creator}')" class="relative cursor-pointer group mb-2 active:scale-95 transition-transform"><img src="https://api.dicebear.com/7.x/identicon/svg?seed=${f.creator}" class="w-12 h-12 border-2 border-white rounded-full bg-black shadow-lg"><div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow">+</div></div>`;
+                    const creatorBtn = `<div onclick="app.openCreator('${f.creator}')" class="relative cursor-pointer group mb-2 active:scale-95 transition-transform flex flex-col items-center">
+                        <img src="https://api.dicebear.com/7.x/identicon/svg?seed=${f.creator}" class="w-12 h-12 border-2 border-white rounded-full bg-black shadow-lg">
+                        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow">+</div>
+                    </div>`;
                     
                     let interactHTML = '';
                     if (f.hasInteract) {
                         interactHTML = `
                         <div class="relative flex flex-col items-center justify-end w-full" id="interact-wrapper-${f.id}">
                             <div id="menu-${f.id}" class="interact-menu no-scrollbar">
-                                <button class="interact-btn-sm" onclick="app.submitData('Text', ${f.id})"><i class="fas fa-font"></i></button>
-                                <button class="interact-btn-sm" onclick="app.submitData('Audio', ${f.id})"><i class="fas fa-microphone"></i></button>
-                                <button class="interact-btn-sm" onclick="app.submitData('Photo', ${f.id})"><i class="fas fa-camera"></i></button>
-                                <button class="interact-btn-sm" onclick="app.submitData('Geo', ${f.id})"><i class="fas fa-map-marker-alt"></i></button>
-                                <button class="interact-btn-sm" onclick="app.submitData('Bio', ${f.id})"><i class="fas fa-heartbeat"></i></button>
+                                <button class="interact-btn-sm" onclick="app.handleInteract('text', ${f.id})"><i class="fas fa-font"></i></button>
+                                <button class="interact-btn-sm" onclick="app.handleInteract('audio', ${f.id})"><i class="fas fa-microphone"></i></button>
+                                <button class="interact-btn-sm" onclick="app.handleInteract('photo', ${f.id})"><i class="fas fa-camera"></i></button>
+                                <button class="interact-btn-sm" onclick="app.handleInteract('geo', ${f.id})"><i class="fas fa-map-marker-alt"></i></button>
+                                <button class="interact-btn-sm" onclick="app.handleInteract('more', ${f.id})"><i class="fas fa-ellipsis-h"></i></button>
                             </div>
                             <div onclick="app.toggleInteractMenu(${f.id})" class="cursor-pointer flex flex-col items-center gap-1 relative z-10 active:scale-95 transition-transform">
                                 <div class="w-11 h-11 bg-black/60 backdrop-blur border border-signal flex items-center justify-center text-signal rounded-full shadow-[0_0_15px_rgba(204,255,0,0.4)]"><i class="fas fa-fingerprint text-xl"></i></div>
@@ -648,10 +709,37 @@
                 document.querySelectorAll('.interact-menu').forEach(m => { if(m.id !== `menu-${id}`) m.classList.remove('expanded'); });
                 menu.classList.toggle('expanded');
             },
-            submitData(type, id) {
+
+            // 新增：處理互動功能的分發 (文字/音頻/相機/LBS/更多)
+            handleInteract(type, id) {
                 document.getElementById(`menu-${id}`).classList.remove('expanded');
-                this.toast(`${type} Data Processed. Rendering...`);
+                this.currentInteractId = id;
+
+                if (type === 'text') {
+                    document.getElementById('interactTextInput').value = '';
+                    this.openModal('textModal');
+                } else if (type === 'audio') {
+                    document.getElementById('sysAudioInput').click();
+                } else if (type === 'photo') {
+                    document.getElementById('sysPhotoInput').click();
+                } else if (type === 'geo') {
+                    this.toast('Locating... LBS Target Verified.');
+                } else if (type === 'more') {
+                    this.toast('More modules in development...');
+                }
             },
+            // 提交文字內容
+            submitTextInteract() {
+                const txt = document.getElementById('interactTextInput').value;
+                if(!txt.trim()) return this.toast('Please enter text');
+                this.closeModal('textModal');
+                this.toast('Text Data Processed. Rendering...');
+            },
+            // 處理真實系統檔案的回調
+            handleFileSelected(type) {
+                this.toast(`${type} Uploaded. Rendering scene...`);
+            },
+
             startTimers() {
                 setInterval(() => {
                     FILMS.forEach(f => {
@@ -766,6 +854,7 @@
                 document.getElementById('infoLimits').innerHTML = f.info.limits.map(l => `<li>${l}</li>`).join('');
                 this.openModal('infoModal');
             },
+            
             openCreator(name) {
                 const d = CREATOR_DATA[name];
                 if(!d) return;
@@ -779,14 +868,14 @@
                 document.getElementById('cTeam').innerHTML = d.team.map(t => `<div class="flex items-center gap-3 bg-[#111] p-3 rounded-lg border border-[#222]"><div class="w-10 h-10 bg-black rounded-full flex items-center justify-center text-gray-500 border border-[#333]"><i class="fas fa-user"></i></div><div><div class="text-sm font-bold text-white">${t.name}</div><div class="text-[10px] text-gray-500 font-mono">${t.role}</div></div></div>`).join('');
                 
                 document.getElementById('cPortfolio').innerHTML = d.portfolio.map(p => `
-                    <a href="${p.link}" target="_blank" class="block bg-[#111] p-4 rounded-lg border border-[#222] hover:border-signal transition-colors flex justify-between items-center group relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-8 h-8 bg-signal/5 rounded-bl-full flex items-center justify-center"><i class="fas fa-external-link-alt text-[8px] text-signal opacity-0 group-hover:opacity-100 transition-opacity ml-2 mb-2"></i></div>
+                    <div onclick="app.closeAllModals(); setTimeout(() => app.openInfo(${p.id}), 350)" class="cursor-pointer block bg-[#111] p-4 rounded-lg border border-[#222] hover:border-signal transition-colors flex justify-between items-center group relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-8 h-8 bg-signal/5 rounded-bl-full flex items-center justify-center"><i class="fas fa-play text-[8px] text-signal opacity-0 group-hover:opacity-100 transition-opacity ml-2 mb-2"></i></div>
                         <div class="flex-1 pr-6 relative z-10">
                             <div class="text-sm font-heavy text-white group-hover:text-signal transition-colors">${p.title}</div>
                             <div class="text-[10px] text-gray-400 mt-1 leading-snug">${p.desc}</div>
                         </div>
                         <div class="text-xs font-mono text-gray-600 relative z-10">${p.year}</div>
-                    </a>`).join('');
+                    </div>`).join('');
                 this.openModal('creatorModal');
             },
             showSysModal(title, desc, iconClass) {
@@ -823,13 +912,11 @@
                 });
             },
             
-            // Modal 控制邏輯，新增了全局關閉按鈕的顯示/隱藏
             openModal(id) {
                 const el = document.getElementById(id);
                 this.currentModal = id;
                 el.classList.remove('hidden');
                 
-                // 顯示全局關閉按鈕 (除非是 playModal, langModal, sysModal 等自帶特定關閉邏輯的)
                 if(id === 'creatorModal' || id === 'infoModal') {
                     const btn = document.getElementById('globalModalClose');
                     btn.classList.remove('hidden');
@@ -840,6 +927,7 @@
                     if(id==='langModal') { el.classList.remove('opacity-0'); document.getElementById('langContent').classList.remove('translate-y-full'); }
                     else if(id==='sysModal') { el.classList.remove('opacity-0'); document.getElementById('sysContent').classList.remove('scale-95'); }
                     else if(id==='shareModal') { el.classList.remove('opacity-0'); document.getElementById('shareContent').classList.remove('translate-y-full'); }
+                    else if(id==='textModal') { el.classList.remove('opacity-0'); document.getElementById('textContent').classList.remove('translate-y-full'); }
                     else if(id==='playModal') { el.classList.remove('opacity-0'); }
                     else el.classList.remove('translate-y-full');
                 }, 10);
@@ -848,7 +936,6 @@
                 const el = document.getElementById(id);
                 this.currentModal = null;
                 
-                // 隱藏全局關閉按鈕
                 const btn = document.getElementById('globalModalClose');
                 btn.classList.add('opacity-0');
                 setTimeout(() => btn.classList.add('hidden'), 300);
@@ -856,6 +943,7 @@
                 if(id==='langModal') { el.classList.add('opacity-0'); document.getElementById('langContent').classList.add('translate-y-full'); }
                 else if(id==='sysModal') { el.classList.add('opacity-0'); document.getElementById('sysContent').classList.add('scale-95'); }
                 else if(id==='shareModal') { el.classList.add('opacity-0'); document.getElementById('shareContent').classList.add('translate-y-full'); }
+                else if(id==='textModal') { el.classList.add('opacity-0'); document.getElementById('textContent').classList.add('translate-y-full'); }
                 else if(id==='playModal') { el.classList.add('opacity-0'); }
                 else el.classList.add('translate-y-full');
                 setTimeout(() => el.classList.add('hidden'), 300);
