@@ -72,6 +72,139 @@
 </head>
 <body data-lang="en">
 
+    <!-- FESTIVAL FULL PAGE -->
+    <div id="festivalPage" class="fixed inset-0 z-50 bg-[#050505] transform translate-y-full transition-transform duration-500 ease-out overflow-y-auto" style="padding-bottom: 40px; display: none;">
+        <div class="sticky top-0 z-10 bg-[#050505]/95 backdrop-blur border-b border-[#222] flex items-center justify-between px-4 py-4">
+            <div>
+                <div class="font-heavy text-xl text-white tracking-wider">HKAIIFF 2026</div>
+                <div class="text-[9px] font-mono text-signal tracking-widest">FESTIVAL GUIDE</div>
+            </div>
+            <button onclick="app.closeFestivalPage()" class="w-10 h-10 bg-[#111] border border-[#333] rounded-full flex items-center justify-center text-gray-400 hover:text-white active:scale-90 transition-all">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Hero -->
+        <div class="relative h-52 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=800" class="w-full h-full object-cover opacity-50">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/50 to-transparent"></div>
+            <div class="absolute bottom-0 left-0 p-5">
+                <div class="font-heavy text-3xl text-white leading-none mb-1">HONG KONG AI</div>
+                <div class="font-heavy text-3xl text-signal leading-none">INTERNATIONAL FILM FESTIVAL</div>
+                <div class="font-mono text-[10px] text-gray-400 mt-2 tracking-widest">JULY 15–21, 2026 · HONG KONG</div>
+            </div>
+        </div>
+
+        <div class="px-4 pt-2 space-y-6">
+            <!-- Key Stats -->
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-[#111] border border-[#333] rounded-xl p-4 text-center">
+                    <div class="font-heavy text-2xl text-signal">7</div>
+                    <div class="text-[9px] font-mono text-gray-500 mt-1">DAYS</div>
+                </div>
+                <div class="bg-[#111] border border-[#333] rounded-xl p-4 text-center">
+                    <div class="font-heavy text-2xl text-white">51%</div>
+                    <div class="text-[9px] font-mono text-gray-500 mt-1">AI THRESHOLD</div>
+                </div>
+                <div class="bg-[#111] border border-[#333] rounded-xl p-4 text-center">
+                    <div class="font-heavy text-2xl text-white">$500</div>
+                    <div class="text-[9px] font-mono text-gray-500 mt-1">ENTRY FEE</div>
+                </div>
+            </div>
+
+            <!-- Historical Heritage -->
+            <div class="bg-[#111] border border-[#333] rounded-xl overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-1 h-full bg-signal"></div>
+                <div class="p-5 pl-6">
+                    <h2 class="font-heavy text-lg text-white mb-3 flex items-center gap-2"><i class="fas fa-landmark text-signal"></i> Historical Heritage & Breakthrough</h2>
+                    <p class="font-mono text-[11px] text-gray-400 leading-relaxed mb-3">Since the birth of its first film in 1909, Hong Kong cinema has stood as a cornerstone of global culture. With over a century of filmmaking tradition, the region's storytelling heritage represents a unique fusion of East and West, tradition and innovation.</p>
+                    <p class="font-mono text-[11px] text-gray-400 leading-relaxed">In 2025, the official registration of HKAIIFF marks a new frontier — the world's first festival exclusively dedicated to AI-Native cinema, signaling that something has to change in how we create and experience film.</p>
+                </div>
+            </div>
+
+            <!-- Hong Kong Advantages -->
+            <div class="bg-[#111] border border-[#333] rounded-xl overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-1 h-full bg-[#00F0FF]"></div>
+                <div class="p-5 pl-6">
+                    <h2 class="font-heavy text-lg text-white mb-3 flex items-center gap-2"><i class="fas fa-city text-[#00F0FF]"></i> Hong Kong Advantages</h2>
+                    <p class="font-mono text-[11px] text-gray-400 leading-relaxed">As an international financial hub and a region at the crossroads of global trade, Hong Kong provides a unique launchpad for decentralized cinema. Its robust legal infrastructure, proximity to mainland China's creative talent, and status as a Web3-friendly jurisdiction make it the ideal birthplace for blockchain-powered AI film culture.</p>
+                </div>
+            </div>
+
+            <!-- Core Mission -->
+            <div class="bg-[#111] border border-[#333] rounded-xl overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-1 h-full bg-[#9D00FF]"></div>
+                <div class="p-5 pl-6">
+                    <h2 class="font-heavy text-lg text-white mb-3 flex items-center gap-2"><i class="fas fa-balance-scale text-[#9D00FF]"></i> Core Mission & Standard</h2>
+                    <p class="font-mono text-[11px] text-gray-400 leading-relaxed mb-3">As the world's premier film festival dedicated exclusively to AI-Native cinema, we champion the philosophy that AI is a revolutionary medium. Qualifying submissions must exceed a 51% AI contribution threshold.</p>
+                    <div class="bg-black border border-[#222] rounded-lg p-3 mb-3">
+                        <div class="text-[10px] font-mono text-[#9D00FF] text-center leading-relaxed">AI Contribution Ratio = (AI Generation × 0.4) + (AI Assistance × 0.3) + (Innovation × 0.3)</div>
+                    </div>
+                    <p class="font-mono text-[11px] text-gray-400 leading-relaxed">Evaluation Dimensions: Artistry 35% · Tech Innovation 35% · Commercial Potential 20% · Social Impact 10%.</p>
+                </div>
+            </div>
+
+            <!-- Global Partners -->
+            <div>
+                <h2 class="font-heavy text-lg text-white mb-4 flex items-center gap-2"><i class="fas fa-network-wired text-blue-400"></i> Global Cooperative Resources</h2>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-[#111] border border-[#222] p-4 rounded-xl text-center hover:border-blue-400 transition-colors">
+                        <div class="font-bold text-white text-sm mb-1">OpenAI / Google</div>
+                        <div class="text-[10px] text-gray-500 font-mono">Sora, GPT-4, Gemini</div>
+                    </div>
+                    <div class="bg-[#111] border border-[#222] p-4 rounded-xl text-center hover:border-signal transition-colors">
+                        <div class="font-bold text-white text-sm mb-1">NVIDIA / Meta</div>
+                        <div class="text-[10px] text-gray-500 font-mono">GPU Compute, Llama</div>
+                    </div>
+                    <div class="bg-[#111] border border-[#222] p-4 rounded-xl text-center hover:border-[#9D00FF] transition-colors">
+                        <div class="font-bold text-white text-sm mb-1">Solana / Polygon</div>
+                        <div class="text-[10px] text-gray-500 font-mono">Blockchain Infrastructure</div>
+                    </div>
+                    <div class="bg-[#111] border border-[#222] p-4 rounded-xl text-center hover:border-danger transition-colors">
+                        <div class="font-bold text-white text-sm mb-1">Netflix / IMAX</div>
+                        <div class="text-[10px] text-gray-500 font-mono">Global Distribution</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h2 class="font-heavy text-lg text-white mb-4 flex items-center gap-2"><i class="fas fa-envelope text-gray-400"></i> PARTNERSHIP & CONTACT</h2>
+                <div class="space-y-3">
+                    <div class="bg-[#111] border border-[#222] p-4 rounded-xl flex items-center gap-4 hover:border-signal transition-colors active:scale-[0.98] cursor-pointer" onclick="app.toast('Email copied: partnership@hkaiiff.org')">
+                        <i class="fas fa-briefcase text-signal text-xl w-8 text-center"></i>
+                        <div class="flex-1"><div class="text-sm font-bold text-white mb-0.5">Business</div><div class="text-[10px] font-mono text-gray-500">partnership@hkaiiff.org</div></div>
+                        <i class="fas fa-copy text-gray-600"></i>
+                    </div>
+                    <div class="bg-[#111] border border-[#222] p-4 rounded-xl flex items-center gap-4 hover:border-[#00F0FF] transition-colors active:scale-[0.98] cursor-pointer" onclick="app.toast('www.hkaiiff.org')">
+                        <i class="fas fa-globe text-[#00F0FF] text-xl w-8 text-center"></i>
+                        <div class="flex-1"><div class="text-sm font-bold text-white mb-0.5">Official Website</div><div class="text-[10px] font-mono text-gray-500">www.hkaiiff.org</div></div>
+                        <i class="fas fa-external-link-alt text-gray-600"></i>
+                    </div>
+                    <div class="bg-[#111] border border-[#222] p-4 rounded-xl flex items-center gap-4 hover:border-[#9D00FF] transition-colors active:scale-[0.98] cursor-pointer" onclick="app.toast('Email copied: support@hkaiiff.org')">
+                        <i class="fas fa-code text-[#9D00FF] text-xl w-8 text-center"></i>
+                        <div class="flex-1"><div class="text-sm font-bold text-white mb-0.5">Technology</div><div class="text-[10px] font-mono text-gray-500">support@hkaiiff.org</div></div>
+                        <i class="fas fa-copy text-gray-600"></i>
+                    </div>
+                    <div class="bg-[#111] border border-[#222] p-4 rounded-xl flex items-center gap-4 hover:border-honey transition-colors active:scale-[0.98] cursor-pointer" onclick="app.toast('Email copied: media@hkaiiff.org')">
+                        <i class="fas fa-bullhorn text-honey text-xl w-8 text-center"></i>
+                        <div class="flex-1"><div class="text-sm font-bold text-white mb-0.5">Media / PR</div><div class="text-[10px] font-mono text-gray-500">media@hkaiiff.org</div></div>
+                        <i class="fas fa-copy text-gray-600"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit CTA -->
+            <div class="bg-signal rounded-xl p-5 text-center">
+                <h3 class="font-heavy text-xl text-black mb-1">READY TO SUBMIT?</h3>
+                <p class="text-xs text-black/70 font-mono mb-4">Join the AI-Native revolution. Festival runs July 15–21, 2026.</p>
+                <button onclick="app.closeFestivalPage(); app.nav('upload'); app.resetUploadFlow();" class="bg-black text-signal font-heavy text-sm px-6 py-3 rounded-lg tracking-wide">SUBMIT YOUR FILM →</button>
+            </div>
+
+            <div class="text-[9px] font-mono text-gray-700 text-center pb-4">© 2026 香港人工智能國際電影節協會 Hong Kong AI International Film Festival Association.<br>All rights reserved. Digital assets carry market risk.</div>
+        </div>
+    </div>
+
     <input type="file" id="sysAudioInput" accept="audio/*" capture="microphone" class="hidden" onchange="app.handleFileSelected('Audio')">
     <input type="file" id="sysPhotoInput" accept="image/*" capture="environment" class="hidden" onchange="app.handleFileSelected('Photo')">
     <input type="file" id="upPosterInput" accept="image/*" class="hidden" onchange="app.finishUpload('poster')">
@@ -154,6 +287,32 @@
         
         <div class="flex items-center gap-5 mb-6 bg-[#111] p-5 rounded-xl border border-[#333] shadow-[0_0_20px_rgba(0,0,0,0.5)]"><div class="relative"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=Janus" class="w-20 h-20 bg-black rounded-full border-2 border-signal p-1"><div class="absolute bottom-0 right-0 w-6 h-6 bg-signal rounded-full border-2 border-black flex items-center justify-center text-[10px] text-black"><i class="fas fa-check"></i></div></div><div class="flex-1"><h2 class="font-heavy text-2xl text-white mb-0.5 tracking-wide">Janus J. Jiao</h2><div class="text-[9px] text-gray-400 font-mono mb-2 tracking-wider uppercase">Chairman, HKAIIFF | Founder, AIF.BOT</div><div class="text-[10px] font-mono text-gray-400 bg-black border border-[#222] px-2 py-1.5 rounded inline-flex items-center gap-2 ltr-force cursor-pointer hover:text-signal transition-colors active:scale-95" onclick="app.toast('Wallet Address Copied')"><i class="fa-brands fa-solana text-signal"></i> 0x8F3...A21C <i class="fas fa-copy text-gray-600 ml-1"></i></div></div></div>
         <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] p-5 rounded-xl border border-[#333] shadow-lg relative overflow-hidden group mb-8"><div class="absolute top-0 right-0 w-24 h-24 bg-signal/5 rounded-bl-full transition-colors group-hover:bg-signal/10"></div><div class="text-[10px] text-gray-500 mb-2 font-mono flex items-center gap-2"><i class="fas fa-coins text-signal"></i> <span data-i18n="aif_balance">AIF BALANCE</span></div><div class="text-4xl font-heavy text-white ltr-force flex items-baseline gap-1">24,500 <span class="text-signal text-lg">AIF</span></div></div>
+
+        <!-- FESTIVAL BANNER -->
+        <div onclick="app.openFestivalPage()" class="relative w-full rounded-xl overflow-hidden cursor-pointer mb-8 group active:scale-[0.98] transition-all" style="background: linear-gradient(135deg, #050505 0%, #0a0a0a 100%); border: 1px solid #CCFF00; box-shadow: 0 0 20px rgba(204,255,0,0.1);">
+            <div class="absolute inset-0 opacity-20" style="background: url('https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=800') center/cover; filter: grayscale(1);"></div>
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-signal"></div>
+            <div class="absolute bottom-0 right-0 w-24 h-24 rounded-tl-full" style="background: rgba(204,255,0,0.05);"></div>
+            <div class="relative z-10 p-5">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="bg-signal text-black text-[9px] font-mono font-bold px-2 py-1 rounded tracking-widest flex items-center gap-1">
+                        <i class="fas fa-circle text-[6px] animate-pulse"></i> LIVE EVENT
+                    </div>
+                    <i class="fas fa-chevron-right text-signal group-hover:translate-x-1 transition-transform"></i>
+                </div>
+                <h3 class="font-heavy text-2xl text-white tracking-wide mb-1">HKAIIFF 2026</h3>
+                <div class="font-mono text-[10px] text-signal tracking-widest mb-3">HONG KONG AI INTERNATIONAL FILM FESTIVAL</div>
+                <p class="text-xs text-gray-400 font-mono leading-relaxed mb-4">July 15–21, 2026 · AI-Native Cinema · Blockchain-Powered</p>
+                <div class="flex items-center gap-4 border-t border-[#333] pt-3">
+                    <div class="text-center"><div class="font-heavy text-lg text-signal">7</div><div class="text-[8px] font-mono text-gray-500">DAYS</div></div>
+                    <div class="w-px h-8 bg-[#333]"></div>
+                    <div class="text-center"><div class="font-heavy text-lg text-white">51%+</div><div class="text-[8px] font-mono text-gray-500">AI RATIO</div></div>
+                    <div class="w-px h-8 bg-[#333]"></div>
+                    <div class="text-center"><div class="font-heavy text-lg text-white">$500</div><div class="text-[8px] font-mono text-gray-500">ENTRY</div></div>
+                    <div class="ml-auto"><div class="bg-signal text-black font-heavy text-xs px-4 py-2 rounded-lg tracking-wide">EXPLORE →</div></div>
+                </div>
+            </div>
+        </div>
 
         <h3 class="font-heavy text-xl mb-4 border-b border-[#333] pb-2 text-white flex items-center gap-2"><i class="fas fa-robot text-gray-500"></i> <span data-i18n="my_bot">MY BOT</span></h3>
         <div class="bg-[#111] border border-[#333] rounded-xl p-5 mb-8 relative overflow-hidden shadow-[0_0_20px_rgba(0,240,255,0.05)]" id="bot-container">
@@ -853,6 +1012,16 @@
             },
             closeAllModals() {
                 if(this.currentModal) this.closeModal(this.currentModal);
+            },
+            openFestivalPage() {
+                const page = document.getElementById('festivalPage');
+                page.style.display = 'block';
+                setTimeout(() => page.style.transform = 'translateY(0)', 10);
+            },
+            closeFestivalPage() {
+                const page = document.getElementById('festivalPage');
+                page.style.transform = 'translateY(100%)';
+                setTimeout(() => { page.style.display = 'none'; page.scrollTop = 0; }, 500);
             },
             toast(msg) {
                 const t = document.getElementById('toast');
